@@ -70,8 +70,17 @@ supplies/services, dashed orange = capital returns.
   sector colour and the diagram traces that company's connections while the panel
   is open. Esc, a click on the diagram background, or the × closes it.
 - The panel is a real flex column, not an overlay: opening it reflows the diagram
-  (the SVG is `width:100%`), so nothing is ever covered. Below 880px viewport it
+  (the SVG is `width:100%`), so nothing is ever covered. Below 1180px viewport it
   switches to a right-side overlay with a shadow instead of crushing the diagram.
+- **The market rail** is the persistent section on the right, with two tabs.
+  **Volume** ranks every ticker on the chart by shares traded in the current
+  session — rank, ticker, name, a proportional bar, volume and % change (hover a
+  row for price and venue). **News** merges every headline in `DATA` into one
+  feed: filter it to a ticker or company name, and order it by *Priority* (source
+  tier, then recency) or *Newest*. Any row, and the ticker chip on any headline,
+  opens the same company panel a chip click does. The `›` control collapses the
+  rail; below 1180px it becomes an overlay toggled by the floating **Feed**
+  button, and opening a company from it steps the rail aside.
 
 ## Company data and news
 
@@ -108,6 +117,35 @@ with the fetch date ("Headlines via Google News, as of 9 Oct 2026") so a stale
 snapshot is always visible as one. HTTP responses are cached under `.cache/`
 (gitignored) so re-runs are cheap and the sources are hit once.
 
+## The market rail
+
+The section on the right is two panes over the same universe the diagram draws —
+the `cos:` lists of `NODES` + `ENABLERS` — so a ticker added to the chart shows up
+there with no further work.
+
+- **Volume** ranks the chart's tickers by shares traded in the current session
+  (bar, volume, % change; price and venue on hover). It reads the `VOL` snapshot:
+
+  ```bash
+  python3 tools/fetch-market-volume.py            # data/market-volume.json
+  python3 tools/fetch-market-volume.py --inject   # …and splice VOL into index.html
+  ```
+
+  The script quotes every chart ticker in one pass from the CNBC quote
+  web-service — no key, many symbols per request — and writes a
+  `/* <<<VOL>>> */ … /* <<<END VOL>>> */` region of its own, so it never touches
+  the `DATA` block the other fetcher rewrites. The rail labels the list with the
+  market timestamp behind it ("Top volume · as of 1:13 PM EDT, 9 Oct"), so a stale
+  snapshot reads as one, and it lists only the tickers that actually report a
+  volume. Re-run it to refresh; nothing is invented.
+- **News** takes every dated headline already in `DATA[tk].news`, merges them,
+  drops duplicate copies of the same story (the best-sourced one wins) and sorts
+  either by source tier then recency (**Priority** — Reuters / Bloomberg / WSJ /
+  CNBC first) or purely by date (**Newest**). The filter box narrows the feed to
+  one ticker or company name; 40 are shown at a time with "show more" for the rest.
+
+Both panes open the company panel, and the rail collapses with the `›` control.
+
 ## Verified
 
 Rendered in Chromium at 1660×1000 (the SVG viewBox): 18 nodes, 32 edges, 89
@@ -126,6 +164,17 @@ Website and Wikipedia links; ARLP degrades to a single Industry row and a Websit
 link with no Wikipedia article; CEG shows live Oct-2026 headlines about Google's
 3.6 GW nuclear PPA, which is the same `gen → dc` PPA edge the diagram traces. No
 document overflow at 1560px with the 400px panel open.
+
+The market rail was verified at 1600×1000 and 820×900: 87 volume rows sorted
+descending (TSLA 27.4M … ARLP 82.8K) from a live CNBC snapshot covering all 89
+chart tickers; the News tab merges 356 headlines into 346 after de-duplication
+and shows 40 with a "show more of 346"; *Priority* orders Reuters/CNBC first,
+*Newest* puts the latest date first, and filtering to `XOM` returns only XOM rows.
+Clicking a volume row opens the panel on that company (AMZN → Data Centers, 400px,
+5 fact rows, 4 headlines), outlines its chip and dims the rest of the diagram; the
+`›` control gives the 320px back to the diagram, and at 820px the rail is a fixed
+overlay reached from the **Feed** button with the panel stacked above it (z-index
+35 over 30). No document overflow at 1600px with the panel and the rail both open.
 
 Data coverage from the last fetch: HQ 83/89, founded 73/89, employees 78/89
 (headcounts older than 2018 are dropped rather than shown stale), exchange 80/89,

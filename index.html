@@ -108,13 +108,81 @@
   .lnk:hover{color:#0F172A;border-bottom-color:#0F172A}
   .asof{font-size:9.5px;color:#B6C1CC;margin-top:20px;line-height:1.5}
 
-  @media (max-width:880px){
-    /* narrow: the panel overlays rather than crushing the diagram */
-    #panel{position:fixed;top:0;right:0;height:100%;z-index:30;
+  /* ---- market rail: top-volume feed + merged ticker news ---- */
+  #rail{flex:0 0 auto;width:320px;background:#fff;border-left:1px solid var(--line);
+    display:flex;flex-direction:column;min-height:0;overflow:hidden;
+    transition:width .22s ease,border-color .22s}
+  body.railoff #rail{width:0;border-left-color:transparent}
+  .railhead{display:flex;align-items:center;gap:8px;flex:0 0 auto;
+    padding:13px 12px 11px;border-bottom:1px solid var(--line)}
+  .tabs{display:flex;gap:2px;flex:1;background:#F1F4F8;border-radius:7px;padding:2px}
+  .tab{flex:1;border:0;background:transparent;font:inherit;font-size:11.5px;font-weight:600;
+    color:#5B6B7C;padding:5px 8px;border-radius:5px;cursor:pointer;letter-spacing:.1px}
+  .tab.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(15,23,42,.09)}
+  #railToggle{flex:0 0 auto;width:24px;height:24px;padding:0;border:0;border-radius:6px;
+    background:transparent;color:#A3AFBC;font-size:16px;line-height:1;cursor:pointer}
+  #railToggle:hover{background:#F1F5F9;color:var(--ink)}
+  .railbody{flex:1;min-height:0;overflow-y:auto;padding:11px 12px 34px}
+  .railnote{font-size:9.5px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;
+    color:#B6C1CC;margin:1px 2px 8px}
+
+  .vrow{display:grid;grid-template-columns:18px 46px 1fr;column-gap:8px;row-gap:3px;
+    align-items:center;width:100%;padding:6px;border:0;border-radius:6px;background:none;
+    font:inherit;text-align:left;cursor:pointer}
+  .vrow:hover{background:#F5F8FB}
+  .vrk{font-family:var(--mono);font-size:10px;color:#B6C1CC;text-align:right}
+  .vtk{font-family:var(--mono);font-size:11.5px;font-weight:700;color:#334155;letter-spacing:.2px}
+  .vnm{font-size:11.5px;color:#8A99AA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .vfoot{grid-column:2 / 4;display:flex;align-items:center;gap:8px}
+  .vbar{flex:1;min-width:24px;height:4px;border-radius:2px;background:#EDF1F6;overflow:hidden}
+  .vbar i{display:block;height:100%;background:#A7B9CB;border-radius:2px}
+  .vvol{font-family:var(--mono);font-size:10px;color:#7B8A9B}
+  .vchg{font-family:var(--mono);font-size:10px;font-weight:600}
+  .up{color:#0E9F6E}.dn{color:#C2410C}.flat{color:#93A2B3}
+
+  .newsbar{display:flex;gap:6px;margin-bottom:6px}
+  #newsQ{flex:1;min-width:0;border:1px solid var(--line);border-radius:6px;padding:5px 8px;
+    font:inherit;font-size:11.5px;color:var(--ink);background:#FBFCFD}
+  #newsQ:focus{outline:none;border-color:#C3CEDB;background:#fff}
+  .sorts{display:flex;background:#F1F4F8;border-radius:6px;padding:2px}
+  .sort{border:0;background:none;font:inherit;font-size:10.5px;font-weight:600;color:#5B6B7C;
+    padding:4px 7px;border-radius:4px;cursor:pointer}
+  .sort.on{background:#fff;color:var(--ink)}
+  .nrow{padding:9px 4px;border-bottom:1px solid #F0F3F7}
+  .nrow:last-child{border-bottom:0}
+  .nt{display:block;font-size:12px;line-height:1.4;font-weight:500;color:#1F3A5F;
+    text-decoration:none}
+  .nt:hover{color:#0F172A;text-decoration:underline;text-decoration-color:#C7D2DE;
+    text-underline-offset:2px}
+  .nmeta{display:flex;align-items:center;gap:7px;margin-top:4px;font-size:10px;color:#A3AFBC}
+  .ntk{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.2px;
+    padding:1px 5px;border:0;border-radius:4px;background:#F1F4F8;color:#42526A;cursor:pointer}
+  .ntk:hover{background:#E6EBF1;color:var(--ink)}
+  .nmore,.nempty{display:block;width:100%;margin-top:10px;padding:7px;border:1px solid var(--line);
+    background:#fff;border-radius:6px;font:inherit;font-size:11px;font-weight:600;
+    color:#42526A;cursor:pointer;text-align:center}
+  .nmore:hover{background:#F5F8FB}
+  .nempty{border:0;color:#A3AFBC;font-weight:500;cursor:default}
+  #railOpen{display:none;position:fixed;top:14px;right:14px;z-index:25;
+    border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 11px;
+    font:inherit;font-size:11.5px;font-weight:600;color:#42526A;cursor:pointer;
+    box-shadow:0 1px 3px rgba(15,23,42,.08)}
+  #railOpen:hover{background:#F5F8FB}
+
+  @media (max-width:1180px){
+    /* narrow: the panel and the rail overlay rather than crushing the diagram */
+    #panel{position:fixed;top:0;right:0;height:100%;z-index:35;
       box-shadow:-14px 0 30px rgba(15,23,42,.10);transition:transform .22s ease,width 0s}
     #panel{width:340px;transform:translateX(100%)}
     #panel.open{width:340px;transform:translateX(0)}
     .pin{width:340px}
+
+    #rail{position:fixed;top:0;right:0;height:100%;z-index:30;width:330px;
+      box-shadow:-14px 0 30px rgba(15,23,42,.10);transform:translateX(100%);
+      transition:transform .22s ease}
+    body.railoff #rail{width:330px;border-left-color:var(--line)}
+    body.railshow #rail{transform:translateX(0)}
+    #railOpen{display:block}
   }
 </style>
 </head>
@@ -157,7 +225,40 @@
       <div class="asof" id="pAsof"></div>
     </div>
   </aside>
+
+  <!-- market rail: a persistent right-hand section with two tabs — the live
+       volume leaderboard and a merged, prioritised news feed over every ticker
+       the diagram lists. Rows open the same company panel a chip click does. -->
+  <aside id="rail" aria-label="Market feed">
+    <div class="railhead">
+      <div class="tabs" role="tablist">
+        <button class="tab on" type="button" role="tab" aria-selected="true"
+          data-tab="vol">Volume</button>
+        <button class="tab" type="button" role="tab" aria-selected="false"
+          data-tab="news">News</button>
+      </div>
+      <button id="railToggle" type="button" title="Hide the feed">&rsaquo;</button>
+    </div>
+    <div class="railbody">
+      <div id="volPane" role="tabpanel">
+        <div class="railnote" id="volAsOf"></div>
+        <div id="volList"></div>
+      </div>
+      <div id="newsPane" role="tabpanel" hidden>
+        <div class="newsbar">
+          <input id="newsQ" type="search" placeholder="Filter ticker or name"
+            aria-label="Filter headlines by ticker or company name">
+          <div class="sorts" role="group" aria-label="Sort order">
+            <button class="sort on" type="button" data-sort="pri">Priority</button>
+            <button class="sort" type="button" data-sort="new">Newest</button>
+          </div>
+        </div>
+        <div id="newsList"></div>
+      </div>
+    </div>
+  </aside>
 </div>
+<button id="railOpen" type="button" title="Show the feed">Feed</button>
 <script>
 (function(){
 "use strict";
@@ -3445,6 +3546,11 @@ const DATA={
 };
 const NEWS_ASOF="2026-10-09";
 /* <<<END DATA>>> */
+/* <<<VOL>>> */
+const VOL={"AA":{"c":-1.51,"d":-0.64,"n":"Alcoa","p":42.19,"v":2123341.0,"va":"2.1M","x":"NYSE"},"AEP":{"c":0.25,"d":0.31,"n":"American Electric","p":122.63,"v":654910.0,"va":"654.9K","x":"NASDAQ"},"AES":{"c":-0.07,"d":-0.01,"n":"AES","p":14.92,"v":3240173.0,"va":"3.2M","x":"NYSE"},"ALB":{"c":-1.0,"d":-1.02,"n":"Albemarle","p":101.08,"v":821632.0,"va":"821.6K","x":"NYSE"},"AMZN":{"c":2.56,"d":6.5,"n":"Amazon.com","p":260.56,"v":18173679.0,"va":"18.2M","x":"NASDAQ"},"APD":{"c":1.51,"d":4.2,"n":"Air Products & Chem","p":282.59,"v":214500.0,"va":"214.5K","x":"NYSE"},"ARLP":{"c":-0.16,"d":-0.04,"n":"Alliance Resource","p":24.61,"v":82830.0,"va":"82.8K","x":"NASDAQ"},"ATO":{"c":0.41,"d":0.66,"n":"Atmos Energy","p":161.32,"v":223742.0,"va":"223.7K","x":"NYSE"},"BE":{"c":0.84,"d":2.28,"n":"Bloom Energy","p":275.1,"v":4112746.0,"va":"4.1M","x":"NYSE"},"BEP":{"c":1.26,"d":0.37,"n":"Brookfield Renewable Partners LP","p":29.66,"v":290084.0,"va":"290.1K","x":"NYSE"},"BKR":{"c":0.55,"d":0.31,"n":"Baker Hughes Co","p":56.61,"v":1149510.0,"va":"1.1M","x":"NASDAQ"},"BTU":{"c":0.96,"d":0.24,"n":"Peabody Energy","p":25.24,"v":522840.0,"va":"522.8K","x":"NYSE"},"BWXT":{"c":0.06,"d":0.08,"n":"BWX Tech.","p":142.3,"v":271007.0,"va":"271.0K","x":"NYSE"},"CCJ":{"c":0.36,"d":0.31,"n":"Cameco Corp","p":87.43,"v":785540.0,"va":"785.5K","x":"NYSE"},"CEG":{"c":4.75,"d":13.53,"n":"Constellation Energy","p":298.6,"v":1924843.0,"va":"1.9M","x":"NASDAQ"},"CHPT":{"c":-1.6,"d":-0.13,"n":"ChargePoint","p":8.0,"v":314693.0,"va":"314.7K","x":"NYSE"},"CLNE":{"c":-2.3,"d":-0.03,"n":"Clean Energy Fuels","p":1.49,"v":641046.0,"va":"641.0K","x":"NASDAQ"},"COP":{"c":0.15,"d":0.2,"n":"Conocophillips","p":134.39,"v":1783919.0,"va":"1.8M","x":"NYSE"},"CVX":{"c":0.51,"d":1.08,"n":"Chevron","p":212.63,"v":2476349.0,"va":"2.5M","x":"NYSE"},"D":{"c":0.02,"d":0.01,"n":"Dominion Energy","p":61.76,"v":867801.0,"va":"867.8K","x":"NYSE"},"DAR":{"c":-1.68,"d":-1.05,"n":"Darling Ingredients","p":61.21,"v":807848.0,"va":"807.8K","x":"NYSE"},"DOW":{"c":0.65,"d":0.18,"n":"Dow Inc.","p":28.78,"v":3315171.0,"va":"3.3M","x":"NYSE"},"DUK":{"c":-0.17,"d":-0.2,"n":"Duke Energy","p":116.64,"v":1241264.0,"va":"1.2M","x":"NYSE"},"EMR":{"c":1.68,"d":2.66,"n":"Emerson Electric","p":161.73,"v":989911.0,"va":"989.9K","x":"NYSE"},"ENB":{"c":-0.18,"d":-0.09,"n":"Enbridge Inc.","p":46.46,"v":1737153.0,"va":"1.7M","x":"NYSE"},"ENPH":{"c":-2.57,"d":-0.84,"n":"Enphase Energy","p":32.07,"v":1431266.0,"va":"1.4M","x":"NASDAQ"},"EOG":{"c":0.15,"d":0.22,"n":"EOG Resources","p":148.73,"v":1025767.0,"va":"1.0M","x":"NYSE"},"EPD":{"c":-0.99,"d":-0.37,"n":"Enterprise Products Partners L.P","p":36.39,"v":1604930.0,"va":"1.6M","x":"NYSE"},"EQT":{"c":-0.11,"d":-0.06,"n":"EQT Corp","p":52.88,"v":1685925.0,"va":"1.7M","x":"NYSE"},"ET":{"c":-0.53,"d":-0.11,"n":"Energy Transfer LP (Texas)","p":20.51,"v":3212008.0,"va":"3.2M","x":"Texas Stock Exchange"},"ETN":{"c":1.25,"d":5.29,"n":"Eaton Corp PLC","p":429.8,"v":682698.0,"va":"682.7K","x":"NYSE"},"EVGO":{"c":-0.39,"d":-0.01,"n":"EVGO Inc.","p":1.27,"v":1003256.0,"va":"1.0M","x":"NASDAQ"},"EXC":{"c":0.17,"d":0.07,"n":"Exelon","p":41.8,"v":1715353.0,"va":"1.7M","x":"NASDAQ"},"FANG":{"c":0.07,"d":0.13,"n":"Diamondback Energy","p":191.81,"v":496999.0,"va":"497.0K","x":"NASDAQ"},"FCX":{"c":3.37,"d":2.4,"n":"Freeport-McMoRan","p":73.54,"v":3630555.0,"va":"3.6M","x":"NYSE"},"FLNC":{"c":-1.81,"d":-0.13,"n":"Fluence Energy Inc","p":7.32,"v":1508577.0,"va":"1.5M","x":"NASDAQ"},"FLNG":{"c":-1.44,"d":-0.46,"n":"FLEX LNG Ltd.","p":31.1,"v":123715.0,"va":"123.7K","x":"NYSE"},"FRO":{"c":0.5,"d":0.28,"n":"Frontline PLC","p":56.54,"v":1465198.0,"va":"1.5M","x":"NYSE"},"FSLR":{"c":-1.02,"d":-1.83,"n":"First Solar","p":177.02,"v":609269.0,"va":"609.3K","x":"NASDAQ"},"GEV":{"c":0.61,"d":6.11,"n":"GE Vernova","p":1005.46,"v":620239.0,"va":"620.2K","x":"NYSE"},"GLNG":{"c":-1.01,"d":-0.49,"n":"Golar LNG Ltd","p":47.93,"v":329615.0,"va":"329.6K","x":"NASDAQ"},"GNRC":{"c":-0.38,"d":-0.86,"n":"Generac Holdings","p":223.54,"v":352192.0,"va":"352.2K","x":"NYSE"},"GOOGL":{"c":1.3,"d":4.54,"n":"Alphabet Class A","p":352.83,"v":8682239.0,"va":"8.7M","x":"NASDAQ"},"GPRE":{"c":-2.66,"d":-0.4,"n":"Green Plains","p":14.66,"v":430866.0,"va":"430.9K","x":"NASDAQ"},"HAL":{"c":-0.34,"d":-0.11,"n":"Halliburton","p":32.46,"v":2100419.0,"va":"2.1M","x":"NYSE"},"INSW":{"c":-0.07,"d":-0.08,"n":"International Seaways","p":121.74,"v":224877.0,"va":"224.9K","x":"NYSE"},"JCI":{"c":2.43,"d":3.74,"n":"Johnson Controls Intl","p":157.74,"v":1021265.0,"va":"1.0M","x":"NYSE"},"KMI":{"c":0.28,"d":0.09,"n":"Kinder Morgan, Inc.","p":32.34,"v":3335043.0,"va":"3.3M","x":"NYSE"},"LEU":{"c":-0.33,"d":-0.47,"n":"Centrus Energy Corp.","p":141.62,"v":230710.0,"va":"230.7K","x":"NYSE"},"LIN":{"c":0.47,"d":2.25,"n":"Linde PLC","p":483.96,"v":779306.0,"va":"779.3K","x":"NASDAQ"},"LNG":{"c":-0.01,"d":-0.02,"n":"Cheniere Energy","p":277.86,"v":421721.0,"va":"421.7K","x":"NYSE"},"LYB":{"c":0.6,"d":0.36,"n":"Lyondellbasell Industries N.v","p":60.7,"v":949558.0,"va":"949.6K","x":"NYSE"},"META":{"c":0.5,"d":3.61,"n":"Meta Platforms","p":724.5,"v":6044272.0,"va":"6.0M","x":"NASDAQ"},"MP":{"c":-0.94,"d":-0.43,"n":"MP Materials Corp","p":45.71,"v":2144451.0,"va":"2.1M","x":"NYSE"},"MPC":{"c":-0.43,"d":-1.97,"n":"Marathon Petroleum","p":461.37,"v":815540.0,"va":"815.5K","x":"NYSE"},"MSFT":{"c":2.28,"d":11.94,"n":"Microsoft","p":534.55,"v":7823113.0,"va":"7.8M","x":"NASDAQ"},"NE":{"c":0.33,"d":0.14,"n":"Noble Corp.","p":42.29,"v":216049.0,"va":"216.0K","x":"NYSE"},"NEE":{"c":0.09,"d":0.07,"n":"Nextera Energy Inc","p":77.44,"v":2634369.0,"va":"2.6M","x":"NYSE"},"NFE":{"c":-2.2,"d":-0.1,"n":"New Fortress Energy Inc.","p":4.23,"v":205724.0,"va":"205.7K","x":"NASDAQ"},"NI":{"c":0.51,"d":0.2,"n":"NiSource","p":40.74,"v":869486.0,"va":"869.5K","x":"NYSE"},"NOV":{"c":-0.42,"d":-0.08,"n":"NOV Inc.","p":18.91,"v":584572.0,"va":"584.6K","x":"NYSE"},"NRG":{"c":0.63,"d":0.68,"n":"NRG Energy","p":107.0,"v":757155.0,"va":"757.2K","x":"NYSE"},"NUE":{"c":2.34,"d":5.76,"n":"Nucor Corporation","p":251.9,"v":365309.0,"va":"365.3K","x":"NYSE"},"OKE":{"c":-0.53,"d":-0.48,"n":"Oneok","p":89.81,"v":562198.0,"va":"562.2K","x":"NYSE"},"OXY":{"c":0.3,"d":0.18,"n":"Occidental","p":60.46,"v":3000979.0,"va":"3.0M","x":"NYSE"},"PBF":{"c":-4.29,"d":-3.83,"n":"PBF Energy","p":85.51,"v":1525520.0,"va":"1.5M","x":"NYSE"},"PLUG":{"c":-1.16,"d":-0.02,"n":"Plug Power","p":1.71,"v":26977676.0,"va":"27.0M","x":"NASDAQ"},"PSX":{"c":0.53,"d":1.48,"n":"Phillips 66","p":283.09,"v":1021934.0,"va":"1.0M","x":"NYSE"},"PWR":{"c":2.16,"d":14.77,"n":"Quanta Services","p":700.1,"v":241725.0,"va":"241.7K","x":"NYSE"},"RIG":{"c":-0.54,"d":-0.03,"n":"Transocean Ltd.","p":5.51,"v":8564442.0,"va":"8.6M","x":"NYSE"},"RUN":{"c":-0.92,"d":-0.07,"n":"Sunrun","p":7.52,"v":2405378.0,"va":"2.4M","x":"NASDAQ"},"SEDG":{"c":-2.34,"d":-0.76,"n":"Solaredge Tech","p":31.71,"v":498459.0,"va":"498.5K","x":"NASDAQ"},"SLB":{"c":-0.6,"d":-0.29,"n":"SLB NV","p":48.69,"v":3649051.0,"va":"3.6M","x":"NYSE"},"SO":{"c":-0.19,"d":-0.16,"n":"Southern Co.","p":85.99,"v":1202669.0,"va":"1.2M","x":"NYSE"},"SQM":{"c":-1.24,"d":-0.8,"n":"Sociedad QM Chile","p":63.72,"v":256588.0,"va":"256.6K","x":"NYSE"},"SRE":{"c":1.04,"d":0.84,"n":"Sempra","p":80.92,"v":1254309.0,"va":"1.3M","x":"NYSE"},"TLN":{"c":3.15,"d":11.31,"n":"Talen Energy Corporation","p":370.53,"v":448891.0,"va":"448.9K","x":"NASDAQ"},"TRGP":{"c":-0.26,"d":-0.75,"n":"Targa Resources","p":287.74,"v":242836.0,"va":"242.8K","x":"NYSE"},"TSLA":{"c":2.08,"d":7.8,"n":"Tesla","p":382.8,"v":27364430.0,"va":"27.4M","x":"NASDAQ"},"TT":{"c":2.71,"d":12.72,"n":"Trane Technologies PLC","p":482.66,"v":362664.0,"va":"362.7K","x":"NYSE"},"VAL":{"c":-0.35,"d":-0.29,"n":"Valaris Ltd","p":83.67,"v":130586.0,"va":"130.6K","x":"NYSE"},"VG":{"c":-0.68,"d":-0.09,"n":"Venture Global","p":13.2,"v":3222592.0,"va":"3.2M","x":"NYSE"},"VLO":{"c":-0.56,"d":-2.49,"n":"Valero Energy","p":441.31,"v":1096672.0,"va":"1.1M","x":"NYSE"},"VRT":{"c":0.39,"d":0.95,"n":"Vertiv Holdings Co","p":244.68,"v":1733711.0,"va":"1.7M","x":"NYSE"},"VST":{"c":2.09,"d":3.27,"n":"Vistra","p":159.41,"v":3876488.0,"va":"3.9M","x":"NYSE"},"WMB":{"c":0.52,"d":0.38,"n":"The Williams Cos.","p":72.72,"v":3492745.0,"va":"3.5M","x":"NYSE"},"XOM":{"c":0.41,"d":0.69,"n":"ExxonMobil","p":169.2,"v":3702493.0,"va":"3.7M","x":"NYSE"}};
+const VOL_ASOF="2026-10-09T17:13:16Z";
+const VOL_STATUS="REG_MKT";
+/* <<<END VOL>>> */
 
 /* ---------- companies ---------- */
 const CO={
@@ -3989,6 +4095,189 @@ lg1.textContent="—— energy flow     ╌╌ supplies & capital";
 
 const f=el("text",{x:60,y:986,class:"foot"},svg);
 f.textContent="Illustrative. Tickers are examples of public listings; flows and ownership are simplified. Not investment advice.";
+
+/* ---------- market rail: top-volume feed + merged ticker news ----------
+   Two panes over the same universe the diagram draws (NODES + ENABLERS), so a
+   ticker added to the chart shows up here with no extra work.
+
+   Volume   — the VOL snapshot (tools/fetch-market-volume.py) ranked by shares
+              traded today, label with the market timestamp it came from.
+   News     — every dated headline in DATA[tk].news, merged, de-duplicated and
+              ordered by source tier then recency ("Priority") or purely by date
+              ("Newest"), filterable to any one ticker.
+   A row or a ticker chip opens the same company panel a chip click does. */
+const VOLQ=(typeof VOL!=="undefined")?VOL:{};
+const VOL_TS=(typeof VOL_ASOF!=="undefined")?VOL_ASOF:"";
+const VOL_ST=(typeof VOL_STATUS!=="undefined")?VOL_STATUS:"";
+const RAIL={vol:$("volList"),news:$("newsList"),asof:$("volAsOf")};
+const CHART_TK=(()=>{                       // ticker → owning node id, in chart order
+  const map={},order=[];
+  NODES.forEach(n=>n.cos.forEach(t=>{ if(!(t in map)){map[t]=n.id;order.push(t);} }));
+  ENABLERS.forEach(g=>g.cos.forEach(t=>{ if(!(t in map)){map[t]=g.id;order.push(t);} }));
+  return {map:map,order:order};
+})();
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,
+  c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const TNAME=t=>((typeof DATA!=="undefined"&&DATA[t]&&DATA[t].name)||
+  (VOLQ[t]&&VOLQ[t].n)||(CO[t]&&CO[t][0])||t);
+const fmtVol=n=>n>=1e9?(n/1e9).toFixed(1)+"B":n>=1e6?(n/1e6).toFixed(1)+"M":
+  n>=1e3?(n/1e3).toFixed(1)+"K":String(n);
+
+/* Selecting from the rail: drive the panel exactly like a chip click, and
+   outline the matching chip so the diagram agrees with the feed. */
+function openCompany(tk){
+  const id=CHART_TK.map[tk];
+  if(id===undefined) return;
+  pick(tk,id,document.createElement("span"));   // detached: the panel needs no chip
+  document.querySelectorAll(".chip").forEach(c=>{
+    if((c.getAttribute("aria-label")||"").indexOf(tk+" — ")===0) c.classList.add("sel");
+  });
+  /* on a narrow screen the rail is an overlay: step it aside so the panel
+     (which is wider and sits above it) is the only thing on show */
+  if(MQ.matches){ BODY.classList.remove("railshow"); railGlyph(); }
+}
+
+/* ---------- pane 1: most volume right now ---------- */
+function fmtAsof(){
+  const d=new Date(VOL_TS);
+  if(isNaN(d.getTime())) return "Top volume";
+  const t=d.toLocaleTimeString("en-US",{timeZone:"America/New_York",
+    hour:"numeric",minute:"2-digit",timeZoneName:"short"});
+  const dd=d.toLocaleDateString("en-US",{timeZone:"America/New_York",
+    day:"numeric",month:"short"});
+  const st=(VOL_ST&&VOL_ST!=="REG_MKT")?" · "+VOL_ST.replace(/_/g," ").toLowerCase():"";
+  return "Top volume · as of "+t+", "+dd+st;
+}
+function renderVol(){
+  const all=Object.keys(VOLQ).filter(t=>CHART_TK.map[t]!==undefined)
+    .map(t=>({t:t,q:VOLQ[t]})).sort((a,b)=>b.q.v-a.q.v);
+  RAIL.vol.innerHTML="";
+  if(!all.length){
+    const e=document.createElement("div"); e.className="nempty";
+    e.textContent="No volume snapshot — run tools/fetch-market-volume.py --inject.";
+    RAIL.vol.appendChild(e); return;
+  }
+  const max=all[0].q.v, frag=document.createDocumentFragment();
+  all.forEach((r,i)=>{
+    const q=r.q;
+    const pc=(q.c===undefined||q.c===null)?"—":((q.c>0?"+":"")+q.c.toFixed(2)+"%");
+    const cls=(q.c===undefined||q.c===null||Math.abs(q.c)<0.005)?"flat":(q.c>0?"up":"dn");
+    const b=document.createElement("button");
+    b.type="button"; b.className="vrow";
+    b.title=r.t+" · "+(q.p!=null?"$"+q.p.toFixed(2)+" · ":"")+(q.x||"");
+    b.setAttribute("aria-label",r.t+" — "+TNAME(r.t)+", volume "+(q.va||fmtVol(q.v)));
+    b.innerHTML='<span class="vrk">'+(i+1)+'</span>'+
+      '<span class="vtk">'+esc(r.t)+'</span>'+
+      '<span class="vnm">'+esc(TNAME(r.t))+'</span>'+
+      '<span class="vfoot"><span class="vbar"><i style="width:'+
+      Math.max(2,Math.round(q.v/max*100))+'%"></i></span>'+
+      '<span class="vvol">'+esc(q.va||fmtVol(q.v))+'</span>'+
+      '<span class="vchg '+cls+'">'+pc+'</span></span>';
+    b.addEventListener("click",()=>openCompany(r.t));
+    frag.appendChild(b);
+  });
+  RAIL.vol.appendChild(frag);
+}
+
+/* ---------- pane 2: merged news over every listed ticker ---------- */
+const NEWS=[];
+CHART_TK.order.forEach(tk=>{
+  const D=(typeof DATA!=="undefined"&&DATA[tk])||{};
+  (D.news||[]).forEach(n=>NEWS.push({tk:tk,ti:n.t,s:n.s||"",d:n.d||"",u:n.u}));
+});
+const TIER1=/reuters|bloomberg|wall street journal|\bwsj\b|financial times|associated press|\bbarron|new york times|\bnyt\b|washington post|\bcnbc\b|dow jones|the economist/i;
+const TIER2=/yahoo|marketwatch|seeking alpha|motley fool|investor's business daily|investopedia|benzinga|zacks|simply wall|business wire|pr newswire|globe ?newswire|oilprice|s&p global|spglobal|utility ?dive|the street|tipranks|insider monkey|forbes|fortune|\bcnn\b|\bbbc\b|streetinsider|oil & gas journal|rigzone|world oil|hydrogen insight|canary media|power magazine|pv magazine|electrek|heatmap|axios|the hill|financial post|energy monitor|argus|hart energy|rbn energy|the wall street|marketwire/i;
+const T_NOW=VOL_TS.slice(0,10);
+const srcTier=s=>TIER1.test(s)?3:(TIER2.test(s)?2:1);
+function ageD(ds){ const a=Date.parse(T_NOW),b=Date.parse(ds);
+  return (isNaN(a)||isNaN(b))?999:Math.max(0,Math.round((a-b)/864e5)); }
+const prio=n=>srcTier(n.s)*1000-ageD(n.d);
+const sigOf=n=>n.ti.toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+/* keep one copy of a story: the best-sourced, newest one */
+(function dedupeNews(){
+  const best={};
+  NEWS.forEach(n=>{ const k=sigOf(n);
+    if(!best[k]||prio(n)>prio(best[k])) best[k]=n; });
+  const keep=new Set(Object.values(best));
+  for(let i=NEWS.length-1;i>=0;i--) if(!keep.has(NEWS[i])) NEWS.splice(i,1);
+})();
+const NST={q:"",sort:"pri",limit:40};
+function newsPick(){
+  const q=NST.q.trim().toLowerCase();
+  const list=NEWS.filter(n=>!q||n.tk.toLowerCase().indexOf(q)===0||
+    TNAME(n.tk).toLowerCase().includes(q));
+  list.sort(NST.sort==="new"
+    ? (a,b)=>a.d<b.d?1:(a.d>b.d?-1:0)
+    : (a,b)=>prio(b)-prio(a)||(a.d<b.d?1:(a.d>b.d?-1:0)));
+  return list;
+}
+function renderNews(){
+  const list=newsPick();
+  RAIL.news.innerHTML="";
+  if(!list.length){
+    const e=document.createElement("div"); e.className="nempty";
+    e.textContent=NST.q?("No headlines for “"+NST.q+"”."):"No recent headlines.";
+    RAIL.news.appendChild(e); return;
+  }
+  const shown=list.slice(0,NST.limit), frag=document.createDocumentFragment();
+  shown.forEach(n=>{
+    const d=document.createElement("div"); d.className="nrow";
+    const a=document.createElement("a"); a.className="nt";
+    a.href=n.u; a.target="_blank"; a.rel="noopener"; a.textContent=n.ti;
+    const m=document.createElement("div"); m.className="nmeta";
+    const b=document.createElement("button"); b.type="button"; b.className="ntk";
+    b.textContent=n.tk; b.title="Open "+n.tk+" — "+TNAME(n.tk);
+    b.addEventListener("click",()=>openCompany(n.tk));
+    const s=document.createElement("span");
+    s.textContent=[n.s,fmtDate(n.d)].filter(Boolean).join(" · ");
+    m.append(b,s); d.append(a,m); frag.appendChild(d);
+  });
+  RAIL.news.appendChild(frag);
+  if(list.length>shown.length){
+    const more=document.createElement("button");
+    more.type="button"; more.className="nmore";
+    more.textContent="Show "+Math.min(40,list.length-shown.length)+
+      " more of "+list.length+" headlines";
+    more.addEventListener("click",()=>{ NST.limit+=40; renderNews(); });
+    RAIL.news.appendChild(more);
+  }
+}
+
+/* ---------- tabs, collapse/hide, wiring ---------- */
+const TABBTNS=Array.prototype.slice.call(document.querySelectorAll(".tab"));
+const PANES={vol:$("volPane"),news:$("newsPane")};
+TABBTNS.forEach(b=>b.addEventListener("click",()=>{
+  TABBTNS.forEach(x=>{const on=x===b;x.classList.toggle("on",on);
+    x.setAttribute("aria-selected",on?"true":"false");});
+  PANES.vol.hidden=(b.dataset.tab!=="vol");
+  PANES.news.hidden=(b.dataset.tab!=="news");
+}));
+const TGL=$("railToggle"), BODY=document.body, MQ=window.matchMedia("(max-width:1180px)");
+function railGlyph(){
+  const open=MQ.matches?BODY.classList.contains("railshow"):!BODY.classList.contains("railoff");
+  TGL.textContent=open?"›":"‹";
+  TGL.title=open?"Hide the feed":"Show the feed";
+}
+function toggleRail(){
+  if(MQ.matches) BODY.classList.toggle("railshow"); else BODY.classList.toggle("railoff");
+  railGlyph();
+}
+TGL.addEventListener("click",toggleRail);
+$("railOpen").addEventListener("click",toggleRail);
+MQ.addEventListener("change",()=>{ BODY.classList.remove("railshow","railoff"); railGlyph(); });
+document.addEventListener("keydown",ev=>{
+  if(ev.key==="Escape"&&MQ.matches){ BODY.classList.remove("railshow"); railGlyph(); }
+});
+$("newsQ").addEventListener("input",ev=>{ NST.q=ev.target.value; NST.limit=40; renderNews(); });
+Array.prototype.slice.call(document.querySelectorAll(".sort")).forEach(b=>
+  b.addEventListener("click",()=>{
+    NST.sort=b.dataset.sort; NST.limit=40;
+    document.querySelectorAll(".sort").forEach(x=>x.classList.toggle("on",x===b));
+    renderNews();
+  }));
+
+RAIL.asof.textContent=fmtAsof();
+renderVol(); renderNews(); railGlyph();
 })();
 </script>
 </body>
