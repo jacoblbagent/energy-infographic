@@ -208,10 +208,10 @@
         <div id="pFacts"></div>
       </details>
 
-      <div class="sect">
-        <div class="sl">Flows</div>
+      <details class="sect disc" id="secFlows">
+        <summary class="sl">Flows</summary>
         <div id="pFlows"></div>
-      </div>
+      </details>
 
       <div class="sect">
         <div class="sl">Recent news</div>
@@ -3950,7 +3950,8 @@ function pick(tk,nodeId,chipEl){
   rows.forEach(f=>fx.appendChild(fact(f[0],f[1])));
   $("secFacts").hidden=!rows.length;
 
-  /* flows */
+  /* flows — collapsed by default each time a company opens */
+  $("secFlows").open=false;
   const flow=$("pFlows"); flow.innerHTML="";
   if(node){
     const out=EDGES.filter(e=>e.a===node.id), inn=EDGES.filter(e=>e.b===node.id);
