@@ -76,14 +76,18 @@
     display:flex;align-items:center;gap:9px}
   .tkr .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
   .cname{font-size:16.5px;font-weight:600;margin:3px 0 5px;letter-spacing:-.1px}
-  .kind{font-size:11.5px;font-weight:600;color:var(--faint);letter-spacing:.2px}
-  .loc{font-size:9.5px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;
-    color:#B6C1CC;margin-top:15px}
-  .desc{font-size:11.5px;color:#8A99AA;margin-top:4px;line-height:1.4}
   .sect{margin-top:19px;padding-top:15px;border-top:1px solid var(--line)}
   .sect[hidden]{display:none}
   .sl{font-size:9.5px;font-weight:700;letter-spacing:1.3px;color:#A3AFBC;
     text-transform:uppercase;margin:0 0 10px}
+  .disc>summary{cursor:pointer;list-style:none;display:flex;align-items:center;
+    margin:0;user-select:none}
+  .disc>summary::-webkit-details-marker{display:none}
+  .disc>summary:hover{color:#6B7A8C}
+  .disc>summary::after{content:"+";margin-left:auto;font-size:13px;font-weight:700;
+    letter-spacing:0;color:#B6C1CC}
+  .disc[open]>summary::after{content:"\2013"}
+  .disc>div{margin-top:10px}
   .about{font-size:12.5px;line-height:1.55;color:#42526A;margin:0}
   .frow{display:flex;gap:7px;align-items:baseline;font-size:12.5px;color:#42526A;
     margin-bottom:7px;line-height:1.35}
@@ -194,19 +198,15 @@
       <button id="pClose" type="button" title="Close (Esc)" aria-label="Close">&times;</button>
       <div class="tkr" id="pTar"></div>
       <div class="cname" id="pName"></div>
-      <div class="kind" id="pKind"></div>
-      <div class="desc" id="pDesc"></div>
-      <div class="loc" id="pLoc"></div>
-
       <div class="sect">
         <div class="sl">About</div>
         <p class="about" id="pAbout"></p>
       </div>
 
-      <div class="sect" id="secFacts">
-        <div class="sl">Company</div>
+      <details class="sect disc" id="secFacts">
+        <summary class="sl">Company</summary>
         <div id="pFacts"></div>
-      </div>
+      </details>
 
       <div class="sect">
         <div class="sl">Flows</div>
@@ -3554,110 +3554,108 @@ const VOL_STATUS="REG_MKT";
 
 /* ---------- companies ---------- */
 const CO={
-  XOM:["ExxonMobil","Integrated major","Oil and gas production, refining and chemicals, with a growing low-carbon arm."],
-  CVX:["Chevron","Integrated major","Upstream production, refining and fuels retail; large Permian and Kazakhstan positions."],
-  COP:["ConocoPhillips","Upstream E&P","Pure upstream producer with no refining; big Permian, Eagle Ford and Alaska acreage."],
-  OXY:["Occidental Petroleum","Upstream + chemicals","Oil and gas producer with a dominant Permian position, plus OxyChem petrochemicals."],
-  EOG:["EOG Resources","Shale E&P","Shale operator focused on oil and gas in the Permian, Eagle Ford and Bakken."],
-  FANG:["Diamondback Energy","Permian E&P","Low-cost Permian pure-play oil producer in the Midland and Delaware basins."],
+  XOM:["ExxonMobil","Integrated major","ExxonMobil spans the whole chain: it drills for oil and gas, refines crude into fuels, and runs a large chemicals business. Its low-carbon arm covers carbon capture, hydrogen and biofuels, and it holds major acreage in the Permian and Guyana."],
+  CVX:["Chevron","Integrated major","Chevron explores for and produces oil and gas upstream, refines it into fuels and lubricants, and sells through retail stations. Its portfolio leans on the Permian basin, Kazakhstan and a growing low-carbon unit."],
+  COP:["ConocoPhillips","Upstream E&P","ConocoPhillips is a pure upstream producer — it finds and pumps oil and gas and sells the raw barrels, with no refining or retail. Its scale comes from Permian, Eagle Ford, Bakken and Alaska acreage, plus LNG interests abroad."],
+  OXY:["Occidental Petroleum","Upstream + chemicals","Occidental is an oil and gas producer with a dominant Permian position and stakes in the Middle East, plus the OxyChem petrochemicals business. It is also a leading player in carbon capture, using CO2 to boost oil recovery."],
+  EOG:["EOG Resources","Shale E&P","EOG is a shale specialist that drills horizontal wells for oil and gas in the Permian, Eagle Ford, Bakken and other US basins. It sells unrefined crude, natural gas and gas liquids to midstream buyers."],
+  FANG:["Diamondback Energy","Permian E&P","Diamondback is a low-cost pure-play oil producer concentrated in the Permian basin's Midland and Delaware formations. It sells crude, natural gas and gas liquids, and has expanded through acquisitions of Permian peers."],
 
-  BTU:["Peabody Energy","Coal producer","Thermal and metallurgical coal miner with a large seaborne export business."],
-  CEIX:["CONSOL Energy","Coal producer","Coal miner supplying US power plants and export thermal coal markets."],
-  ARLP:["Alliance Resource Partners","Coal producer","Appalachian and Illinois Basin coal producer with export and royalty interests."],
+  BTU:["Peabody Energy","Coal producer","Peabody mines thermal coal for power generation and metallurgical coal for steelmaking, with a large seaborne export business. It ships coal from US and Australian mines to buyers in Asia, Europe and the Americas."],
+  CEIX:["CONSOL Energy","Coal producer","CONSOL Energy mines coal from the Appalachian and Illinois basins, supplying US power plants and export thermal markets. It also markets coal and owns a marine terminal that loads vessels for export."],
+  ARLP:["Alliance Resource Partners","Coal producer","Alliance Resource Partners is a coal producer with mines in the Appalachian and Illinois basins, plus export and royalty interests. It sells thermal coal to US utilities and international buyers."],
 
-  CCJ:["Cameco","Uranium mining","Uranium producer with mines in Canada and Kazakhstan, plus fuel services."],
-  LEU:["Centrus Energy","Enrichment","Uranium enrichment and nuclear fuel components for US and international reactors."],
-  BWXT:["BWX Technologies","Nuclear equipment","Nuclear components, fuel and reactor services for defense and commercial power."],
+  CCJ:["Cameco","Uranium mining","Cameco mines and mills uranium in Canada and Kazakhstan and provides fuel services such as refining and conversion. Its uranium feeds nuclear reactors that generate carbon-free baseload electricity."],
+  LEU:["Centrus Energy","Enrichment","Centrus Energy supplies enriched uranium and technical services for commercial reactors in the US and abroad. It is also developing US-based enrichment capability to reduce reliance on foreign supply."],
+  BWXT:["BWX Technologies","Nuclear equipment","BWX Technologies makes nuclear components, fuel and reactor services for both naval defense programs and commercial power plants. It builds the reactors that power submarines and aircraft carriers as well as small modular designs."],
 
-  FSLR:["First Solar","Solar manufacturing","Thin-film cadmium-telluride solar panel maker; supplies utility-scale projects."],
-  ENPH:["Enphase Energy","Solar equipment","Microinverters and home battery systems for residential solar."],
-  SEDG:["SolarEdge","Solar equipment","Solar inverters and power optimizers for residential and commercial systems."],
-  RUN:["Sunrun","Residential solar","Residential solar installer and financer; also sells home battery storage."],
+  FSLR:["First Solar","Solar manufacturing","First Solar manufactures thin-film cadmium-telluride solar panels at US factories and supplies utility-scale projects. Its panels avoid the polysilicon supply chain and are sold mainly to large developers."],
+  ENPH:["Enphase Energy","Solar equipment","Enphase makes microinverters and battery systems for residential solar, converting the DC power panels produce into usable household AC. Its equipment also provides home energy management and backup."],
+  SEDG:["SolarEdge","Solar equipment","SolarEdge builds power optimizers and inverters for residential and commercial solar installations. Its systems monitor and optimise each panel's output and pair with home battery storage."],
+  RUN:["Sunrun","Residential solar","Sunrun installs and finances residential solar systems, often through leases and power agreements rather than outright sales. It also sells home battery storage and bundles solar with backup power."],
 
-  DAR:["Darling Ingredients","Biofuel feedstock","Renders animal byproducts into feedstocks for renewable diesel and biodiesel."],
-  GPRE:["Green Plains","Ethanol","Ethanol producer and corn processor; also makes protein feed and corn oil."],
-  BEP:["Brookfield Renewable","Renewable power","Owns hydro, wind and solar generation; sells power under long-term contracts."],
+  DAR:["Darling Ingredients","Biofuel feedstock","Darling Ingredients collects and renders animal byproducts into ingredients, including feedstocks for renewable diesel and biodiesel. Its fats and used cooking oil are key inputs to low-carbon fuel production."],
+  GPRE:["Green Plains","Ethanol","Green Plains operates ethanol plants that ferment corn into fuel alcohol and also produce protein feed and corn oil. Its ethanol is blended into the gasoline supply, mainly in the US Midwest."],
+  BEP:["Brookfield Renewable","Renewable power","Brookfield Renewable owns and operates hydro, wind and solar generation assets across several continents. It sells power under long-term contracts and holds a large development pipeline."],
 
-  ENB:["Enbridge","Pipelines","Pipelines and gas utilities; moves crude oil, liquids and natural gas across North America."],
-  KMI:["Kinder Morgan","Pipelines","Natural gas pipelines plus products pipelines, terminals and CO2 infrastructure."],
-  WMB:["Williams","Gas infrastructure","Natural gas gathering, processing and interstate transmission, mainly in the US East."],
-  OKE:["ONEOK","NGL infrastructure","Natural gas liquids and natural gas pipelines, processing and fractionation."],
-  ET:["Energy Transfer","Midstream","Midstream pipelines, storage and processing for natural gas, NGLs and crude."],
-  LNG:["Cheniere Energy","LNG export","Runs the Sabine Pass and Corpus Christi LNG terminals — a top US gas exporter."],
-  NFE:["New Fortress Energy","LNG terminals","LNG liquefaction, terminals and power plants for emerging markets."],
+  ENB:["Enbridge","Pipelines","Enbridge operates crude oil and liquids pipelines plus natural gas transmission and distribution networks across North America. Its systems move the bulk of Canadian crude exports to US refineries and terminals."],
+  KMI:["Kinder Morgan","Pipelines","Kinder Morgan owns natural gas pipelines plus products pipelines, terminals and CO2 infrastructure. Its network gathers, transports and stores energy commodities under long-term, fee-based contracts."],
+  WMB:["Williams","Gas infrastructure","Williams gathers, processes and transports natural gas through interstate pipelines, mostly in the US East and Gulf Coast. Its systems link shale production to power plants, LNG terminals and industrial users."],
+  OKE:["ONEOK","NGL infrastructure","ONEOK owns natural gas liquids and natural gas pipelines along with processing and fractionation plants. It gathers raw gas, separates the liquids and delivers them to petrochemical and export markets."],
+  ET:["Energy Transfer","Midstream","Energy Transfer is a midstream operator running pipelines, storage and processing for natural gas, gas liquids and crude oil. Its footprint spans the Permian, Gulf Coast and the eastern US."],
+  LNG:["Cheniere Energy","LNG export","Cheniere Energy operates the Sabine Pass and Corpus Christi LNG terminals, making it a top US exporter of liquefied natural gas. It buys gas, cools it into liquid and ships it to overseas buyers."],
+  NFE:["New Fortress Energy","LNG terminals","New Fortress Energy builds LNG liquefaction, terminals and gas-fired power plants for emerging markets. It takes gas to places without pipeline access and converts it to power locally."],
 
-  VLO:["Valero Energy","Refining","Largest independent refiner; also ethanol and renewable diesel production."],
-  MPC:["Marathon Petroleum","Refining + retail","Refining plus the largest US fuel retail network; also midstream stakes."],
-  PSX:["Phillips 66","Refining + chemicals","Refining, midstream and petrochemicals through its CPChem joint venture."],
-  PBF:["PBF Energy","Refining","Independent refiner with East and West Coast refineries and logistics."],
-  DOW:["Dow Inc.","Petrochemicals","Plastics, industrial intermediates, silicones and coatings."],
-  LYB:["LyondellBasell","Petrochemicals","Olefins and polyolefins producer; makes plastics from refinery-derived feedstocks."],
+  VLO:["Valero Energy","Refining","Valero is the largest independent refiner in the US, turning crude oil into gasoline, diesel and other fuels. It also produces ethanol and renewable diesel and exports refined products worldwide."],
+  MPC:["Marathon Petroleum","Refining + retail","Marathon Petroleum refines crude oil into fuels and runs the largest US fuel retail network through its branded stations. It also holds midstream stakes in pipelines and terminals."],
+  PSX:["Phillips 66","Refining + chemicals","Phillips 66 refines crude into fuels, operates midstream pipelines and terminals, and makes petrochemicals through its CPChem joint venture. It also markets lubricants and has a growing renewable fuels business."],
+  PBF:["PBF Energy","Refining","PBF Energy is an independent refiner with plants on the US East and West Coasts and in the Gulf region. It also owns logistics assets and produces renewable fuels at some sites."],
+  DOW:["Dow Inc.","Petrochemicals","Dow makes plastics, industrial intermediates, silicones and coatings from hydrocarbon feedstocks. Its products go into packaging, construction, electronics and consumer goods."],
+  LYB:["LyondellBasell","Petrochemicals","LyondellBasell produces olefins and polyolefins, making plastics from refinery- and gas-derived feedstocks. It is one of the world's largest producers of polyethylene and polypropylene."],
 
-  NEE:["NextEra Energy","Utility + renewables","Largest US regulated utility holding and the world's biggest renewables developer."],
-  CEG:["Constellation Energy","Nuclear power","Largest US nuclear operator; sells power to utilities and under corporate PPAs."],
-  VST:["Vistra","Independent power","Competitive power producer and retail supplier with a large gas and nuclear fleet."],
-  NRG:["NRG Energy","Retail power","Competitive retail electricity and generation for homes and businesses."],
-  AES:["AES Corp","Global power","Global power generation, utility-scale renewables and battery storage."],
+  NEE:["NextEra Energy","Utility + renewables","NextEra Energy is the largest US regulated utility holding, serving Florida, and the world's biggest developer of wind and solar. It builds renewables for its own utilities and for third-party customers."],
+  CEG:["Constellation Energy","Nuclear power","Constellation Energy is the largest US nuclear power operator, running a fleet of reactors that produce carbon-free baseload electricity. It sells power to utilities, businesses and under long-term corporate agreements."],
+  VST:["Vistra","Independent power","Vistra is a competitive power producer and retail supplier with a large fleet of gas, coal and nuclear plants. It sells electricity directly to homes and businesses in deregulated markets."],
+  NRG:["NRG Energy","Retail power","NRG Energy sells electricity and natural gas to homes and businesses as a competitive retail supplier. It also owns generation assets that back its retail load."],
+  AES:["AES Corp","Global power","AES generates and distributes power around the world, including utility-scale renewables and battery storage. It also runs regulated utilities in several emerging markets."],
 
-  FLNC:["Fluence Energy","Storage systems","Grid-scale battery storage systems and energy management software."],
-  TSLA:["Tesla","Storage + EVs","Electric vehicles plus energy storage (Megapack) and solar."],
-  ALB:["Albemarle","Lithium","Lithium producer for batteries; also bromine specialties and refining catalysts."],
-  PLUG:["Plug Power","Hydrogen","Hydrogen fuel cells, electrolyzers and green hydrogen production."],
+  FLNC:["Fluence Energy","Storage systems","Fluence Energy builds grid-scale battery storage systems and supplies the software that manages them. Its projects let utilities and developers store and shift power on the grid."],
+  TSLA:["Tesla","Storage + EVs","Tesla makes electric vehicles and, on the energy side, battery storage products like the utility-scale Megapack and residential Powerwall. It also sells solar systems and operates charging networks."],
+  ALB:["Albemarle","Lithium","Albemarle produces lithium for batteries, largely from brine and hard-rock operations in Australia, Chile and the US. It also makes bromine specialties and refinery catalysts."],
+  PLUG:["Plug Power","Hydrogen","Plug Power makes hydrogen fuel cells and electrolyzers and produces green hydrogen for industrial and transport customers. Its equipment powers forklifts, data centers and backup generation."],
 
-  DUK:["Duke Energy","Regulated utility","Regulated electric and gas utility serving the Carolinas, Florida and the Midwest."],
-  SO:["Southern Company","Regulated utility","Regulated utility holding with electric and gas service across the Southeast."],
-  D:["Dominion Energy","Regulated utility","Electric and gas distribution in Virginia and the Carolinas."],
-  AEP:["American Electric Power","Regulated utility","Regulated electric utility in 11 states; one of the largest US transmission owners."],
-  EXC:["Exelon","Wires-only utility","Transmission and distribution utility (ComEd, PECO, BGE) with no generation."],
-  SRE:["Sempra","Utility + LNG","Utility holding (SDG&E, SoCalGas) plus LNG and Mexican energy infrastructure."],
-  NI:["NiSource","Regulated utility","Regulated gas and electric distribution across six Midwest states."],
-  ATO:["Atmos Energy","Gas distribution","Largest pure-play natural gas distribution utility in the US."],
+  DUK:["Duke Energy","Regulated utility","Duke Energy is a regulated electric and gas utility serving customers in the Carolinas, Florida and the Midwest. It generates and delivers power under state-regulated rates."],
+  SO:["Southern Company","Regulated utility","Southern Company is a regulated utility holding with electric and gas service across the southeastern US. Its subsidiaries include Georgia Power and Alabama Power."],
+  D:["Dominion Energy","Regulated utility","Dominion Energy provides electric and gas distribution in Virginia and the Carolinas and operates regulated gas utilities. It has been shifting toward regulated utility operations and offshore wind."],
+  AEP:["American Electric Power","Regulated utility","American Electric Power is a regulated electric utility serving 11 states and one of the largest US transmission owners. It generates power and delivers it over an extensive grid."],
+  EXC:["Exelon","Wires-only utility","Exelon is a wires-only utility: it owns transmission and distribution networks such as ComEd, PECO and BGE but no power generation. It earns regulated returns on delivering electricity and gas."],
+  SRE:["Sempra","Utility + LNG","Sempra is a utility holding that owns San Diego Gas & Electric and SoCalGas, plus energy infrastructure in Mexico and LNG projects on the Gulf Coast. It combines regulated distribution with export-linked growth."],
+  NI:["NiSource","Regulated utility","NiSource is a regulated gas and electric distribution utility operating across several Midwest states. Its largest business is natural gas service to homes and businesses."],
+  ATO:["Atmos Energy","Gas distribution","Atmos Energy is the largest pure-play natural gas distribution utility in the US, serving millions of customers across several states. It delivers gas for heating and industrial use under regulated rates."],
 
-  SLB:["SLB","Oilfield services","World's largest oilfield services company: drilling, completions and digital."],
-  HAL:["Halliburton","Oilfield services","Cementing, stimulation and completions services for oil and gas producers."],
-  BKR:["Baker Hughes","Oilfield + equipment","Oilfield equipment and services plus industrial gas turbines and power gear."],
-  NOV:["NOV Inc.","Oilfield equipment","Drilling rig equipment and oilfield hardware for onshore and offshore work."],
-  GEV:["GE Vernova","Power equipment","Gas turbines, grid equipment and wind turbines — the GE energy spin-off."],
-  ETN:["Eaton","Electrical equipment","Electrical grid, power management and data-center equipment."],
-  PWR:["Quanta Services","Grid construction","Builds and maintains electric transmission, substations and grid infrastructure."],
-  EMR:["Emerson Electric","Automation","Automation and control systems for energy, power and industrial plants."],
-  HUBB:["Hubbell","Grid hardware","Electrical grid and utility hardware components."],
+  SLB:["SLB","Oilfield services","SLB (formerly Schlumberger) is the world's largest oilfield services company, providing drilling, completions, production and digital technology to producers. It operates in nearly every major oil and gas basin."],
+  HAL:["Halliburton","Oilfield services","Halliburton provides cementing, stimulation, completions and drilling services to oil and gas producers. It is a major hydraulic-fracturing contractor, especially in North America."],
+  BKR:["Baker Hughes","Oilfield + equipment","Baker Hughes supplies oilfield equipment and services and also makes industrial gas turbines and power equipment. It serves both the oil and gas industry and the broader energy and industrial market."],
+  NOV:["NOV Inc.","Oilfield equipment","NOV Inc. builds drilling rig equipment and oilfield hardware for onshore and offshore operations. Its machinery is used by land and offshore drillers worldwide."],
+  GEV:["GE Vernova","Power equipment","GE Vernova, spun off from General Electric, makes gas turbines, grid equipment and wind turbines. Its machines generate much of the world's electricity and support grid expansion."],
+  ETN:["Eaton","Electrical equipment","Eaton makes electrical grid, power management and data-center equipment such as switchgear and UPS systems. Its products manage and protect electricity from the grid to the load."],
+  PWR:["Quanta Services","Grid construction","Quanta Services builds and maintains electric transmission lines, substations and grid infrastructure. It contracts with utilities to construct and upgrade the power network."],
+  EMR:["Emerson Electric","Automation","Emerson Electric supplies automation and control systems for energy, power and industrial plants. Its software and hardware monitor and operate process facilities."],
+  HUBB:["Hubbell","Grid hardware","Hubbell makes electrical grid and utility hardware components such as connectors, meters and enclosures. Its products go into transmission, distribution and industrial electrical systems."],
 
-  SQM:["SQM","Lithium + chemicals","Lithium, iodine and specialty plant nutrients from Chile's Atacama brine."],
-  MP:["MP Materials","Rare earths","Mines and processes rare-earth elements at Mountain Pass; makes magnets."],
-  FCX:["Freeport-McMoRan","Copper mining","Copper producer — the metal that wires grids, motors and data centers."],
+  SQM:["SQM","Lithium + chemicals","SQM produces lithium, iodine and specialty plant nutrients, largely from Chile's Atacama salt-flat brine. Its lithium feeds battery makers while its iodine goes to industrial and medical uses."],
+  MP:["MP Materials","Rare earths","MP Materials mines and processes rare-earth elements at Mountain Pass in California and is building magnets for electric motors and defense. Rare earths are essential to motors, wind turbines and electronics."],
+  FCX:["Freeport-McMoRan","Copper mining","Freeport-McMoRan is a major copper producer, mining the metal that wires grids, motors and data centers. It also extracts gold and molybdenum at mines in the Americas and Indonesia."],
 
-  MSFT:["Microsoft","Data center buyer","Hyperscale data centers; buys clean power at scale, including nuclear agreements."],
-  AMZN:["Amazon","Data center buyer","AWS data centers plus Amazon's own renewable and nuclear power procurement."],
-  GOOGL:["Alphabet","Data center buyer","Google data centers; a 24/7 carbon-free energy buyer with advanced nuclear deals."],
-  META:["Meta Platforms","Data center buyer","Data centers for AI workloads; a very large PPA buyer now adding nuclear."],
+  MSFT:["Microsoft","Data center buyer","Microsoft operates hyperscale data centers that consume large amounts of electricity, largely for cloud and AI services. It buys clean power at scale, including nuclear agreements to match its demand."],
+  AMZN:["Amazon","Data center buyer","Amazon runs AWS data centers and large logistics operations that use substantial electricity. It procures its own renewable and nuclear power, making it a major corporate energy buyer."],
+  GOOGL:["Alphabet","Data center buyer","Alphabet operates Google's data centers and has pledged to run on round-the-clock carbon-free energy. It buys clean power heavily and has signed advanced-nuclear agreements to back its load."],
+  META:["Meta Platforms","Data center buyer","Meta builds data centers for its social platforms and AI workloads and is a very large buyer of renewable power. It is now adding nuclear agreements to cover round-the-clock demand."],
 
-  /* --- added sectors: marine transport, contract drilling, industrial gases,
-         fuel cells, and the demand side of homes, buildings and transport --- */
-  EQT:["EQT Corporation","Gas producer","Largest US natural gas producer; feeds pipelines, LNG and gas-fired power."],
-  EPD:["Enterprise Products","Midstream","NGL and gas pipelines, processing and export terminals along the Gulf Coast."],
-  TRGP:["Targa Resources","NGL processing","Gathers, processes and exports natural gas liquids from the Permian."],
-  VG:["Venture Global","LNG export","US LNG exporter running the Plaquemines and Calcasieu Pass terminals."],
-  FRO:["Frontline","Crude tankers","One of the largest crude oil tanker fleets, moving barrels by sea."],
-  INSW:["International Seaways","Product tankers","Owns and operates crude and product tankers on international routes."],
-  GLNG:["Golar LNG","LNG shipping","Owns LNG carriers and floating liquefaction (FLNG) vessels."],
-  FLNG:["Flex LNG","LNG shipping","Pure-play owner of modern LNG carriers on long-term charters."],
-  RIG:["Transocean","Offshore drilling","Deepwater and ultra-deepwater rigs contracted to the major producers."],
-  VAL:["Valaris","Offshore drilling","Offshore drilling contractor with a fleet of drillships and jackups."],
-  NE:["Noble Corporation","Offshore drilling","Contract driller for offshore oil and gas, heavy in deepwater."],
-  APD:["Air Products","Industrial gases","Industrial gases and hydrogen, including large blue and green projects."],
-  LIN:["Linde","Industrial gases","Largest industrial gas company; hydrogen, oxygen and nitrogen for industry."],
-  BE:["Bloom Energy","Fuel cells","Solid-oxide fuel cells for on-site power, sold into data centers and industry."],
-  TLN:["Talen Energy","Nuclear IPP","Independent power producer with a large nuclear fleet selling to data centers."],
-  VRT:["Vertiv","Data center power","Critical power and cooling equipment for data centers."],
-  GNRC:["Generac","Home power","Home standby generators and energy storage for backup and off-grid power."],
-  JCI:["Johnson Controls","Building efficiency","Building controls, HVAC and fire systems — the demand-side efficiency layer."],
-  TT:["Trane Technologies","HVAC","Heating, ventilation and air conditioning, including heat pumps."],
-  CHPT:["ChargePoint","EV charging","Runs one of the largest networked electric-vehicle charging fleets."],
-  EVGO:["EVgo","EV charging","Fast-charging network for electric vehicles in the United States."],
-  CLNE:["Clean Energy Fuels","RNG fueling","Renewable natural gas for truck fleets and fueling stations."],
-  NUE:["Nucor","Industrial buyer","Electric-arc steelmaker; one of the largest industrial electricity buyers."],
-  AA:["Alcoa","Industrial buyer","Aluminium producer — smelting is among the most electricity-intensive industries."]
+  EQT:["EQT Corporation","Gas producer","EQT is the largest US natural gas producer, drilling in the Appalachian basin. Its gas feeds pipelines, LNG export terminals and gas-fired power plants."],
+  EPD:["Enterprise Products","Midstream","Enterprise Products owns gas-liquid and natural gas pipelines, processing plants and export terminals, mainly along the Gulf Coast. It moves hydrocarbons and earns largely fee-based revenue."],
+  TRGP:["Targa Resources","NGL processing","Targa Resources gathers, processes and exports natural gas liquids, concentrated in the Permian basin. It links shale production to gas-liquid pipelines and Gulf Coast export docks."],
+  VG:["Venture Global","LNG export","Venture Global is a US LNG exporter running the Plaquemines and Calcasieu Pass terminals on the Gulf Coast. It liquefies cheap US gas and ships it to global buyers."],
+  FRO:["Frontline","Crude tankers","Frontline operates one of the largest crude oil tanker fleets, moving barrels by sea. Its vessels carry crude from producers to refineries worldwide."],
+  INSW:["International Seaways","Product tankers","International Seaways owns and operates crude and product tankers on international routes. Its ships move oil and refined fuels between ports worldwide."],
+  GLNG:["Golar LNG","LNG shipping","Golar LNG owns LNG carriers and floating liquefaction vessels. Its floating units turn offshore gas into liquid for shipment, without building onshore plants."],
+  FLNG:["Flex LNG","LNG shipping","Flex LNG is a pure-play owner of modern LNG carriers chartered on long-term contracts. Its ships transport liquefied gas between terminals worldwide."],
+  RIG:["Transocean","Offshore drilling","Transocean operates deepwater and ultra-deepwater drilling rigs contracted to major oil producers. Its rigs drill offshore wells in frontier and established basins."],
+  VAL:["Valaris","Offshore drilling","Valaris is an offshore drilling contractor with a fleet of drillships and jackup rigs. It drills exploration and production wells for oil and gas companies at sea."],
+  NE:["Noble Corporation","Offshore drilling","Noble Corporation drills offshore oil and gas wells and is heavily focused on deepwater projects. It contracts its rigs to international and independent producers."],
+  APD:["Air Products","Industrial gases","Air Products makes industrial gases and hydrogen, including large blue and green projects. Its gases serve refining, chemicals, electronics and manufacturing customers."],
+  LIN:["Linde","Industrial gases","Linde is the largest industrial gas company, supplying hydrogen, oxygen and nitrogen to industry. Its gases go into refining, chemicals, steel and food production."],
+  BE:["Bloom Energy","Fuel cells","Bloom Energy makes solid-oxide fuel cells that generate electricity on-site for data centers, hospitals and industry. Its cells run on natural gas or hydrogen and provide reliable, low-carbon power."],
+  TLN:["Talen Energy","Nuclear IPP","Talen Energy is an independent power producer with a large nuclear fleet, selling power to data centers and other customers. Its nuclear plants supply carbon-free baseload electricity."],
+  VRT:["Vertiv","Data center power","Vertiv makes critical power and cooling equipment for data centers, including UPS systems and thermal management. Its gear keeps servers running as computing demand rises."],
+  GNRC:["Generac","Home power","Generac makes home standby generators and energy storage systems for backup and off-grid power. Its products keep homes powered during outages."],
+  JCI:["Johnson Controls","Building efficiency","Johnson Controls supplies building controls, HVAC and fire systems that improve efficiency on the demand side. Its technology reduces the energy buildings consume."],
+  TT:["Trane Technologies","HVAC","Trane Technologies makes heating, ventilation and air-conditioning equipment, including heat pumps. Its systems heat and cool buildings more efficiently to cut energy demand."],
+  CHPT:["ChargePoint","EV charging","ChargePoint runs one of the largest networked electric-vehicle charging fleets, selling hardware and subscription services. Its stations serve homes, businesses and fleets."],
+  EVGO:["EVgo","EV charging","EVgo operates a fast-charging network for electric vehicles across the United States. It builds and runs charging stations and sells charging to drivers."],
+  CLNE:["Clean Energy Fuels","RNG fueling","Clean Energy Fuels supplies renewable natural gas for truck fleets and operates fuelling stations. Its gas is made from captured methane at farms and landfills."],
+  NUE:["Nucor","Industrial buyer","Nucor is an electric-arc steelmaker, producing steel largely from scrap in electric furnaces. It is one of the largest industrial electricity buyers in the US."],
+  AA:["Alcoa","Industrial buyer","Alcoa produces aluminium, whose smelting is among the most electricity-intensive industrial processes. Its metal goes into transport, packaging and construction."],
 };
 
 const G={fossil:"#C2410C",lowc:"#0E9F6E",infra:"#2563EB",svc:"#64748B",use:"#334155"};
@@ -3941,13 +3939,6 @@ function pick(tk,nodeId,chipEl){
   const nmEl=$("pName");
   nmEl.textContent=(name===tk?"":name);
   nmEl.style.display=(name===tk?"none":"");
-  $("pKind").textContent=kind;
-  const dsEl=$("pDesc");
-  dsEl.textContent=D.desc||"";
-  dsEl.hidden=!D.desc;
-  $("pLoc").textContent=node
-    ? `0${node.c+1} ${COL_TITLES[node.c]} · ${node.label}`
-    : `ENABLERS · ${(ENABLERS.find(e=>e.id===nodeId)||{}).label||""}`;
   $("pAbout").textContent=about;
 
   /* company facts — only what could actually be sourced */
