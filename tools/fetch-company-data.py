@@ -551,6 +551,9 @@ def main():
         bx_emp, bx_yr = box.get("employees"), box.get("employeesYear")
         if bx_emp and (not wd_emp or not wd_yr or wd_yr < 2022 or (bx_yr and bx_yr >= wd_yr)):
             r["employees"], r["employeesYear"] = bx_emp, bx_yr
+        # a headcount from over five years ago misleads more than it informs
+        if r["employeesYear"] and r["employeesYear"] < 2018:
+            r["employees"], r["employeesYear"] = None, None
         if not r["founded"] and box.get("founded"):
             r["founded"] = box["founded"]
         r.pop("_extract", None)
