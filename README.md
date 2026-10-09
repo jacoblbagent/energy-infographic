@@ -1,6 +1,8 @@
 # The Energy Value Chain — web infographic
 
-**🔗 Local:** http://localhost:5184/  ·  **Tailnet:** http://jlb-hermes.tail1caa84.ts.net:5184/
+**🔗 Live:** https://jacoblbagent.github.io/energy-infographic/
+**Repo:** https://github.com/jacoblbagent/energy-infographic
+**Local:** http://localhost:5184/  ·  **Tailnet:** http://jlb-hermes.tail1caa84.ts.net:5184/
 
 A single-file, dependency-free web infographic showing the public companies in
 each sector of the energy industry and how the sectors interact. Data-driven
