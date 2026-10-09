@@ -139,6 +139,7 @@
     align-items:center;width:100%;padding:6px;border:0;border-radius:6px;background:none;
     font:inherit;text-align:left;cursor:pointer}
   .vrow:hover{background:#F5F8FB}
+  .vrow.sel,.vrow.sel:hover{background:#E8F0FA}
   .vrk{font-family:var(--mono);font-size:10px;color:#B6C1CC;text-align:right}
   .vtk{font-family:var(--mono);font-size:11.5px;font-weight:700;color:#334155;letter-spacing:.2px}
   .vnm{font-size:11.5px;color:#8A99AA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -167,6 +168,7 @@
   .ntk{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.2px;
     padding:1px 5px;border:0;border-radius:4px;background:#F1F4F8;color:#42526A;cursor:pointer}
   .ntk:hover{background:#E6EBF1;color:var(--ink)}
+  .ntk.sel,.ntk.sel:hover{background:#D9E6F6;color:#0F172A}
   .nmore,.nempty{display:block;width:100%;margin-top:10px;padding:7px;border:1px solid var(--line);
     background:#fff;border-radius:6px;font:inherit;font-size:11px;font-weight:600;
     color:#42526A;cursor:pointer;text-align:center}
@@ -3931,6 +3933,7 @@ function pick(tk,nodeId,chipEl){
   const D=(typeof DATA!=="undefined"&&DATA[tk])||{};
   picked={tk:tk,nodeId:nodeId};
   markPin(nodeId);
+  markRailSel(tk);
 
   $("pTar").innerHTML=`<span class="dot" style="background:${gcol}"></span>${tk}`;
   const nmEl=$("pName");
@@ -4042,11 +4045,18 @@ function pinNode(id){
     document.body.classList.remove("panelopen");
   }
   markPin(id);
+  markRailSel(picked.tk||null);
   focus(id);
 }
 function markPin(id){
   document.querySelectorAll(".g-node").forEach(g=>
     g.classList.toggle("pin",!!id&&g.dataset.id===id));
+}
+/* mirrors the open company onto the rail rows/ticker buttons, so the row you
+   toggled reads as selected — and its second click is a visible close. */
+function markRailSel(tk){
+  document.querySelectorAll("#rail .vrow,#rail .ntk").forEach(el=>
+    el.classList.toggle("sel",!!tk&&el.dataset.tk===tk));
 }
 function clearSel(){
   picked=null;
@@ -4054,6 +4064,7 @@ function clearSel(){
   document.body.classList.remove("panelopen");
   document.querySelectorAll(".chip.sel").forEach(c=>c.classList.remove("sel"));
   markPin(null);
+  markRailSel(null);
   blur();
 }
 
@@ -4120,6 +4131,8 @@ const fmtVol=n=>n>=1e9?(n/1e9).toFixed(1)+"B":n>=1e6?(n/1e6).toFixed(1)+"M":
 function openCompany(tk){
   const id=CHART_TK.map[tk];
   if(id===undefined) return;
+  /* clicking the company that is already open toggles the panel shut */
+  if(picked&&picked.tk===tk){ clearSel(); return; }
   pick(tk,id,document.createElement("span"));   // detached: the panel needs no chip
   document.querySelectorAll(".chip").forEach(c=>{
     if((c.getAttribute("aria-label")||"").indexOf(tk+" — ")===0) c.classList.add("sel");
@@ -4155,7 +4168,7 @@ function renderVol(){
     const pc=(q.c===undefined||q.c===null)?"—":((q.c>0?"+":"")+q.c.toFixed(2)+"%");
     const cls=(q.c===undefined||q.c===null||Math.abs(q.c)<0.005)?"flat":(q.c>0?"up":"dn");
     const b=document.createElement("button");
-    b.type="button"; b.className="vrow";
+    b.type="button"; b.className="vrow"; b.dataset.tk=r.t;
     b.title=r.t+" · "+(q.p!=null?"$"+q.p.toFixed(2)+" · ":"")+(q.x||"");
     b.setAttribute("aria-label",r.t+" — "+TNAME(r.t)+", volume "+(q.va||fmtVol(q.v)));
     b.innerHTML='<span class="vrk">'+(i+1)+'</span>'+
@@ -4169,6 +4182,7 @@ function renderVol(){
     frag.appendChild(b);
   });
   RAIL.vol.appendChild(frag);
+  markRailSel(picked&&picked.tk);
 }
 
 /* ---------- pane 2: merged news over every listed ticker ---------- */
@@ -4218,6 +4232,7 @@ function renderNews(){
     a.href=n.u; a.target="_blank"; a.rel="noopener"; a.textContent=n.ti;
     const m=document.createElement("div"); m.className="nmeta";
     const b=document.createElement("button"); b.type="button"; b.className="ntk";
+    b.dataset.tk=n.tk;
     b.textContent=n.tk; b.title="Open "+n.tk+" — "+TNAME(n.tk);
     b.addEventListener("click",()=>openCompany(n.tk));
     const s=document.createElement("span");
@@ -4233,6 +4248,7 @@ function renderNews(){
     more.addEventListener("click",()=>{ NST.limit+=40; renderNews(); });
     RAIL.news.appendChild(more);
   }
+  markRailSel(picked&&picked.tk);
 }
 
 /* ---------- tabs, collapse/hide, wiring ---------- */
