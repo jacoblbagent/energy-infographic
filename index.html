@@ -172,6 +172,17 @@
     font:inherit;font-size:11.5px;font-weight:600;color:#42526A;cursor:pointer;
     box-shadow:0 1px 3px rgba(15,23,42,.08)}
   #railOpen:hover{background:#F5F8FB}
+  body.panelopen #railOpen{display:none!important}
+
+  @media (min-width:1181px){
+    /* wide: the rail collapses to zero width, taking its own toggle with it —
+       leave a handle on the right edge so it can be brought back. Hidden while
+       the company panel is open (it owns the right edge then). */
+    body.railoff #railOpen{display:flex;align-items:center;gap:5px;
+      top:50%;right:0;transform:translateY(-50%);
+      border-radius:8px 0 0 8px;border-right:0;padding:10px 9px;
+      box-shadow:-1px 1px 4px rgba(15,23,42,.09)}
+  }
 
   @media (max-width:1180px){
     /* narrow: the panel and the rail overlay rather than crushing the diagram */
@@ -258,7 +269,7 @@
     </div>
   </aside>
 </div>
-<button id="railOpen" type="button" title="Show the feed">Feed</button>
+<button id="railOpen" type="button" title="Show the feed" aria-label="Show the market feed">&lsaquo; Feed</button>
 <script>
 (function(){
 "use strict";
@@ -3987,6 +3998,7 @@ function pick(tk,nodeId,chipEl){
   chipEl.classList.add("sel");
   if(node) focus(node.id); else blur();
   panel.classList.add("open");
+  document.body.classList.add("panelopen");
 }
 const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 function fmtDate(s){
@@ -4040,6 +4052,7 @@ function pinNode(id){
   if(!same){
     document.querySelectorAll(".chip.sel").forEach(c=>c.classList.remove("sel"));
     panel.classList.remove("open");
+    document.body.classList.remove("panelopen");
   }
   markPin(id);
   focus(id);
@@ -4051,6 +4064,7 @@ function markPin(id){
 function clearSel(){
   picked=null;
   panel.classList.remove("open");
+  document.body.classList.remove("panelopen");
   document.querySelectorAll(".chip.sel").forEach(c=>c.classList.remove("sel"));
   markPin(null);
   blur();
