@@ -43,7 +43,8 @@ supplies/services, dashed orange = capital returns.
 - Hovering any node dims everything unrelated, thickens the traced edges, and
   reveals the flow labels for those edges (only a curated subset is labelled in
   the static view — the rest appear on trace; unrelated labels fade back).
-- Hovering a ticker chip shows a tooltip with the full company name and sector.
+- Hovering a ticker chip shows a one-line tooltip: ticker + company name (no
+  sector subtext — the sector lives in the panel and the diagram's own card).
 - **Clicking a ticker chip opens the company panel** on the right: ticker (in its
   sector colour), company name, a 2–3 word type tag, its stage in the chain
   (`03 CONVERSION & GENERATION · Power Generation`), a one-line description, and
