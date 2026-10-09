@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Energy Value Chain — Public Companies</title>
+<style>
+  :root{
+    --bg:#FBFBFA;--ink:#0F172A;--muted:#5B6B7C;--faint:#93A2B3;
+    --line:#DFE5EC;--node:#FFFFFF;--chip:#F7F9FB;--chipb:#E6EBF1;
+    --fossil:#C2410C;--lowc:#0E9F6E;--infra:#2563EB;--svc:#64748B;--use:#334155;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  #frame{overflow:auto;width:100%}
+  svg{display:block;width:100%;height:auto;min-width:1060px}
+
+  .col-title{font-size:10px;font-weight:700;letter-spacing:1.5px;fill:var(--faint)}
+  .node-box{fill:var(--node);stroke:var(--line);stroke-width:1}
+  .node-label{font-size:12.5px;font-weight:600;fill:var(--ink)}
+  .node-tag{font-size:10px;font-weight:500;fill:var(--faint);letter-spacing:.2px}
+
+  .chip-box{fill:var(--chip);stroke:var(--chipb);stroke-width:1;transition:fill .16s,stroke .16s}
+  .chip-text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    font-size:10.5px;font-weight:600;fill:#42526A;letter-spacing:.2px;pointer-events:none}
+  .chip{cursor:default}
+  .chip:hover .chip-box{fill:#EDF2F7;stroke:#B9C6D4}
+  .chip:hover .chip-text{fill:var(--ink)}
+
+  .g-node{transition:opacity .18s}
+  .g-node.dim{opacity:.2}
+
+  .edge{fill:none;stroke:#A9B6C4;stroke-width:1;transition:opacity .18s,stroke .18s,stroke-width .18s}
+  .edge.dim{opacity:.07}
+  .edge.hl{opacity:1;stroke-width:1.7;stroke:#334155}
+  .edge-lbl{font-size:9px;font-weight:600;fill:#7B8A9B;letter-spacing:.1px;opacity:0;
+    transition:opacity .18s;paint-order:stroke;stroke:var(--bg);stroke-width:3;stroke-linejoin:round}
+  .edge-lbl.on{opacity:1}
+  .edge-lbl.static{opacity:1}
+
+  .svc{stroke:#B7C1CD;stroke-dasharray:3 4}
+  .cap{stroke:#DDBBA4;stroke-dasharray:4 5}
+  .cap-lbl{font-size:9px;font-weight:700;fill:#B57A4E;letter-spacing:.6px}
+
+  .band-box{fill:#FCFDFE;stroke:#E6EBF1;stroke-width:1;stroke-dasharray:3 4}
+  .band-lbl{font-size:10.5px;font-weight:700;fill:#5B6B7C;letter-spacing:.6px}
+  .foot{font-size:9.5px;fill:#A3AFBC}
+  .legend-t{font-size:10px;font-weight:600;fill:var(--muted);letter-spacing:.2px}
+
+  #tip{position:fixed;pointer-events:none;background:#0F172A;color:#fff;font-size:11.5px;
+    font-weight:500;line-height:1.25;padding:6px 9px;border-radius:6px;opacity:0;
+    transition:opacity .12s;white-space:nowrap;z-index:20;transform:translate(12px,12px)}
+  #tip .tk{font-family:ui-monospace,Menlo,monospace;font-weight:700;color:#BFD3EA}
+  #tip small{display:block;color:#94A3B8;font-weight:500;font-size:10.5px;margin-top:1px}
+</style>
+</head>
+<body>
+<div id="frame"><svg id="svg" viewBox="0 0 1660 1000" xmlns="http://www.w3.org/2000/svg"></svg></div>
+<div id="tip"></div>
+<script>
+(function(){
+"use strict";
+const NS="http://www.w3.org/2000/svg";
+const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;};
+
+/* ---------- data ---------- */
+const CO={
+  XOM:"ExxonMobil",CVX:"Chevron",COP:"ConocoPhillips",OXY:"Occidental Petroleum",
+  EOG:"EOG Resources",FANG:"Diamondback Energy",
+  BTU:"Peabody Energy",CEIX:"CONSOL Energy",ARLP:"Alliance Resource Partners",
+  CCJ:"Cameco",LEU:"Centrus Energy",BWXT:"BWX Technologies",
+  FSLR:"First Solar",ENPH:"Enphase Energy",SEDG:"SolarEdge",RUN:"Sunrun",
+  DAR:"Darling Ingredients",GPRE:"Green Plains",BEP:"Brookfield Renewable",
+  ENB:"Enbridge",KMI:"Kinder Morgan",WMB:"Williams",OKE:"ONEOK",ET:"Energy Transfer",
+  LNG:"Cheniere Energy",NFE:"New Fortress Energy",
+  VLO:"Valero Energy",MPC:"Marathon Petroleum",PSX:"Phillips 66",PBF:"PBF Energy",
+  DOW:"Dow Inc.",LYB:"LyondellBasell",
+  NEE:"NextEra Energy",CEG:"Constellation Energy",VST:"Vistra",NRG:"NRG Energy",AES:"AES Corp",
+  FLNC:"Fluence Energy",TSLA:"Tesla",ALB:"Albemarle",PLUG:"Plug Power",
+  DUK:"Duke Energy",SO:"Southern Company",D:"Dominion Energy",
+  AEP:"American Electric Power",EXC:"Exelon",
+  SRE:"Sempra",NI:"NiSource",ATO:"Atmos Energy",
+  SLB:"SLB",HAL:"Halliburton",BKR:"Baker Hughes",NOV:"NOV Inc.",
+  GEV:"GE Vernova",ETN:"Eaton",PWR:"Quanta Services",EMR:"Emerson Electric",HUBB:"Hubbell",
+  SQM:"SQM",MP:"MP Materials",FCX:"Freeport-McMoRan",
+  MSFT:"Microsoft",AMZN:"Amazon",GOOGL:"Alphabet",META:"Meta Platforms"
+};
+const G={fossil:"#C2410C",lowc:"#0E9F6E",infra:"#2563EB",svc:"#64748B",use:"#334155"};
+
+const COL_TITLES=["PRIMARY ENERGY","MIDSTREAM & TRANSPORT","CONVERSION & GENERATION","DELIVERY","END USE"];
+const CX=[230,530,830,1130,1460];
+const NW=[230,230,250,250,230];
+
+const NODES=[
+  {id:"oil",   c:0,label:"Oil & Gas",           g:"fossil",cos:["XOM","CVX","COP","OXY","EOG","FANG"]},
+  {id:"coal",  c:0,label:"Coal",                g:"fossil",cos:["BTU","CEIX","ARLP"]},
+  {id:"uran",  c:0,label:"Uranium & Fuel",      g:"lowc",  cos:["CCJ","LEU","BWXT"]},
+  {id:"solar", c:0,label:"Solar & Wind",        g:"lowc",  cos:["FSLR","ENPH","SEDG","RUN"]},
+  {id:"bio",   c:0,label:"Bio & Hydro",         g:"lowc",  cos:["DAR","GPRE","BEP"]},
+
+  {id:"pipe",  c:1,label:"Pipelines & Storage", g:"infra", cos:["ENB","KMI","WMB","OKE","ET"]},
+  {id:"lng",   c:1,label:"LNG & Export",        g:"infra", cos:["LNG","NFE"]},
+
+  {id:"ref",   c:2,label:"Refining & Fuels",    g:"fossil",cos:["VLO","MPC","PSX","PBF"]},
+  {id:"chem",  c:2,label:"Chemicals",           g:"fossil",cos:["DOW","LYB"]},
+  {id:"gen",   c:2,label:"Power Generation",    g:"infra", cos:["NEE","CEG","VST","NRG","AES"]},
+  {id:"store", c:2,label:"Storage & Hydrogen",  g:"lowc",  cos:["FLNC","TSLA","ALB","PLUG"]},
+
+  {id:"util",  c:3,label:"Electric Utilities",  g:"infra", cos:["DUK","SO","D","AEP","EXC"]},
+  {id:"gasut", c:3,label:"Gas Utilities",       g:"infra", cos:["SRE","NI","ATO"]},
+
+  {id:"homes", c:4,label:"Homes & Buildings",   g:"use",   cos:[],tag:"residential"},
+  {id:"trans", c:4,label:"Transport",           g:"use",   cos:[],tag:"road · air · marine"},
+  {id:"ind",   c:4,label:"Industry",            g:"use",   cos:[],tag:"manufacturing"},
+  {id:"dc",    c:4,label:"Data Centers",        g:"use",   cos:["MSFT","AMZN","GOOGL","META"],tag:"hyperscale compute"}
+];
+
+/* l = label shown always;  no l = label only appears while a node is traced */
+const EDGES=[
+  {a:"oil",b:"pipe",l:"crude · gas"},{a:"oil",b:"ref"},{a:"oil",b:"chem"},
+  {a:"coal",b:"gen",l:"coal"},{a:"uran",b:"gen",l:"fuel"},
+  {a:"solar",b:"gen"},{a:"bio",b:"ref",l:"biofuels"},
+  {a:"pipe",b:"ref"},{a:"pipe",b:"lng"},{a:"pipe",b:"gen",l:"gas"},
+  {a:"pipe",b:"gasut"},
+  {a:"lng",b:"ind"},
+  {a:"ref",b:"trans",l:"fuels"},{a:"ref",b:"ind"},
+  {a:"chem",b:"ind",l:"plastics"},
+  {a:"gen",b:"util"},{a:"gen",b:"dc",l:"PPA"},
+  {a:"util",b:"homes"},{a:"util",b:"ind"},
+  {a:"gasut",b:"homes",l:"heat"},{a:"gasut",b:"ind"}
+];
+
+const ENABLERS=[
+  {label:"Oilfield Services",cos:["SLB","HAL","BKR","NOV"]},
+  {label:"Power & Grid Equipment",cos:["GEV","ETN","PWR","EMR","HUBB"]},
+  {label:"Materials & Mining",cos:["ALB","SQM","MP","FCX"]}
+];
+
+/* ---------- measurement ---------- */
+const mctx=document.createElement("canvas").getContext("2d");
+mctx.font='600 10.5px ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace';
+const chipW=t=>Math.ceil(mctx.measureText(t).width)+16;
+
+/* ---------- layout ---------- */
+const TOP=168, AVAIL=580, CH=20, CGAP=6, RGAP=28;
+NODES.forEach(n=>{
+  n.x=CX[n.c]; n.w=NW[n.c];
+  const inner=n.w-28; let rows=[],cur=[],rw=0;
+  n.cos.forEach(t=>{const w=chipW(t);
+    if(cur.length&&rw+CGAP+w>inner){rows.push({items:cur,w:rw});cur=[];rw=0;}
+    if(cur.length)rw+=CGAP; cur.push({t,w}); rw+=w;});
+  if(cur.length)rows.push({items:cur,w:rw});
+  n.rows=rows;
+  const chipsH=rows.length?rows.length*CH+(rows.length-1)*CGAP:0;
+  let h=14+18+(chipsH?8+chipsH:0)+(n.tag?(chipsH?7:7)+14:0)+14;
+  n.h=Math.max(h,n.c===4?88:76);
+});
+const byId={}; NODES.forEach(n=>byId[n.id]=n);
+[0,1,2,3,4].forEach(c=>{
+  const col=NODES.filter(n=>n.c===c);
+  const total=col.reduce((s,n)=>s+n.h,0)+RGAP*(col.length-1);
+  let y=TOP+Math.max(0,(AVAIL-total)/2);
+  col.forEach(n=>{n.y=y;y+=n.h+RGAP;});
+});
+
+/* anchors */
+const outs={},ins={};
+EDGES.forEach((e,i)=>{ (outs[e.a]=outs[e.a]||[]).push(i); (ins[e.b]=ins[e.b]||[]).push(i); });
+const spread=(node,i,arr)=>node.y+16+(arr.indexOf(i)+1)*(node.h-32)/(arr.length+1);
+EDGES.forEach((e,i)=>{
+  const A=byId[e.a],B=byId[e.b];
+  e.x1=A.x+A.w/2; e.y1=spread(A,i,outs[e.a]);
+  e.x2=B.x-B.w/2; e.y2=spread(B,i,ins[e.b]);
+});
+
+/* ---------- render ---------- */
+const svg=document.getElementById("svg");
+const defs=el("defs",{},svg);
+function marker(id,color){
+  const m=el("marker",{id:id,viewBox:"0 0 8 8",refX:"6.6",refY:"4",markerWidth:"8",
+    markerHeight:"8",orient:"auto",markerUnits:"strokeWidth"},defs);
+  el("path",{d:"M0.5,1 L7,4 L0.5,7 z",fill:color},m);
+}
+marker("m-flow","#A9B6C4"); marker("m-svc","#B7C1CD"); marker("m-cap","#DDBBA4");
+
+const gEdge=el("g",{},svg);
+const gBand=el("g",{},svg);
+const gNode=el("g",{},svg);
+
+EDGES.forEach(e=>{
+  const dx=e.x2-e.x1, c=Math.max(28,dx*0.52);
+  const p=el("path",{d:`M${e.x1},${e.y1} C${e.x1+c},${e.y1} ${e.x2-c},${e.y2} ${e.x2},${e.y2}`,
+    class:"edge","marker-end":"url(#m-flow)","data-a":e.a,"data-b":e.b},gEdge);
+  e.el=p;
+  const t=el("text",{x:e.x1+7,y:e.y1-5,class:"edge-lbl"+(e.l?" static":"")},gEdge);
+  t.textContent=e.l||"";
+  e.lbl=t;
+});
+
+/* ---------- enabler guide + band ---------- */
+const GUIDE_Y=752, bandTop=796, bandX0=290, bandX1=1290, bandCx=(bandX0+bandX1)/2;
+el("path",{d:`M${CX[0]},${GUIDE_Y} L${CX[3]},${GUIDE_Y}`,class:"edge svc",
+  "marker-end":"url(#m-svc)"},gBand);
+[0,1,2,3].forEach(c=>{
+  const n=NODES.filter(m=>m.c===c).slice(-1)[0];
+  el("path",{d:`M${CX[c]},${GUIDE_Y} L${CX[c]},${n.y+n.h+3}`,class:"edge svc",
+    "marker-end":"url(#m-svc)"},gBand);
+});
+el("path",{d:`M${bandCx},${bandTop} L${bandCx},${GUIDE_Y+3}`,class:"edge svc",
+  "marker-end":"url(#m-svc)"},gBand);
+const gl=el("text",{x:CX[0]+10,y:GUIDE_Y-9,class:"edge-lbl static"},gBand);
+gl.textContent="supplies every stage";
+
+const cap=el("text",{x:bandX0,y:bandTop-14,class:"col-title"},gBand);
+cap.textContent="ENABLERS";
+const BW=322, BGAP=16, BH=74;
+ENABLERS.forEach((g,i)=>{
+  const x=bandX0+i*(BW+BGAP);
+  el("rect",{x:x,y:bandTop,width:BW,height:BH,rx:10,class:"band-box"},gBand);
+  const lt=el("text",{x:x+14,y:bandTop+22,class:"band-lbl"},gBand); lt.textContent=g.label;
+  let cx=x+14, cy=bandTop+34;
+  g.cos.forEach(t=>{
+    const w=chipW(t);
+    const cg=el("g",{class:"chip"},gBand);
+    el("rect",{x:cx,y:cy,width:w,height:CH,rx:5,class:"chip-box"},cg);
+    const tx=el("text",{x:cx+w/2,y:cy+CH/2+3.7,class:"chip-text","text-anchor":"middle"},cg);
+    tx.textContent=t;
+    bindTip(cg,t,g.label);
+    cx+=w+CGAP;
+  });
+});
+
+/* ---------- capital loop ---------- */
+function roundPath(pts,r){
+  let d=`M${pts[0][0]},${pts[0][1]}`;
+  for(let i=1;i<pts.length-1;i++){
+    const p0=pts[i-1],p1=pts[i],p2=pts[i+1];
+    const v1=[p1[0]-p0[0],p1[1]-p0[1]],v2=[p2[0]-p1[0],p2[1]-p1[1]];
+    const l1=Math.hypot(v1[0],v1[1]),l2=Math.hypot(v2[0],v2[1]);
+    const rr=Math.min(r,l1/2,l2/2);
+    const a=[p1[0]-v1[0]/l1*rr,p1[1]-v1[1]/l1*rr];
+    const b=[p1[0]+v2[0]/l2*rr,p1[1]+v2[1]/l2*rr];
+    d+=` L${a[0]},${a[1]} Q${p1[0]},${p1[1]} ${b[0]},${b[1]}`;
+  }
+  const L=pts[pts.length-1]; return d+` L${L[0]},${L[1]}`;
+}
+const dcN=byId["dc"], oilN=byId["oil"], LOOP_Y=936;
+const loop=[[CX[4],dcN.y+dcN.h+2],[CX[4],LOOP_Y],[60,LOOP_Y],
+            [60,oilN.y+oilN.h/2],[CX[0]-oilN.w/2-2,oilN.y+oilN.h/2]];
+el("path",{d:roundPath(loop,18),class:"edge cap","marker-end":"url(#m-cap)"},gEdge);
+const capLbl=el("text",{x:60,y:LOOP_Y-12,class:"cap-lbl"},gEdge);
+capLbl.textContent="REVENUE & CAPITAL RETURNS";
+
+/* ---------- nodes ---------- */
+NODES.forEach(n=>{
+  const g=el("g",{class:"g-node","data-id":n.id},gNode); n.gEl=g;
+  el("rect",{x:n.x-n.w/2,y:n.y,width:n.w,height:n.h,rx:12,class:"node-box"},g);
+  const cy=n.y+26;
+  el("circle",{cx:n.x-n.w/2+18,cy:cy-4,r:3.6,fill:G[n.g]},g);
+  const lt=el("text",{x:n.x-n.w/2+30,y:cy,class:"node-label"},g);
+  lt.textContent=n.label;
+  let yy=n.y+42;
+  if(n.rows.length){
+    yy+=8;
+    n.rows.forEach(row=>{
+      let cx=n.x-row.w/2;
+      row.items.forEach(it=>{
+        const cg=el("g",{class:"chip"},g);
+        el("rect",{x:cx,y:yy,width:it.w,height:CH,rx:5,class:"chip-box"},cg);
+        const tx=el("text",{x:cx+it.w/2,y:yy+CH/2+3.7,class:"chip-text","text-anchor":"middle"},cg);
+        tx.textContent=it.t;
+        bindTip(cg,it.t,n.label);
+        cx+=it.w+CGAP;
+      });
+      yy+=CH+CGAP;
+    });
+    yy-=CGAP;
+  }
+  if(n.tag){ yy+=7; const tg=el("text",{x:n.x,y:yy+12,class:"node-tag","text-anchor":"middle"},g);
+    tg.textContent=n.tag; }
+  g.addEventListener("mouseenter",()=>focus(n.id));
+  g.addEventListener("mouseleave",blur);
+});
+
+/* ---------- trace on hover ---------- */
+function focus(id){
+  const near={}; near[id]=1;
+  EDGES.forEach(e=>{ if(e.a===id)near[e.b]=1; if(e.b===id)near[e.a]=1; });
+  EDGES.forEach(e=>{
+    const on=(e.a===id||e.b===id);
+    e.el.classList.toggle("hl",on); e.el.classList.toggle("dim",!on);
+    e.lbl.classList.toggle("on",on);
+  });
+  NODES.forEach(n=>n.gEl.classList.toggle("dim",!near[n.id]));
+}
+function blur(){
+  EDGES.forEach(e=>{e.el.classList.remove("hl","dim");e.lbl.classList.remove("on");});
+  NODES.forEach(n=>n.gEl.classList.remove("dim"));
+}
+
+/* ---------- tooltip ---------- */
+const tip=document.getElementById("tip");
+function bindTip(nodeEl,tk,sector){
+  nodeEl.addEventListener("mouseenter",()=>{
+    tip.innerHTML=`<span class="tk">${tk}</span>&nbsp;&nbsp;${CO[tk]||tk}<small>${sector}</small>`;
+    tip.style.opacity="1";
+  });
+  nodeEl.addEventListener("mousemove",ev=>{tip.style.left=ev.clientX+"px";tip.style.top=ev.clientY+"px";});
+  nodeEl.addEventListener("mouseleave",()=>{tip.style.opacity="0";});
+}
+
+/* ---------- column headers ---------- */
+[0,1,2,3,4].forEach(c=>{
+  const first=NODES.filter(n=>n.c===c)[0];
+  const x=CX[c]-NW[c]/2;
+  const y=first.y-13;
+  const num=el("text",{x:x,y:y,class:"col-title",style:"fill:#C3CCD6"},svg);
+  num.textContent="0"+(c+1);
+  const t=el("text",{x:x+22,y:y,class:"col-title"},svg);
+  t.textContent=COL_TITLES[c];
+});
+
+/* ---------- header / footer / legend ---------- */
+const h1=el("text",{x:60,y:92,style:"font-size:25px;font-weight:700;letter-spacing:-.3px;fill:#0F172A"},svg);
+h1.textContent="The Energy Value Chain";
+const h2=el("text",{x:60,y:118,style:"font-size:12.5px;font-weight:500;fill:#5B6B7C"},svg);
+h2.textContent="Public companies by sector. Hover any node to trace its connections.";
+
+const legend=[["Hydrocarbons",G.fossil],["Low-carbon",G.lowc],["Infrastructure",G.infra],["Services",G.svc],["End use",G.use]];
+let lx=1620;
+legend.slice().reverse().forEach(([t,col])=>{
+  const tw=t.length*6.1;
+  const tx=el("text",{x:lx,y:92,"text-anchor":"end",class:"legend-t"},svg); tx.textContent=t;
+  el("circle",{cx:lx-tw-14,cy:88.5,r:3.6,fill:col},svg);
+  lx-=tw+52;
+});
+const lg1=el("text",{x:1620,y:118,"text-anchor":"end",
+  style:"font-size:10px;font-weight:500;fill:#93A2B3"},svg);
+lg1.textContent="—— energy flow     ╌╌ supplies & capital";
+
+const f=el("text",{x:60,y:986,class:"foot"},svg);
+f.textContent="Illustrative. Tickers are examples of public listings; flows and ownership are simplified. Not investment advice.";
+})();
+</script>
+</body>
+</html>
