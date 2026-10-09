@@ -65,8 +65,8 @@
   /* ---- company panel ---- */
   #panel{flex:0 0 auto;width:0;overflow:hidden;background:#fff;
     border-left:1px solid transparent;transition:width .22s ease,border-color .22s}
-  #panel.open{width:376px;border-left-color:var(--line)}
-  .pin{width:376px;height:100%;overflow-y:auto;padding:26px 26px 40px;position:relative}
+  #panel.open{width:400px;border-left-color:var(--line)}
+  .pin{width:400px;height:100%;overflow-y:auto;padding:26px 26px 40px;position:relative}
   #pClose{position:absolute;top:20px;right:20px;width:26px;height:26px;padding:0;
     border:0;border-radius:6px;background:transparent;color:#A3AFBC;font-size:18px;
     line-height:1;cursor:pointer}
@@ -78,14 +78,34 @@
   .kind{font-size:11.5px;font-weight:600;color:var(--faint);letter-spacing:.2px}
   .loc{font-size:9.5px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;
     color:#B6C1CC;margin-top:15px}
-  .rule{height:1px;background:var(--line);margin:17px 0}
-  .about{font-size:13px;line-height:1.55;color:#42526A;margin:0}
-  .sec{font-size:9.5px;font-weight:700;letter-spacing:1.3px;color:#A3AFBC;margin:0 0 9px}
+  .desc{font-size:11.5px;color:#8A99AA;margin-top:4px;line-height:1.4}
+  .sect{margin-top:19px;padding-top:15px;border-top:1px solid var(--line)}
+  .sect[hidden]{display:none}
+  .sl{font-size:9.5px;font-weight:700;letter-spacing:1.3px;color:#A3AFBC;
+    text-transform:uppercase;margin:0 0 10px}
+  .about{font-size:12.5px;line-height:1.55;color:#42526A;margin:0}
   .frow{display:flex;gap:7px;align-items:baseline;font-size:12.5px;color:#42526A;
     margin-bottom:7px;line-height:1.35}
   .frow .ar{color:#A9B6C4;flex:0 0 auto}
   .frow .lb{color:#8A99AA;font-size:11px}
   .muted{font-size:12px;color:#A3AFBC;font-style:italic}
+  .fact{display:grid;grid-template-columns:82px 1fr;gap:8px;margin-bottom:7px;
+    font-size:12.5px;line-height:1.35}
+  .fact .k{font-size:9.5px;font-weight:700;letter-spacing:.6px;color:#A3AFBC;
+    text-transform:uppercase;padding-top:2px}
+  .fact .v{color:#334155}
+  .fact .yr{color:#A3AFBC;font-size:11px}
+  .nit{margin-bottom:13px}
+  .nit:last-child{margin-bottom:4px}
+  .nit a{font-size:12.5px;line-height:1.4;color:#1F3A5F;text-decoration:underline;
+    text-decoration-color:#C7D2DE;text-underline-offset:2px;font-weight:500}
+  .nit a:hover{color:#0F172A;text-decoration-color:#0F172A}
+  .meta{font-size:10.5px;color:#A3AFBC;margin-top:3px}
+  .lnks{display:flex;flex-wrap:wrap;gap:6px 14px}
+  .lnk{font-size:12px;color:#42526A;text-decoration:none;border-bottom:1px solid #D8E0E8;
+    padding-bottom:1px}
+  .lnk:hover{color:#0F172A;border-bottom-color:#0F172A}
+  .asof{font-size:9.5px;color:#B6C1CC;margin-top:20px;line-height:1.5}
 
   @media (max-width:880px){
     /* narrow: the panel overlays rather than crushing the diagram */
@@ -106,11 +126,34 @@
       <div class="tkr" id="pTar"></div>
       <div class="cname" id="pName"></div>
       <div class="kind" id="pKind"></div>
+      <div class="desc" id="pDesc"></div>
       <div class="loc" id="pLoc"></div>
-      <div class="rule"></div>
-      <p class="about" id="pAbout"></p>
-      <div class="rule"></div>
-      <div id="pFlows"></div>
+
+      <div class="sect">
+        <div class="sl">About</div>
+        <p class="about" id="pAbout"></p>
+      </div>
+
+      <div class="sect" id="secFacts">
+        <div class="sl">Company</div>
+        <div id="pFacts"></div>
+      </div>
+
+      <div class="sect">
+        <div class="sl">Flows</div>
+        <div id="pFlows"></div>
+      </div>
+
+      <div class="sect">
+        <div class="sl">Recent news</div>
+        <div id="pNews"></div>
+      </div>
+
+      <div class="sect" id="secLinks">
+        <div id="pLinks"></div>
+      </div>
+
+      <div class="asof" id="pAsof"></div>
     </div>
   </aside>
 </div>
@@ -119,6 +162,2423 @@
 "use strict";
 const NS="http://www.w3.org/2000/svg";
 const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;};
+
+/* ---------- company facts + news ----------
+   Rewritten wholesale by `python3 tools/fetch-company-data.py --inject`; do not
+   hand-edit inside the markers, edit data/company-data.json or the script. */
+/* <<<DATA>>> */
+const DATA={
+"XOM":{
+"name":"ExxonMobil",
+"desc":"American multinational oil and gas company",
+"hq":"Spring, Texas",
+"founded":1882,
+"employees":57900,
+"employeesYear":2025,
+"listed":"NYSE",
+"industry":"petroleum industry",
+"site":"https://www.exxonmobil.com/",
+"wiki":"ExxonMobil",
+"news":[
+{
+"t":"One billion barrels: Guyana's remarkable journey continues",
+"s":"ExxonMobil",
+"d":"2026-09-28",
+"u":"https://news.google.com/rss/articles/CBMixAFBVV95cUxPVnc5S2c1NnFQMjZ5bEJDVTNYVElWbkJyYl9WNWpzZFl1UGZXczRRTzFHczBHRWJNZjc1STZzdFQzVFdCcFhVRHNlQkFDTHppU1FxY2VKdWFvREUtNU9qcV96MGptY3piVEtLN3dycEh3SlVNMk11anNKbnhNemFnQU9Hb3FzQWFQODJJNkE1Z1pySzhhNFdvdmZSdHUtN1p1ZlRVYjVuM2YyMWV3bDVjUldlRzhHdlJpcGpfQ1FMZ2xaU3Z6?oc=5"
+},
+{
+"t":"Vietnam refinery signs crude oil deal with ExxonMobil Asia Pacific",
+"s":"Reuters",
+"d":"2026-09-24",
+"u":"https://news.google.com/rss/articles/CBMiugFBVV95cUxNTjJQTG1ib2plSnVBWnVaN1V6c3o3UGFuaThiZ0hKNnZieW5BbkVjVDFRQnlkWmtRbHdJdHJBT0NWTmNMVF9tLVoyTFlqcVJwOUNaUXZHZ09FUTdreEh1TVVCWWlMUWxjek5OX0VKalBsRW9fWW53aXc5dEp2Rm9xRGdXam14eHBQdi1YVllFSHFqQXB0WXNfYUMyX1RaMWJZVld0UHNOVzNOdlRwaFM3OTdHSTJuQ1A2a2c?oc=5"
+},
+{
+"t":"Building trust among Gulf Coast communities as CCS expands",
+"s":"ExxonMobil",
+"d":"2026-09-22",
+"u":"https://news.google.com/rss/articles/CBMiqwFBVV95cUxNcDR4UHdMaVliV0RvQUhfTVRRbHM0WmswQmF2NTRTY0p5NFBzOWlPU0tSLWtjcTB1MXI1TTUzYVpzdUdlQ2M4Yi12QnlaU2pqUUNmWjAyOHVyU1RjVVhsT2pPTDlRcUItMXRsTDdsZVFycU5QdDNRekYzNHNwd3RISE45eGc5cW9FcTU4RTM3azQ3N0J1WUp2TTR3YmNmREsxTktWRlBvc3F6YjQ?oc=5"
+},
+{
+"t":"Sustained oil and gas investment is more important than ever",
+"s":"ExxonMobil",
+"d":"2026-09-17",
+"u":"https://news.google.com/rss/articles/CBMirwFBVV95cUxNVFJNa0swNkFfalZrRm9VWDV2RUNNUkFJbDJmYi1MUDN6Wl8wZ2FGd05Kd3VvLUVMQXYyZG5JT3h4bnlJajUyU0lJR0RBR1Q0MjN1SW9lQ0lvN3B5MERESm9ZVWV0NUhqSFpuSVBHeER5SWJwRVZ0a1E3TXFqcHJUT242elE2YV8tU3RhdWNOT3FFWWlRTmV4LUVvcWJXOWNBSXhzODR6a3pIRmFHNkJr?oc=5"
+}
+]
+},
+"CVX":{
+"name":"Chevron Corporation",
+"desc":"American multinational energy corporation",
+"hq":"Houston, Texas, U.S.",
+"employees":45298,
+"employeesYear":2024,
+"listed":"NYSE",
+"industry":"petroleum industry",
+"site":"https://www.chevron.com",
+"wiki":"Chevron Corporation",
+"news":[
+{
+"t":"Shell, Chevron cut Gulf of Mexico output as Tropical Storm Isaias approaches",
+"s":"Reuters",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMivgFBVV95cUxPNUNOZjNFVW95UmFQQ0JVdVhUdHE2c3RxTVhHQUt5aG41cWFOOFotd0FibWVMU0cxNlVxLVRhUlRxQ0dqOERpMGJnQUR0SFRwUzhJS2FvVjhtQW1RVzB5cHF2U2VVYUdCZV9wN29UV3dxcmlYOXJrMnBGZ3pPMEpGdDRWM0ZENEtESFZFTWlzQzV4VWFmenF2RzlzTGNObER2Y3c4clkxbTBxZVBBUEF3YzM5RUNtRl8ya3d0Wmt3?oc=5"
+},
+{
+"t":"Chevron CEO warns against 'unwise' diesel export ban, saying it could make things worse",
+"s":"CNBC",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMihgFBVV95cUxOS3AtdXB0ZXZReElCY2lUT2VTUjdRRjg2Z3NBZ1V0RE1LUTFIdzNCcHowbDNfdlp3SG1LYVh0SXd1MmFSZWhWZjVoUlNPSzNKc2U1b1hOSFR6U0dSRlAtQktKSkhCWlctRW1WeE1kV2ZVZWNBRGxjRVpYbk1XNkQ5N0lLVWlFUdIBiwFBVV95cUxOV2FqbmJsWDlQeGFCUWU4QlhpMDRuZmJNY2xoM2RGVzlMcC1uSmI0dkdtMEt0V3Z5c285bmdMUmFLYm02VURCaGRWQUtNWHpPME0yQU1CbnNKTlM1eURnWm1uTXYwbDh2STFQYlRHNGFCYVZEVjR4MzZVekowdEV1S0loZFFuM3FBQnhj?oc=5"
+},
+{
+"t":"Chevron evacuates some workers from Gulf of Mexico platforms at risk of storm",
+"s":"Reuters",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMitgFBVV95cUxPeE1tcFA4M1FmSy1kSUZiWmwyWVN3TE1ydUMwQllkOUVXRVJwbkNKVnZVZGx5Wng3Q2plMlk1a2NEYXpELXRSMlVMWm9Uc19IREp5bm1tNmQ4VHFLRktoWFl6WWEwZ1JWdlRvQ1JRTFVxM1dDb3BMZ3IwTDc2cGpBdHZhSmRtSnVCTHRZT3dsX3FuN3IxaVVpMERUelVHNmZ5WnctNmlpR1VwaTFvQ0xiM3hxNDJCUQ?oc=5"
+},
+{
+"t":"Chevron to divest midstream assets in Bakken restructuring",
+"s":"Reuters",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMixAFBVV95cUxORTluRjdOQWZ3ajh2YXNrVl9MbnR2WF9pNm5DdVhWcVZnNVJmSm5xQmhDczdrRTJMcjdqeGtFUlJKcWJLeUY2WjMxcm9SYlBaX0R1a3lfYkp3b3ZOMWRJMC1JNy1CX3c0OTl4bEtpWTF4WWR4NDFRN0xENERwc3dJS2JVUmtycHd0MzNwUVF2dGtubEpPeDBqYkFhdVJ5LTl1Q0EzV1k4QlowSEczNHAwSVNUX0IxVkVLOWttbExHT2RNNDh6?oc=5"
+}
+]
+},
+"COP":{
+"name":"ConocoPhillips",
+"desc":"American multinational energy company",
+"hq":"Houston",
+"founded":1875,
+"employees":11800,
+"employeesYear":2024,
+"listed":"NYSE",
+"industry":"petroleum industry",
+"site":"https://www.conocophillips.com/",
+"wiki":"ConocoPhillips",
+"news":[
+{
+"t":"ConocoPhillips sees oil price floor rising to $70 a barrel, chairman says",
+"s":"Reuters",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMiugFBVV95cUxNdElzWnJPYVRNeTc4QzA0NUVpNFo2NjBtY0VfZU54X2M4U0ZURUwyU2hjWFgya3Z5b01SUkdUeGQwQWtXT19KMll3d05QY1pndWkzdnV1bVZWcU5vcWNmTWxEVE5ROElsbUYxeUNLeVpzaEpHaFAxNlFEcHBJSUpzNDFZcHUzT3EwTXlYQ0xKNTBpZ0JiUWozQkw2MG01RWF5TmcyMVFETTctWTF3andCSTlMcW54eC1aTnc?oc=5"
+},
+{
+"t":"Venture Global and ConocoPhillips Announce 20-Year LNG Sales and Purchase Agreement",
+"s":"Business Wire",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMi1wFBVV95cUxOQ25GRVc4T3duRElabFN6MWlnMS1MQm12RXlmYXhhMEVvQ0U2Rms4Yy1odHBuNlY4cnREZU1sYUo4c21mbjM0MXREaGxMUDFQcFZPODRISHJLZ2NXbTBMWW9LU1owd3ZSWUFyczFwUkxDUzhtd2dIZmpYN1J2ZkdwaHc3T0hKSEZnZnZpOW9ibHpTbG5SUzYwYkl0c08tV0FuQkxlc2ExNE5wcnVxRmxHS2x5TzJScU1mVUpjeXk0VnF6dFJVbUhjTGE0R3RxdDY1ZDRvbG9wTQ?oc=5"
+},
+{
+"t":"ConocoPhillips signs 20-year LNG deal with Venture Global",
+"s":"Reuters",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMirgFBVV95cUxPQ0FMYkk0RXBNc2Vfb1psZDJDR1dyUmFmVjJqNUF0V1hqREg5UmVUOFZvMFRvbDF1MDlRN1U4NVpqNGZXMnpnTTdCQ1RkcTFBUFJXVUlKbzFVR2FsT3pZZlhsME5lZlpTazFFdU9neHZYVlFhN3FLMWdra2JVTmUwZ2Jib2F3eXJoVkVSMWVWMmFaVHpjOEV3TzZ4b25jVmFXY0tkUmpUNzJDa3oxNXc?oc=5"
+},
+{
+"t":"ConocoPhillips explores sale of Norway business and UK Teesside asset",
+"s":"Reuters",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMitAFBVV95cUxOazg3NldKaUZ5dl9mR1A3Sy0wVVpkRnFLak9QS3p2VFd2d3U4Z2RpMzZzSmpFU0puR3pzdzRVTHR0YWlycDg1aW1IcXpKNFZVR2tvQWxzVXljWC1JU1g0bXpZYmZsQzh5djYtZ0l3ZUVvTGZjSWZLdUpocnlBN2Q5aGtVVFM2RUp2bE9RVXJTTEpuTzNsMUFCa01GSnlSaEFFdVplSVEwcnp5T0JTenl3UHVHdGU?oc=5"
+}
+]
+},
+"OXY":{
+"name":"Occidental Petroleum",
+"desc":"American oil company",
+"hq":"Houston, Texas, U.S.",
+"founded":1920,
+"employees":10412,
+"employeesYear":2025,
+"listed":"NYSE",
+"industry":"petroleum industry",
+"site":"https://www.oxy.com/",
+"wiki":"Occidental Petroleum",
+"news":[
+{
+"t":"Occidental’s New CEO Tested by Debt, Lagging Stock Price and Big Dividend Payments to Berkshire",
+"s":"EnergyNow.com",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMiwgFBVV95cUxQNkRvdTVlNjhNdG1aWVhadll0ekVpUkRYLVUtc1ExRlVCR3VyM01kNWVCQ1FDSHEyTmxWZmhWVlc5QXcwVmdnSXI1M1ZXN0FJZ29KZVZnMHE3RkE3STlITDBXTTEzZmtZOEw3UzE3WEpUMFFHaktaRGlyTTA0UXU5TkFBcmNjbDR0RWIxQnZURkNsQXZrNUxZSlVGUWJRYVljMEJlY3EyNXB4SU0tMUZwOFZEMjQyb0g4c3hYNVA1aHR1Zw?oc=5"
+},
+{
+"t":"Occidental Petroleum Corporation (OXY) Stock Price, News, Quote & History",
+"s":"Yahoo! Finance Canada",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMiUEFVX3lxTFB6aUY0RFFQUk43bkZyaUJtdHlnMVVSWWhzdzlGMk9WbE0tNDEwVXJsdEJzcVhzeWcwb1pscGxxczdhemY3TzJxb3lkc1ZJbFc2?oc=5"
+},
+{
+"t":"3 Reasons We Love Occidental Petroleum (OXY)",
+"s":"Yahoo Finance",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMiogFBVV95cUxNUHdoSlZtVTB6dFFud2t5bFI4RXFLRUlYT0Z4VzlKMXVWbU5fYms0Q29TTTNWOTB0VUlqY3BSSDNGbWJHS3JYUW1vVEdRV0YwQ2JuNEFtQTllVFBWa3FHV3hwTHV1alY3LVRCNTdiNHFLVTlTMF9uQWtaanRVZ2M5NXlZYlFQQVdDZ3dJUnVPTTJBQ1F1ZFhaOGRiaGl4S2JxZmc?oc=5"
+},
+{
+"t":"Chevron vs. Occidental Petroleum: Which Oil Stock Is a Better Buy in 2026?",
+"s":"The Motley Fool",
+"d":"2026-09-21",
+"u":"https://news.google.com/rss/articles/CBMiwgFBVV95cUxPU1RvUU1CeDRzZkxvM1E4RVZWa214QjRWR0dudUZQcEJ4SDA3V0F5QzZoMDhTU3A5dzVjLTVIYTVRaEwwcG1Yd3lscEVBdzNQejFqeE5ta1d3d1hKTHNyNC00cFBkTjJzZTNZaUpuME9nSERKTjZCVWJRNzluZFZuSU5aM2Y3aE10Ni1USDhnbnhmT3ZoYmR6MHdTU3BJYkh5YnRJd280ZHRIYWR2TDZYSnJOaFlDOU56OU45X1UyWndYZw?oc=5"
+}
+]
+},
+"EOG":{
+"name":"EOG Resources",
+"desc":"American energy company engaged in hydrocarbon exploration",
+"hq":"Houston, Texas, U.S.",
+"founded":1999,
+"employees":3400,
+"employeesYear":2025,
+"listed":"NYSE",
+"industry":"petroleum industry",
+"site":"https://www.eogresources.com/",
+"wiki":"EOG Resources",
+"news":[
+{
+"t":"EOG Resources, Inc. (EOG) Stock Price, News, Quote & History",
+"s":"Yahoo! Finance Canada",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMiUEFVX3lxTFByeVRlNlB4bWRETVNDVE01UEcydEhDbFo0MFFJRmhaWGVhVlNRazV0SlROVHF5dS0wc09ZMnlyMVRJaHg2bzJ1eDd5bmF6dGFz?oc=5"
+},
+{
+"t":"EOG Resources Announces Ann Janssen's Retirement and Jeff Hibbard as Next CFO",
+"s":"Yahoo Finance",
+"d":"2026-09-24",
+"u":"https://news.google.com/rss/articles/CBMiowFBVV95cUxNNDRYQjlPQ0piTUVTcFo3NGc4djZDbzRSeUIweEhlaWxxQ0pIM2hiQ05pb2UzbjVXaHFYWGVWUURNSFZEbUlBanBKNy1SUVV1bUZCdUx1VUdKTWJtZ0J6WXdwWmp4a1h5b2hIVFpJSERQVFR2Um5uM3lnZ0JYZTR0T29mb2hhV1F5bEdEQmY1Q2doYmhCbV9qMW1kYURGX2R3NXdF?oc=5"
+},
+{
+"t":"Is EOG Resources Stock A Buy For Its Shrinking Share Count?",
+"s":"Yahoo Finance",
+"d":"2026-09-23",
+"u":"https://news.google.com/rss/articles/CBMinwFBVV95cUxPWkFmRHNoZUJxd1NudlhPcjlsQ05UY3pwa1RVai1kdE9PN0tCd1RWcDg4QlpEbVEwZmdiMVl0VjFDTHRSbWI4VXczWndLbHhNak5EWUJubHN2aWxhcDJrZW9jTnp5czlpZUVDRnRZZ05POFVGMGRUSGh4WkRrT1k4Ukc2SW1BQ1FRYzBFVHVKUFB1MV8yUjlRUmtDbmdDT1U?oc=5"
+},
+{
+"t":"EOG Resources Schedules Conference Call and Webcast of Third Quarter 2026 Results for November 6, 2026",
+"s":"Yahoo Finance",
+"d":"2026-09-22",
+"u":"https://news.google.com/rss/articles/CBMinAFBVV95cUxONUt1NGtacjN6c19QRjNpeGNIbE9GMk95U1BkVjE5OTRlMlBLWlRzRkdoYXZnU3poU3lfbUFkZ1g3OWNkVWtHYTVtTjA5OGFJb1ZSTElaWVctUWxaeXhzUkpmd1Q2eXh4OGswQW02ZGktWUZaWTBhYk9vempuMGdHbU9ORmZZdVJfODU1dXE3bzB6dktRUFpBZEwtZTc?oc=5"
+}
+]
+},
+"FANG":{
+"name":"Diamondback Energy",
+"desc":"U.S. energy company",
+"hq":"Midland, Texas",
+"founded":2007,
+"employees":1762,
+"employeesYear":2025,
+"listed":"NASDAQ",
+"industry":"petroleum industry",
+"site":"https://www.diamondbackenergy.com",
+"wiki":"Diamondback Energy",
+"news":[
+{
+"t":"Diamondback Energy, Inc. (FANG) Stock Price, News, Quote & History",
+"s":"Yahoo! Finance Canada",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMiUkFVX3lxTE1udzRUeXNJSW1UcHAxMmJMTEU0NVVJMDlXMDgxVU85YXk2NWNPNkhLN3RJMTNUVDdPQWN6UnpzcDJTT1pBYkRlYnptVGw4OXlqNEE?oc=5"
+},
+{
+"t":"Diamondback Energy (FANG) Stock Drops Despite Market Gains: Important Facts to Note",
+"s":"Yahoo Finance",
+"d":"2026-09-21",
+"u":"https://news.google.com/rss/articles/CBMiogFBVV95cUxOZ0hmUkFndFlZeHRpck5YV3lTV19yQmJLWGRpOC03WVdzMnFJVTgtRDVCLWNYOFZhQ0VzcGhmeWN0cmczdkJGRlV1aXpNaWJtYWUtNnNuM1NQSGc5TVhUVTZYUUExd1RNdzRfXy1JaG9ibGQzcHJKMzg3SjVZVkFNUUotMmhHWVZfSWNkU1oxOGxtNmlzeE5BVC1YZkFJZmRMLUE?oc=5"
+},
+{
+"t":"Diamondback Energy Sinks After Insider Sells $2 Billion in Stock",
+"s":"Barron's",
+"d":"2026-09-18",
+"u":"https://news.google.com/rss/articles/CBMihwFBVV95cUxOVEJKVU1ZN1A0cV9CLW9DYVZPLVUwMFFHUnlzek8wYXpEZGluRWtPdjl4clVUYXZTVE55VHNCQm5ZRFJXMFUxR3Z6dFFhQzlkaFB0Z203LU1nOE1Iejl6bmV4YzQwY1ZOZEdfX1J1Z2VhMVpGaGtNejV0RE5MU296cDloS1Npbms?oc=5"
+},
+{
+"t":"Diamondback Energy (FANG) Rises As Market Takes a Dip: Key Facts",
+"s":"Yahoo Finance",
+"d":"2026-09-09",
+"u":"https://news.google.com/rss/articles/CBMiowFBVV95cUxOeHNMNDdqMG1mc3Z5YUtmVVhCNXBZWnlHR0JXY2tUaUNnVmYxY05QbVBPTGQ2bWlrTFhpamFuMkVSelpMWTAxa3h6ZWpncGwySEZMZVJCaVV3eWpGN3EtY0RIQkJScnp3QmhSRVFscm8yOTVQbkdXMWRQSHFjVS1mamdya20yMzJSempMbEdHaFZ4WkVoUVpRbXNMeWlBU3pjUkw4?oc=5"
+}
+]
+},
+"BTU":{
+"name":"Peabody Energy",
+"desc":"American coal mining company",
+"hq":"St. Louis, Missouri, US",
+"founded":1883,
+"employees":5500,
+"employeesYear":2018,
+"listed":"NYSE",
+"industry":"mining of coal",
+"site":"https://www.peabodyenergy.com/",
+"wiki":"Peabody Energy",
+"news":[
+{
+"t":"Peabody Energy, Solaris Energy Infrastructure, ProFrac, Centrus Energy, and SLB Shares Are Falling, What You Need To Know",
+"s":"Yahoo Finance",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMirgFBVV95cUxPR2RhbkhsMHdsdG9KRlcxalBjemNTQS1mOWRCV3VqMUpaT3Y2b2FtRkJNWF93UFlKSnE1cWs2aE5FVUJ0cUE5ajRZQWNkSzcyYXVTay1mbElHcVFkVTZzWmpHU3h0akpweEVHZ0VnSllVSVN3b01fSjU2UW9LcUdvQnNaOVJjLUFFclN5TlNFRzl3djBIcFJZdm1tWU5tbDB2TnEzc01KRHFVRG1ERUE?oc=5"
+},
+{
+"t":"Peabody Energy (BTU): Buy, Sell, or Hold Post Q2 Earnings?",
+"s":"Yahoo Finance",
+"d":"2026-09-28",
+"u":"https://news.google.com/rss/articles/CBMilwFBVV95cUxNcVF3dVllX2xKMVAtZVBGaEpNQ3l3YXhxNnE3bTBBVmNNV1FJbDg4bTZXQWJ2bFhrUWlhblpocmJabm41SENRSWd2V2V6NlVmd3BxTjk2TE1wbXAwX0RwUzJucmRwbHlMQXhvOXFrRG9qbE5wbGthUDQyWDJ1QnhWSzk1YWhuaEVnTGhOOEZUNGo3TzdzSTNr?oc=5"
+},
+{
+"t":"Mixed or Offshore Upstream E&P Stocks Q2 Results: Benchmarking Peabody Energy (NYSE:BTU)",
+"s":"Yahoo Finance",
+"d":"2026-09-17",
+"u":"https://news.google.com/rss/articles/CBMijAFBVV95cUxPSlp4MmlWci16d05NTDVRSy1QWEdKZkZSTUNPX2ZXY2FIWkpOcDJZdEcwQ0dnc3JtSnhqa0lDQWxwd3JPczJOcklZZUdmcVRMX0FrNnFfV1o0ZS11UlZHaGlaZC1NYWhMcWlnempOeVp4aHh2TDVKTHhScW02UlVURGJIM0UzTGt0SVRiVw?oc=5"
+},
+{
+"t":"UBS Adjusts Peabody Energy Price Target to $27.50 From $26.50, Maintains Neutral Rating",
+"s":"Yahoo Finance",
+"d":"2026-08-24",
+"u":"https://news.google.com/rss/articles/CBMingFBVV95cUxPSnNhbFFzRHEwbkc2Z3RCakpVWTdqM0FCZkhkMDkzaXhaRm5hWEJXNWw5T2NMR1BmRktabWNLVTVNMWlEVHdybDVIZ2o4OURzc0pZNTJMRERpNVhwV3hUVjZfRFdhWEhaNl9xX1lYVXlURTBrNFg0YktWRkxhTzBKa3ktYnZWZThnNG43S1lYMnM3OElVQUduYkRZLUdvQQ?oc=5"
+}
+]
+},
+"CEIX":{
+"name":"CONSOL Energy",
+"desc":"American energy company",
+"hq":"Cecil Township, Pennsylvania",
+"founded":1864,
+"employees":1692,
+"listed":"NYSE",
+"industry":"mining of coal",
+"site":"https://www.consolenergy.com/",
+"wiki":"Consol Energy",
+"news":[
+{
+"t":"Coal Co. Settles Fight With Miners Over Lifetime Benefits",
+"s":"Law360",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMiUEFVX3lxTE4yNmlBam9lbDFtRHpUWHVNakpXWXBxQVlrRDVvWUZiOHo1MTJ4eThHZUg0NzRmU2toNzN1V1A4RS1DdE5tdkNDaDQzelh5cTMz0gFWQVVfeXFMTUFyaUpnS2Y0WG9HTTdFakZQNUtoZ195ZUhzeF90alpFQkM1N1RVTW1fZVE0VWRNWDlOWDFjUnlMQXR3Vnl6QWNQX3NXQl9XWVpqU1V6NUE?oc=5"
+},
+{
+"t":"CNX Resources Corporation (CNX) Stock Price, News, Quote & History",
+"s":"Yahoo! Finance Canada",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMiUEFVX3lxTE9UNzdiNFhzdEJxb2dtRFlOcWY1cG0xZ2tvYmJsVFh2TzNqeWdKUU9HcHZrQWdhNUluVFdVUGVHRFk1U2ZJUFFNS0M2ZllBUGU3?oc=5"
+},
+{
+"t":"Former Penguins defenseman Matt Dumba retires",
+"s":"TribLIVE.com",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMiVkFVX3lxTE16NFZSQzF0YnFZVkpBaWtodFJ1Y0d1M2g3VnNSYmRSTXliMERGNEU4UTdSckc3M1kwTm13T0NEY0xBUkJMMWtXOERZck9sbnV1V1dXTlV3?oc=5"
+},
+{
+"t":"CLEAResult Acquires CHEERS, Expanding Support for California’s Residential Energy Efficiency Market",
+"s":"Business Wire",
+"d":"2026-09-29",
+"u":"https://news.google.com/rss/articles/CBMi6gFBVV95cUxQalFzc0VDcnYyR0ZsUF9EMGRXTWMzRHBHeWZSY2FmQWxjbXlyOEZCc2QzbVROWEpBdGZvS1pHeWZkbDAwQTdwQUo4bWR2QkpXMF83OGdHdDhzUUVyMEluX0JCV0o2alpKZGRSeFE3UUhkNWQtQkhjWkJZZmlNT2xtOUs3aHBfbFd2WWdlYU84MFJzY0FEQjd5NDdQSXVrenhIMTJZTkZ1bHRNbTV3Y1BHYnF0Q0pPWlJySDVlTWhkdkdnN05RSkJuZThxWjVRNWdPS2phSENpbi1CN0NPTHF6am9xbW9qelJLbVE?oc=5"
+}
+]
+},
+"ARLP":{
+"name":"Alliance Resource Partners",
+"desc":"coal company based in USA",
+"industry":"coal industry",
+"site":"https://www.arlp.com/",
+"news":[
+{
+"t":"Alliance Resource Partners (ARLP) Could Be 21% Undervalued On Royalty Growth Narrative",
+"s":"Yahoo Finance",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMinAFBVV95cUxPc1lfdTR5bWlrekRSRVU2SWVIVXJUZUFoNzJFUVJSUUlpSURGdTJhQ3pCb1RMR0pLUjhPdjhHLXd6c2pXZ25YVVdGNk1oMVZWcjYwUmFucXkyOVB5R2ZTd3BQeXBZdDlZU093M1RJZ0poWmZPcWZZZUplVG45TDBKVEVTNGpFQ29raC1fMFpPaDVyeXZSRldEMWljdko?oc=5"
+},
+{
+"t":"Alliance Resource Partners (ARLP) Could Be 21% Undervalued Following A Softer Month",
+"s":"Simply Wall Street",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMi2wFBVV95cUxNbmJZQUhRZ3kyNGtQeURZRDNWM3gyLXZtdWprZlRhNEROZTY4ZWI2WWk4T2JxLXhYV2djWDg2dFM5R0EyQzNCbXJnREZpSHpRX1hLcllQVWVMYlEyZ25wT1FuWjFFSl9FN2pqWVlJXzZORU13WS1tM1pqNGc5cmNlc3dNTHQ1VmFmd2FUNnVqNDNnUjVHM3Y0UFFKblozdnJENWpCLUd3bm1Vb3NnY1dremU0eGMybkh0dmx1ZVB1Rkh0b3czTDQyUEQ0RnJucUdDTUVCRXVLdnVyQ1XSAeABQVVfeXFMT1R5Z3Eyb1ZQVDVzNy1uQmZ0NmtEU0pYT2k0OXIxakFXRlZXV0pPc1NoV2pYMnBxRnZ2X2hPYTFWS2lFNHo1TDBVUmR0a0pTNDNMdE1jZUFQLXExbm1rUjVESjY2REY1Z2x3M1Z0Y1NydUdWMzd1RDVWM0VZTHFXcUNhaU0tVGJPYmVTQ3ZyWW1Sejk4djNadVNXY2tUUnRWWmFKUnluNHhoN2pnSVctYkpHQkVJUlZJaC1xTDhCVGJjdXl1ZDNIY0Ntb2xXZVpJcEZ5YW0xazlXYjBNVjJYcWo?oc=5"
+},
+{
+"t":"Alliance Resource Partners: A ~10% Yield Backed By Contracted Coal And Growing Royalties",
+"s":"Seeking Alpha",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMi1AFBVV95cUxPZlRHTHRWaFZ5d05Ob3hjSnhCQVVCNzctb3Rfb2p3NF83ejNHd1hrR2RUX2plTlc4OEJvWDNualJYRUJ2aV9zVDJSRGY1dExOdnZVYllXeFlYMmFBcWNIdktHaXprRFpNVFcyb2VKWVB6N1RXcFNaVDF4RnFseUJmN0pleVpWVDlhT0YtVnVEekxyaFB6dDI3cDB5cHJ1MkRGdGJTVTlMV0dIN2tlazJPSWl1YmlfcGEybmVhNUVqSG9qNnRxSDV0VVNyaFZvOENzVEhqcA?oc=5"
+},
+{
+"t":"Alliance Resource Partners (ARLP), Why Is It Back In The Spotlight?",
+"s":"Simply Wall Street",
+"d":"2026-09-29",
+"u":"https://news.google.com/rss/articles/CBMi2wFBVV95cUxQRllLbEVxQ05xYUxNbzgxWGp5TXQwSm9OdGxodlR6b0paR3Q1eXJfM1NJVjMtRE80WmRCTy1NekM1UW9kTEpGQlVJZFlfN1lMSUpMTWVBbWZENUVQbnVnSkFydVRyWVNTd1lSdjY1UjVob2FmaHJVZTVZYlpDT3J1Wm9TbnhFX2ZTbk9vVXJHcVMzaENnMElaTDQ4eTRZMkNiN0IyWlgyU1NHank1ZVhCY3o1TU5rWldScUkxemNhZnNYd2htMTBocnI3NHJ3aEpDbzE0S3RLMVk5bknSAeABQVVfeXFMT0ZvUFEyVDB3ZkJTRkg3bTFucm45UHYwVU5selhZRExsd2lfdEhRWXI4LXVYQ1lFVmJkU0xSNEdSbk1vU1J0MXB3WC05ekgzdWZOM3NLOXNLWnJyUVQ0UjFkUWZUTmhOX3ZXYVhIZVdkVUx1NVFUWGR0TWMtN2JEWFZOMGpjRlZRRHVOQXB5Y2xrN1RpT0ZYQUo0YW5BTVlrM1RfeGxURThsRnpMcTlPVjUtd1VwSTRPQjdRREl0aHBqT3RoYWNUWkxiSkhCcUxGeVoxLUFMcklwZ2NqUFdVNTY?oc=5"
+}
+]
+},
+"CCJ":{
+"name":"Cameco",
+"desc":"Canada uranium company",
+"hq":"Saskatoon, Saskatchewan, Canada",
+"founded":1988,
+"employees":3082,
+"employeesYear":2025,
+"listed":"NYSE",
+"industry":"mining",
+"site":"https://www.cameco.com/",
+"wiki":"Cameco",
+"news":[
+{
+"t":"Cameco And 2 Canadian Nuclear Stocks To Watch",
+"s":"Yahoo Finance",
+"d":"2026-09-23",
+"u":"https://news.google.com/rss/articles/CBMikwFBVV95cUxNWjk0NUJYWWVnNDhUcmFNd3BwSjFFa2xVZ2Z3V1c3RlRmc3B5ckpRZ0oxVllSOXpHUnVJb3F5eXowU1pWUUVsV2owajJVYmJNYThCYXI4LTNnNk4tanZ1UWFRMnlPU2pPeHRhV1BfY1llaEc0eG9BNTl5NE5HQjFrTm1nY2dFWUpPbHdkZTE5YXFldGc?oc=5"
+},
+{
+"t":"Prediction: Cameco's Westinghouse Stake Becomes the Real Growth Story by 2028",
+"s":"Yahoo Finance",
+"d":"2026-09-18",
+"u":"https://news.google.com/rss/articles/CBMirwFBVV95cUxPd1F1UzFvUmRqVVpaZ0ZNWjRmY19OSjliVzFvUGZZT0h4UnVTcWJqcFdRT0hETlM1VWZVYUMwaWpubjJWNmNpdHdVWk15b3QtZGdpaXR1bXRxNGxMS3RhRG9oX0Q4VFphMEplZUE1cmdNcXZsdDEzenAydkx5eDFFWFJTUHhSdklDWWF4UVRuWTI0ZHF1SENpZ0s2RThuNzdqRGt2SzdfVlNGdTctY0tJ?oc=5"
+},
+{
+"t":"Cameco vs. TMC The Metals Co: Is a Uranium Stock or Rare Earth Metals Venture the Better Buy in 2026?",
+"s":"The Motley Fool",
+"d":"2026-09-10",
+"u":"https://news.google.com/rss/articles/CBMi5gFBVV95cUxNVDNmZTljRVJDcHl2WlhjV2dscDBPSGRWakhob01LSGNPeUNKRzZOZ3NQMTRUODlvQ1ByeWV4WmFBWjg1elZCa0d1VFVTV2NMWjdfdzBQS3VRVm9SbFVJc0N4RjBNNU9UN00td3R3dy1hcUFRMl93Q3RNRHRVM2tpUDNyMktvajB0UmNkVXAwTWdFTkpzdnFUckl2LU1WYjlWRjV1LU5QYTJpSHQwcllxZXdkTm9wbzZOSzN1ZDRBTzhvS3pzcnhtVE1zZFpVU1FzZl9pcnFwSEVZZFgxTWJpbl9JeldtZw?oc=5"
+},
+{
+"t":"Cameco Stock And 2 AI Infrastructure Picks With High Growth Potential",
+"s":"Yahoo Finance",
+"d":"2026-08-29",
+"u":"https://news.google.com/rss/articles/CBMingFBVV95cUxObm5IVzluNVZoMGFHamIzQ1Zvc1IwOExTbjV0UXlUN3piUU16Nk1SdTdNUkJILUV0akN6dm95RUQtSUpoM0V2Z0stVFRqeGZiSEhLWURzeTJ4MU1hQ0VpZ0VXWFZIY1pEaDVZUFpaQWRWS2FsaGhYQlpibU5UTzA0WHJpUkhXVmZzdXJVSUozUG9zM2JqaXRzY0s2bUUyZw?oc=5"
+}
+]
+},
+"LEU":{
+"name":"Centrus Energy",
+"desc":"American nuclear fuel supply company",
+"hq":"Bethesda, Maryland United States",
+"founded":1992,
+"employees":266,
+"employeesYear":2021,
+"listed":"NYSE",
+"site":"http://www.centrusenergy.com/",
+"wiki":"Centrus Energy",
+"news":[
+{
+"t":"Centrus Energy (NYSE:LEU) - Stock Analysis",
+"s":"Simply Wall Street",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMib0FVX3lxTFBtVi0waHBwOEF6UEoyUDVlandKOTdsWTNENlI1bHBEVVpIc1BCeWZSUVBsNE5tdWNoZjRuejR3S2tmTkxrTHl2NVN2ZkdlSnpfSzdSRnNBSWVjMWVZT1dMSHpBY3ZleGdBNkdrbUxWcw?oc=5"
+},
+{
+"t":"Why Is Centrus Energy (LEU) Stock Soaring Today",
+"s":"Yahoo Finance",
+"d":"2026-09-17",
+"u":"https://news.google.com/rss/articles/CBMimAFBVV95cUxNSjh4Y29Qbk01QzU0TEJiY2RCYXdCbFFiN3E0cTNZMENYODhjLXZRZm9tUVVpejBsZTNxR05BQlRDcnJ6T2JGQXNtbzctVHhnNjZqbEM4SXNiTkJ6am15N1dJNG1zSlZ4RWpoMlc4NjhJMl9mTS1JOWZZSE9LRG14UEFuNGRxa1NWY29ab2Qwbm9OSEJnbFFPdw?oc=5"
+},
+{
+"t":"Centrus Energy: The Backlog Is Now Real (NYSE:LEU)",
+"s":"Seeking Alpha",
+"d":"2026-08-31",
+"u":"https://news.google.com/rss/articles/CBMihgFBVV95cUxNVU84cy0tdUx1RUxVU2EtRjJTYmdkZnBCZVdIU1l1a1FMbDBSTE8xSVJwcVZOYnhWZnFUUTFqT19DY2hfdVhRVzB0d3I3amdJdHM2U3Z5MVBPdEdsQ1BwNTc5am9LUEV4dk5wM2xPM01jdWE5djhtLWlCYmgxbWhNQ3JFNUxjUQ?oc=5"
+},
+{
+"t":"Centrus Energy (LEU) May Have Found its Next Major Growth Opportunity",
+"s":"Yahoo Finance",
+"d":"2026-08-25",
+"u":"https://news.google.com/rss/articles/CBMijgFBVV95cUxNQjF4eHdFZXdWVGZSZnZEQUhuNEprSDNEZ3M5b3hYZWh5ek9mam9YSUhZQzkzUzlCZ1oxbk1DTzgtMjR5dExJSENxLUwwNUItNENDX1BublV1RXN4VmY0RlBZaUI5MDEza1VMZVlTZE1jRE92TnpMU3NlNVNaUjk5SXBSNU16OXpiLUxkUFRn?oc=5"
+}
+]
+},
+"BWXT":{
+"name":"BWX Technologies",
+"desc":"American industrial company",
+"hq":"Lynchburg, Virginia",
+"employees":7800,
+"listed":"NYSE",
+"site":"http://www.bwxt.com/",
+"wiki":"BWX Technologies",
+"news":[
+{
+"t":"Jim Cramer Weighs In on BWX Technologies After 27% Pullback",
+"s":"Yahoo Finance",
+"d":"2026-10-04",
+"u":"https://news.google.com/rss/articles/CBMioAFBVV95cUxQXzJTQTFpLXhXdE4yY3RCRTBuY0EwM24xMzFGRXdBNF9fQnJhOHdwdkEtVE5NSm9PLXctYW9iY1U2M2I2RVlaQ0hRdFdKSjF5Q3h5VDlrNHdmZHZRSDBlODhfU3ZhTDJ4TFpZY3VpZUEtcXEtbVQzclQ5RUtfQzd0UjhCU3BxT2t4ZlJ2ZU1kdFZHcFk1aUI4Wi05ZHdmS2hQ?oc=5"
+},
+{
+"t":"BWX Technologies to Announce Third Quarter 2026 Results on Monday, November 2",
+"s":"Yahoo Finance",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMipwFBVV95cUxPdXgzMTZHeXRzdURkeDlJaWdpV1hfWFNFYUU3X1AwYzhfNFR4T1JMYnl2Y0dNV2JsLWMtRjltM1o1VlBNZXNxWVdxRUZFbUNoTTl5T0VuSHhfY0dFdkk2Nng0akhFamQ3SDY3SnU2elJDNDRSckZHS0UwN2N4bURYakp0Y05IZm9hMFg1MGo5TUphMFJWMnpMYWk2SHlnb1k5VXE1eFZDMA?oc=5"
+},
+{
+"t":"BWX Technologies CEO Rex Geveden sits down with Jim Cramer",
+"s":"CNBC",
+"d":"2026-09-29",
+"u":"https://news.google.com/rss/articles/CBMiowFBVV95cUxPV0hzV3lhdDBJSXVlSllYRUh4UGpmMUkycXdfUzh1ejFKclU3MnpTVnlXY3FFLV9JeldjU2VGalp5amRKRGl2dnZ5WXdrWFc0U2lUMjN6ZXVJQVRUdzMwb2x0XzM2X2d6dDVjejR0dTJrZVVuWTFoZmVHTkVDT05lazRBbUpPX1Bob1JEY1Brd1h5LU1nZXlObzZuM2VWbTRUT2Zz?oc=5"
+},
+{
+"t":"BWX Technologies Hosting Investor Day",
+"s":"Yahoo Finance",
+"d":"2026-09-29",
+"u":"https://news.google.com/rss/articles/CBMipAFBVV95cUxQZ3k4d3B6eEdCWVQ4NUZYaHNvdHJScVZYLUx2dHBCeHpORUhQR01CWEZaWHhGT0F1VXJXMXRQUU1mSTVmRTB5OVozXzVVcmJ4MG5BRjd5TDJNaXUxek9kWGY3ZXI4VlVOSXFXN0ZwNkdrcnBkXzc3YnYwRVgtLTRPNjl5RGRyWlFwRlg3b25NQjREQy1NZFdRcVdleERDU3NVd2w4Xw?oc=5"
+}
+]
+},
+"FSLR":{
+"name":"First Solar",
+"desc":"American solar power company",
+"hq":"Phoenix, Arizona",
+"founded":1999,
+"employees":7900,
+"employeesYear":2026,
+"listed":"NASDAQ",
+"industry":"photovoltaics",
+"site":"https://www.firstsolar.com/",
+"wiki":"First Solar",
+"news":[
+{
+"t":"First Solar Sues Corning Subsidiary, Chinese Rival Over Patent Infringement",
+"s":"Investor's Business Daily",
+"d":"2026-10-02",
+"u":"https://news.google.com/rss/articles/CBMiiwFBVV95cUxNODUzRF9PZ05DQTJOM01nSkdTNHhLTjRqMkhjdW5iVkVrOVdZSUowTWl2MzBkRjRaM3JBWUlydTVfU0tBR0gwdm84RF82dnJIWUtYR0tJZldqeXk4Y01ZUkdrTWw1aEpIaEtvTWp2ZmFzZS1IUU55MGZHRXRxUWJONU9ON3JHdjZNX0JN?oc=5"
+},
+{
+"t":"First Solar sues China's JA Solar for patent infringement",
+"s":"Reuters",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMiqAFBVV95cUxQWlppamF2Z0xLMHJBMzFsQWtxQ281enVtUHVIdVc5N19BWXNrSGFuSWdya0JWM0R0UWFyaGlUazVlWkxfbUJjeGczV0JnSHJFSTNNUzk1VVpHeUFLb2NTY3pETm91NTZDRkRKXzJYamY1V2lXanVQd0w3NE9wYU9JcnBubmpxc2Y5UHg0b0sxMU9VS2JlUFNRTzJJTWM0S1U0NXZneVdDMmI?oc=5"
+},
+{
+"t":"First Solar (FSLR) Stock Declines While Market Improves: Some Information for Investors",
+"s":"Yahoo Finance",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMinAFBVV95cUxNRDh0MEJkYzk1RHVfTWNmR00yUzY3YnpVNnIyY2FrRXN6X3ExZmw2YWFaNllpZ3AxZ3lSbjJBblFCRW8zMHVUOHlsUnRxM1owdURZek9ZRlpPazFRYmUtY0hDeklnNzNNZmZXenBlb0xZZW91VU9JM3ZkczBrcklLaWRBNFVQNGNvVTBycC1wZU1vd0xPODVFU1h6MF8?oc=5"
+},
+{
+"t":"First Solar leads big solar sector drop as high borrowing costs threaten project financing",
+"s":"Seeking Alpha",
+"d":"2026-09-24",
+"u":"https://news.google.com/rss/articles/CBMixwFBVV95cUxPT3BQdmdjUEhlMmFmTUJRYTI4ckxJQ1VuRUtIYWV4S0VGcEZYY3BtcnJCOHlGcWJ3MXg4NGMzLWJsNWhrQ29wQXR2WkhtaWNVcXB5LTVzMnpaOFRhaHZIb3ZxMjhEV0NZTS1odnFZZW4wM0lKYTZoUVVYbkJxLVpPU3NPZGs0OWdUWmo3V0pDcFVXMkhGMTBhdW1sUWNuVkxVZFpxMTJhZVZGZG9vdFN0UlV0bTZrMXc1Y2NqTFkyclUtRkJzX0hz?oc=5"
+}
+]
+},
+"ENPH":{
+"name":"Enphase Energy",
+"desc":"American technology company",
+"hq":"Fremont, California",
+"founded":2006,
+"employees":2781,
+"listed":"NASDAQ",
+"industry":"renewable energy industry",
+"site":"http://enphase.com",
+"wiki":"Enphase Energy",
+"news":[
+{
+"t":"Enphase Energy, Inc. (ENPH) stock price, news, quote and history",
+"s":"Yahoo Finance Singapore",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMiUkFVX3lxTFB0YjRGR05PaTJKTzNCLWxVSFVtVXg3TWF1V0lBTURiXzJwZV9qWW9GNTVONWRJMmh2eFlQM3lQaWNHcUgwRTV6RjA0X2IzVk9MT0E?oc=5"
+},
+{
+"t":"Enphase Energy, Inc. (ENPH) stock price, news, quote and history",
+"s":"Yahoo Finance UK",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMiUkFVX3lxTE9xRWpVbXp0NXlDVmRlVXp6Sk43aTRkSGJxa2E2dWg5MG9DeGtNNXh6WllvZGFoQk1td1kxUGFPUzBQVjYtOEQ3MGVwQUo5TjhKbFE?oc=5"
+},
+{
+"t":"Enphase Energy (ENPH) Stock Looks Near Fair Value On Cash Flow",
+"s":"Yahoo Finance",
+"d":"2026-09-26",
+"u":"https://news.google.com/rss/articles/CBMinAFBVV95cUxNVHZFRjFUNnhoMmxCWWVYUENQWHpmS085bkhINmxydV9heDY2VEVqMnVIcldSc293NEp3THpVdlFkazI2NGFGY0J2REhnZlZOa2draFNtemZPcE96WjRKbkppNUlFTXNRUXctR1BDTklISDlXekYxaTVhRFk2QlN3U25CVENDWmJWOEhQTlhXVzlJckN1Q2VIay0xeC0?oc=5"
+},
+{
+"t":"Enphase opens pre-orders for 80-kWh commercial battery that skips central inverters",
+"s":"Yahoo Tech",
+"d":"2026-08-30",
+"u":"https://news.google.com/rss/articles/CBMiigFBVV95cUxPNjZFQkhuam1weW1VU0xLcFdGNW85N2pfalJjQ0dCWHg0NlcwNmxjTFZCM255RWdqNFN6bU1Rb2UyTW9HbkVPQXk0UDF4UzlEdHUxdmFVcUVES2FObXVodmdqaENhbS1DMzdpYTZKbklfT0Q1NVU0c2p5Mm9wVW5wYmVmTmdnV09Qanc?oc=5"
+}
+]
+},
+"SEDG":{
+"name":"SolarEdge",
+"desc":"Israeli technology company",
+"hq":"Herzliya",
+"founded":2006,
+"employees":3576,
+"listed":"NASDAQ",
+"industry":"photovoltaics",
+"site":"http://www.solaredge.com",
+"wiki":"SolarEdge",
+"news":[
+{
+"t":"SolarEdge Technologies, Inc. (SEDG) stock price, news, quote and history",
+"s":"Yahoo Finance Singapore",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMiUkFVX3lxTFBEYV8weWUxa21iY1FEbFhkbnZzMVQtSy1UZUp3WEFEa2RVS0dLUnJjRFhsSlM4T2JraXVHVU0tMTBpeFl0eS1Kaks0Q3hyTTNEU3c?oc=5"
+},
+{
+"t":"SolarEdge Technologies to See Continued Solar Revenue, Margin Growth, RBC Capital Markets Says",
+"s":"Yahoo Finance",
+"d":"2026-09-11",
+"u":"https://news.google.com/rss/articles/CBMioAFBVV95cUxPTzhzMFhEaFZuOVY2NkxsLXdJa2J0MGJjNC11eEZNMXJFS2xuOG80Q25TaEMweFhfa2h2UzhELVpTX2dBUWpYM2JSRVBRNHB3S1gwYVR4VlhpYkxENDNPeFNiZ0RpWFByVkotX25abDlYcWlsRHJENEN1WEJKYjkyV3kzVVJMclVKSzE2Y0ZEemxGYnh0Z1hTZlVsaTRPcTFn?oc=5"
+},
+{
+"t":"SolarEdge Stock Jumps After Upgrade. Why This Analyst Sees a 41% Gain.",
+"s":"Barron's",
+"d":"2026-08-26",
+"u":"https://news.google.com/rss/articles/CBMieEFVX3lxTE13OEJkY0o4cGhRVmY0Smtyei0tMW1pT3FXOWJ2b2N2dUZvSFNYMDN1enlkUlpFdHB1LW5ZSkRibHB0aGRlbE14UGNHOWc1M3ZPTURlT05wMjczTGNEWEVLLXNfVXBfR2dCMzRDQ3IwN1YxcHJFdDhUWg?oc=5"
+},
+{
+"t":"Why Is SolarEdge (SEDG) Stock Rocketing Higher Today",
+"s":"Yahoo Finance",
+"d":"2026-08-26",
+"u":"https://news.google.com/rss/articles/CBMioAFBVV95cUxPYTFuLUh4WVU4RmJqY3VocHFKMmljelR3M1lvMmxnR1dldEc0RXJFem5qMUxzM1ZVTXNDMmxNYmFOa0VJaTdValBjbEdCeVoyQ3ZYMFQtZHJTc2N1X3hPc3lIOENEdUxVdC0wUmxYWGxhV3VfYzIwX2F6M3Zaa3YwZW1Oc09Ka2ctY1BvbG5ObU1qRnpGVTZDSEJoWmdHbEdW?oc=5"
+}
+]
+},
+"RUN":{
+"name":"Sunrun",
+"desc":"American renewable energy company",
+"hq":"San Francisco, California",
+"founded":2007,
+"employees":11058,
+"listed":"NASDAQ",
+"industry":"photovoltaic system",
+"site":"https://www.sunrun.com/",
+"wiki":"Sunrun",
+"news":[
+{
+"t":"Sunrun (RUN) Dips More Than Broader Market: What You Should Know",
+"s":"Yahoo Finance",
+"d":"2026-09-23",
+"u":"https://news.google.com/rss/articles/CBMimAFBVV95cUxOR01Jd1R5ZjRxbERndGtzdXFxamFmbldGLTlWNmZ3NEtyUUZkWTNTRTRMcC1kSHR4Y2lPWmxEemVyVUE4anpPTFJXbTJUQ3MwRmpsZHlIZHQtek9Yel9fdWdRNVRNTEZ5QkQwOEdFMmZCNzBSdmZfYWlXOUhxb1lhbm9Gc2ZMRXRqZ2pLMmhjQkROTWVtZHZZVw?oc=5"
+},
+{
+"t":"US data centre power goes distributed: Sunrun signs VPP deal with Google supplier Voltus",
+"s":"Energy-Storage.News",
+"d":"2026-08-24",
+"u":"https://news.google.com/rss/articles/CBMivAFBVV95cUxNS1dJUlFvYlhuV0tsNW1JX2liSTE5ZDhEd09IajB3bUVEeEhVT0NnR1Rmb2Y2VUJIeFEwcVlNSno3RjNDb2htNGVfR19xSG56Um03V1E3TDVOT0ZNWU9fNGYwZ2pFVFBSVXhPbGFsRGRzNE84eVUtRm1nTExwS240QzVOQXFTNEVrWk5IUDVlamgxNi1qTHdYdk1xbFgzRzY4bnZvb2V2VzI2N2NPTDNaS2c5Q1EtbDJuSm5OQw?oc=5"
+},
+{
+"t":"Another Voltus data center expansion — this time with Sunrun",
+"s":"Latitude Media",
+"d":"2026-08-17",
+"u":"https://news.google.com/rss/articles/CBMimgFBVV95cUxOaWRlV2ZKLVQwT21NQmtLNUVQVE5pQ2ZXUUk1cWRvVDhtZGpRZzQyWTdSaEhlbldwZ3FBdkNGTWpHdjFEUjJ4WnRlYlFwekx1a1pla2t3QUtqOXhfVGI5UVhkN2lNcnR5ZVJPSjduQXJIZnduaFdPZ2tvNnI0NU1pSFJTbnY2X01mQTlabWNXbU9FM0hmdThhZDB3?oc=5"
+},
+{
+"t":"Sunrun pursues direct-sales transition amid industry headwinds",
+"s":"Utility Dive",
+"d":"2026-08-10",
+"u":"https://news.google.com/rss/articles/CBMihAFBVV95cUxOSkZMZTB2Q3FuQzRUM2NSRFFYQWhRTzExWW5ZaGE2SmNENlY3Qk83OVhLak5GSUJicGEtam9aODNjZHZpQVRyYnZYMElPT2hMVW80YTNWdlNKanhRVEs4TFhYaF9wVWd4czhFTkJqUlVJMkJ2RmhVZEJBYVBhdG55OENkVk8?oc=5"
+}
+]
+},
+"DAR":{
+"name":"Darling Ingredients",
+"desc":"Darling Ingredients serves the agri-food industry and reduce food waste by collecting and repurposing animal-based co-products and other natural materials that would otherwise be discarded.",
+"hq":"Irving",
+"site":"https://www.darlingii.com/",
+"news":[
+{
+"t":"Darling Ingredients Inc. (DAR) Stock Price, News, Quote & History",
+"s":"Yahoo! Finance Canada",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMiUEFVX3lxTE5kTHpWc1k5WkZNNTNuMldiY3BzLXQzNUlqS0JNQkFMbXlhUzJtb05TZUNmSnBkUS1lc2Uwd2hFaVNZeUdiTDdZdVJKdlUwMVMx?oc=5"
+},
+{
+"t":"Can Darling Ingredients' Portfolio Reset Drive Long-Term Growth?",
+"s":"Yahoo Finance",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMiqgFBVV95cUxNVlh4V1R4U3ZhbVpFWkNEZkRBM3F4MjJvNkNPLVRQYXRXa0VpdEZVakVGSk95czNGdUtiYWxGSzgyRGcwelppOGZyLUd4b1hjQlJhMVRkRnBmV196aTVVQXAzNFBtXzdxTjZYN1dkU3pHOTJJWnpzVXVWYlNxZ1kxamFmQkhfMGw3bGI1WlJxTEFVNWljMUx2Sl9aX3ZzdXdSTzU0QVR5b1FBQQ?oc=5"
+},
+{
+"t":"Darling Ingredients Inc. Closes on Sale of CTH Sausage Casings Business",
+"s":"Yahoo Finance",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMiogFBVV95cUxOSEd0NkwyMngyR1F5RUV2UG1DQllkTVo4VGIzeHR5UVFNM09aS0YtQVFaS1BXVkdIUnYtZjc0eHVsanpiY2VvWGhpLTlsVWl5UzdFb3RRWnhjRG8tZGp6dS1fLWt0NVdHdHkxYnFVV21qNHlheW5uS1c4aWhYaEpzNTZ6OFIyZF8xdnRSWi1KbjkwVi01WURvVkRTWk9raWZoT2c?oc=5"
+},
+{
+"t":"Darling Ingredients Inc. to Release Third Quarter 2026 Financial Results",
+"s":"Yahoo Finance",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMipAFBVV95cUxOM09tVTdIb0lWTlEybi1laXBzR2xuSVhpOGg4dG9BVFdvRzk0eUdRUmd1QzkyUnNuQlRBVFY2eFhDeFhJYVpNVDNRYTZySHZ2R09YbmotSW5BS25Gb2twMUV3b0lIRHhxNVhuWlZfR2N3Q2haYkhybWdDQUx6TU5rQWJLeVJUT2Z1ZFBBSmNPa3JTTVFHckx4elVCX0l5UU0yQ18yMw?oc=5"
+}
+]
+},
+"GPRE":{
+"name":"Green Plains",
+"desc":"American ethanol producer",
+"hq":"Omaha, Nebraska, U.S.",
+"employees":1427,
+"employeesYear":2019,
+"listed":"NASDAQ",
+"site":"http://www.gpreinc.com/",
+"wiki":"Green Plains",
+"news":[
+{
+"t":"Green Plains Facility in Superior, Iowa, Marks One Billion Gallons of Ethanol Production",
+"s":"Yahoo Finance",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMilwFBVV95cUxOTlV2bDJvZG1fWmR0X0lWcmhxRUJYR1o5SVpaR1BkeldvTXhrOTRDQXpuSHpFaHFvR1RjeFZNWVl3R3NwUm9ybVZyTTdOMVFpMnV3amg2M1BHZ085bnFHSEZLRTJrSEVYV2lrdFAwRTV0M004TU9XWkJXU0VYcnh5ZTBWNTlONW9YVnJ0bVg4V0t2MW5iQlFj?oc=5"
+},
+{
+"t":"Green Plains Facility in Superior, Iowa, Marks One Billion Gallons of Ethanol Production",
+"s":"Business Wire",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMi2wFBVV95cUxNNUcwTkRSWkUtbEJPZnYyX0g4RjFJVG5CYW1jWkdPNVZ6X1prU1hmZWZlSVdlcGlqLWQ2dUdEUW1aMU15WWNYenhmZTEtaVFDOU1OWEVHc25UMndkbUptSTBhMV9CeWxPWXkxSUFUVU5XdlZHaTVYYk9kOTJQQjhTeloyalN2RFd4MlhKcTYxYUNrTmZkd2VNY0YtNnU4MmlpdV9DVzNIMHdYck03OVphQUpWcEktVGFjNG9xeEdtSDdIRkFRcFdsQVdtUnNTcFFGRk1ZZHRUcEwxUlk?oc=5"
+},
+{
+"t":"Zacks.com featured highlights include HF Sinclair, Vince, Ganesco, One Gas and Green Plains",
+"s":"Yahoo Finance",
+"d":"2026-09-29",
+"u":"https://news.google.com/rss/articles/CBMingFBVV95cUxNU0ZjMUFOc0hwckdrcXBoUEE5b2hId0p1amFiamtjU3VnMGs1R2pCWWNmNlVXaFNRdGh5Ymt6X2F4TG5HTTRTT18tNGRVYjkyUWZ2alcwVVdENktORFRDSng2MVpYZ1BpUks1NmotSWRPa2R0bnoxQTFmX2EtclFJVU1xaTBETFFkZk1GdnVUT3lGR2ZmSU1UYUluT1B2dw?oc=5"
+},
+{
+"t":"Liberty Energy, Green Plains, Murphy Oil, Patterson-UTI, and Texas Pacific Land Shares Are Soaring, What You Need To Know",
+"s":"Yahoo Finance",
+"d":"2026-09-08",
+"u":"https://news.google.com/rss/articles/CBMilgFBVV95cUxPcVJPUUZKRnUyT2NmNXZjM0g5b0l2R25oZmR2ajI3ZzhWbGx1STY0VGFCcUx3TlpSeHlESnZvZEF4YWFVZmo5dldNdzBzSUdhVGI4MjVadjZzZWZpQlBNSmhqbWVFcHVLSFNmekRhTHlmUFpkTExtSTJ6cVF2OFdteGNUaW03djU4NE1hbUZYMUFTWF95Snc?oc=5"
+}
+]
+},
+"BEP":{
+"name":"Brookfield Renewable Partners",
+"desc":"Publicly traded limited partnership that owns and operates renewable power assets",
+"hq":"Toronto, Ontario",
+"employees":5870,
+"employeesYear":2025,
+"listed":"TSX",
+"site":"https://brookfieldrenewable.com",
+"wiki":"Brookfield Renewable Partners",
+"news":[
+{
+"t":"Brookfield Renewable Partners L.P. (BEP-UN.TO) Stock Price, News, Quote & History",
+"s":"Yahoo! Finance Canada",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMiWEFVX3lxTE91VEdwajVxdkpWR21HTnNGMVVKMVdaWVAtUXN4YmtKM0pyRktYNk82cWxaMGY2aWpvR0dvT1BtOE1aSUREcU8zb2tTNWZMTVlTU2tLdkNRWE0?oc=5"
+},
+{
+"t":"Brookfield Renewable Partners Positioned for 'Industry-Leading' Returns, RBC Says",
+"s":"Yahoo Finance",
+"d":"2026-09-30",
+"u":"https://news.google.com/rss/articles/CBMipAFBVV95cUxNb0UyZGlNSF9GOVNuSkFneXh5bnJWTnNCbU42QVFhdlNkYmV4RnV0VGdYamdjUnYyaVhHY081VlJyZHI4QTNvRDVvUHluX19IS3NuYjd6eURHTEhmR3UzVkViSTJYNThKQmNBVVpRN3BqYkFwa3Q5c3htTGh2MHR6bWw0ZEhIMTVpQUdFaVIwMHNVX09MS0F3ejZqN2pYNzVpSWxBbg?oc=5"
+},
+{
+"t":"3 Reasons to Buy Brookfield Renewable Before September Ends",
+"s":"Yahoo Finance",
+"d":"2026-09-23",
+"u":"https://news.google.com/rss/articles/CBMilgFBVV95cUxNYlNiZmtTeWVUWmhJeTRxR3hRclVQSDBGUE5hMHVQcG1ybUpVVU9EcjB1Vl82MkdQSkx3OTg0QnlZdHgwSEN0RGZzdl9XTEs0dmhRS3RkeklMWVZac205bDBhaFZwbE9Ub25xVTRjZWthV2pIRFVTWDNxQkd2dndJNUNtdFU2RWY2NUJlOUp4RmNtcHZTRmc?oc=5"
+},
+{
+"t":"3 Reasons to Buy Brookfield Renewable Before September Ends",
+"s":"The Motley Fool",
+"d":"2026-09-23",
+"u":"https://news.google.com/rss/articles/CBMimAFBVV95cUxNMXZUR1N1U1dUYWJVWjdOcUUzZTB6N3BFT3J3VV9xSWctSjFwcVIwUXpxRTVwUXhuWmNPbEtWekx0ellxNGR0X1ZTNXExa0w3YjUxUlQtSE1GSzVhRk5PMC1fRTFjWU1pbUFsVVJUWTYtS2pPazlqdVN6bDByYVhkamZPLWtxam1HQzQ2NFVaVXN1QW1mX3ViUQ?oc=5"
+}
+]
+},
+"ENB":{
+"name":"Enbridge",
+"desc":"Canadian energy company",
+"hq":"Calgary, Alberta",
+"founded":1987,
+"employees":13400,
+"listed":"NYSE",
+"industry":"petroleum industry",
+"site":"https://www.enbridge.com/",
+"wiki":"Enbridge",
+"news":[
+{
+"t":"Wisconsin DNR says it’s still evaluating whether aquifer breach occurred on Line 5",
+"s":"WPR",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMilAFBVV95cUxQYWtFWUhDajZKY1pZUUhJb01wcld4X1pMRnVCSEoyWGVwcnZLOFdzUVJzUFdtdjVLWDVxNmxXMzd5WlNrVkUxUFBSMjNhWF9HM280amJXUjhGcjhwRXlzbjhxX01VWWZZY3c4ZFFMd1ljYkVFdDdjLVB3dHZmWlliQXcyMVlOVlB3c3QtWnd5aUpLQllF?oc=5"
+},
+{
+"t":"Enbridge Line 5 reroute project breaches aquifer near Marengo",
+"s":"Northern News Now",
+"d":"2026-10-02",
+"u":"https://news.google.com/rss/articles/CBMiowFBVV95cUxQbUt3R21FanZOYnhtSGJHdW1kT3JSVXN5bkhxUDVCd3pPaVVIMlh4Ql9TUnd2SDFrU1B1TEhBZ19kM2ptNGJBYXZjU1ZqMHhfODFCeXU1OGg1aWZ0bENSeTdsUzZHYUpuNER3Ql83LUZ6ZWRacE1FamhWYXpVUGVNZDNmVUxCOVlLdllnZkF4QnFpajRTNVBHQlhvT2s5NEFmRVZF0gG3AUFVX3lxTE9KTHRWTEJrMVlYZ3M1Si0xOG95TDlXTVAxNExEa3NyWENwZ2hkVkhpNlJ3cE5tNGxPOUFIWF9DOVpkUW5MVTg1M2ZadHZhbkJDb0Q0STVjYXJqWFM1RDRkUUY2dk9FVUkzanJFV2pESkZ6N1I2MGp1SzBUZ2lwOGlMTFdOSXVsOTZsWHZYLVN3QVBSMkFuUmtuODAyYjR5SndZOHJNWGNsTmxhYW1Vc0Zod290WU5kUQ?oc=5"
+},
+{
+"t":"Enbridge (TSX:ENB) Pullback Revives The Undervalued Narrative But Is It Priced In",
+"s":"Yahoo Finance",
+"d":"2026-09-29",
+"u":"https://news.google.com/rss/articles/CBMinwFBVV95cUxPOHZPU1ZQZGt6YWk2cUVJMFZQVFo5YmFTNDBrNlZtRkRvUGJlVUlFcG9kZ3pJbmtMXzFZSGFQVGo1M25IbU5jMUZHREM3RFlTMC1YaUpXYk43MXhTMEx5RWhabndGUmpxMDJGckhHLURaOF9vRkNja0dnNHBRWl9aMWhUNXNnVG54SDFwTGRpZWhPOG5zUU83Sm1Ha2MycFk?oc=5"
+},
+{
+"t":"Enbridge responds to Line 5 Natural Gas Liquids release in Wisconsin",
+"s":"Enbridge Inc.",
+"d":"2026-09-28",
+"u":"https://news.google.com/rss/articles/CBMirAFBVV95cUxNY3o1VUtUZkVra1kwak44Ynd2cU9NczJWSGNkMXZIdWU5RTMwQ2lWZzltRmhKcWphLVlpVkR6NmxpWDFSTzFrRnJDX1RFZ1dTM3c4azZodko2R1kwN3pFMk9wZEdDbVZEaGNyYlBlRXdzbGN1WEYxQTd6RkNyM3laUU14RHZMS0tseFZ1bkVsUjFyclBNaHlGUXJKWW53bXh5MjVGRTdHRzc0M1R3?oc=5"
+}
+]
+},
+"KMI":{
+"name":"Kinder Morgan",
+"desc":"American energy transportation company",
+"hq":"Houston, Texas, U.S.",
+"founded":1997,
+"employees":10933,
+"employeesYear":2024,
+"listed":"NYSE",
+"industry":"petroleum industry",
+"site":"http://www.kindermorgan.com/",
+"wiki":"Kinder Morgan",
+"news":[
+{
+"t":"Pipelines Are Pumping AI’s Power. 2 Winning Stocks to Buy.",
+"s":"Barron's",
+"d":"2026-09-23",
+"u":"https://news.google.com/rss/articles/CBMiiAFBVV95cUxOV2JjZ19fLVYyTEhpbkw2ZkxpWTJqbTRtN1hteE5weE13NHB2RDJ1dDg2RVJrMTBnZ1lfY19OUERkNS1lMUF1X2F6dXZiQWkxWE5CbWE1eU9scWEyTnlVOWNoOF92am40VklsdnFVQURLbGlFRlo1RUJ6Y1RCdDE3dzlWVC1mY29L?oc=5"
+},
+{
+"t":"Kinder Morgan Targets $1.4B in New Gas Projects as LNG, Power Demand Fuel Growth",
+"s":"Yahoo Finance",
+"d":"2026-09-10",
+"u":"https://news.google.com/rss/articles/CBMiiwFBVV95cUxQb1lGS0FqRGRaMFJibzkzWXFIRTVFcWdyTTZGNjF1LVRpX1lhdnhPN3FLcXQ4V25QRXhmOG94TzFURHI2UUNQQU9fcHZRSU5TVnhrUUcweTV1VE5FTFNSMXJNdTk5UWZocnZ2LVZJZDlWY2s1ZUdpUjQ4X0xIVUE5a2liRjNjVTJ0Yzg0?oc=5"
+},
+{
+"t":"Kinder Morgan (KMI) Could Be 11% Undervalued As Export Demand Supports Its Narrative",
+"s":"Yahoo Finance",
+"d":"2026-08-30",
+"u":"https://news.google.com/rss/articles/CBMiiwFBVV95cUxNLUMwQV9lektRVnFxVEFPR3JoU0VGSHR3ajdGYktsSDN0alVBbTBpQURUT2g1empVSG50WW9CaDR6YkxxSm5fQU1aellpaVlsd3NXWkEyM2YzS0R4aEVVMjNwVV84b1FOeThQWW5VOVh4YmtiWm0xUkJWdUZuZ3JCMjMxYUFsTVp6eklr?oc=5"
+},
+{
+"t":"Kinder Morgan: The Consolidation Is An Opportunity Before The Next Leg Higher (NYSE:KMI)",
+"s":"Seeking Alpha",
+"d":"2026-08-26",
+"u":"https://news.google.com/rss/articles/CBMiuAFBVV95cUxQRHJfY01xX1JCRzVaaUU5cnIxWVdTRHRzUWU1OHEyWkpVdnpqR3l4NzMxU2ROcXd0aXlGZDFQc3lOY29MNlNoZDdZRVM1ck9PZVlDbC1lQUhkZi0wczE2TjNmbkN1ZDkyUmV0ZmZzMFNPVGo0dmV0WnlQWTUxNWFIeFFPSW9PMTZCMVRlbm43NGM2bUhoelhqS2xsY1Mzb3g4WFJfUDdpaDVxRmU3UnNjeVZMM0llMnB6?oc=5"
+}
+]
+},
+"WMB":{
+"name":"Williams Companies",
+"desc":"American energy company",
+"hq":"Tulsa, Oklahoma, U.S.",
+"founded":1908,
+"employees":5829,
+"listed":"NYSE",
+"industry":"petroleum industry",
+"site":"http://www.williams.com",
+"wiki":"Williams Companies",
+"news":[
+{
+"t":"The Williams Companies, Inc. (WMB) stock price, news, quote and history",
+"s":"Yahoo Finance Singapore",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMiUEFVX3lxTE9ZRXRmUmZFc0xTbmRQWFotU2pkZVBPU3B4cjI0enhVMHdtTXpzdmNQMktDN3FVYXYtcGtsTlVLdXVlUC1aM1Z0RWJZejFNbU5G?oc=5"
+},
+{
+"t":"The Williams Companies, Inc. (WMB) Stock Price, News, Quote & History",
+"s":"Yahoo! Finance Canada",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMiUEFVX3lxTE9tTWhMelpUVDFmNVBBUDNWdDFjX3UwMnh4UlhhbHZtQV9QU0h0UWlLNkVHX0UwTHJQSlVaXzdWY3ZGOWRndXR1SmlMNjl2bHRr?oc=5"
+},
+{
+"t":"Top Stock Reports for Visa, Intuitive Surgical & Williams Companies",
+"s":"Yahoo Finance",
+"d":"2026-09-29",
+"u":"https://news.google.com/rss/articles/CBMingFBVV95cUxNOU0zejZvZlp4NjdNcnJOT3JUUE9QeWFDMXZoUUQ4V0d6S3FPd01LQlBDWEpXUGZ5cVN1dEtJamdRandCV1NxcDJiUlFSWWV0Y0JYcnBMSXF5QlNrYmxMQ0oyeHdGaHpnTWNGVGlRc3Z3Wi1fSWJMNkQ5U2I4RWZrNWxhV0h0TUQxMzNZdGZ6THhOcm1JS3l5bnBXaVpEdw?oc=5"
+},
+{
+"t":"We need meaningful, durable permitting reform this year",
+"s":"Williams Companies",
+"d":"2026-09-23",
+"u":"https://news.google.com/rss/articles/CBMilgFBVV95cUxQZlRIRFhXU3FjYVB4NlJjVVZDU0YzcGV4dTFQNlpZc29WZ19vbUxuZThka0plMmwyV19TeEtrTW95VVVTS01YWWRUVW5xVVJDeGIzekpZNHBxbUdEaVhWaE5oeDlvc3VuaUpaSG5QRDRKNW45TXpoblVqOUxFYXRHeHZLQ0o4WmFDS05nbU02TExSa0M3clE?oc=5"
+}
+]
+},
+"OKE":{
+"name":"ONEOK",
+"desc":"Oklahoma based energy company",
+"hq":"Tulsa, Oklahoma",
+"founded":1906,
+"employees":6326,
+"employeesYear":2025,
+"listed":"NYSE",
+"industry":"public utility",
+"site":"http://www.oneok.com/",
+"wiki":"Oneok",
+"news":[
+{
+"t":"ONEOK (OKE) Completed Its Corporate Reorganization On September 10",
+"s":"Yahoo Finance",
+"d":"2026-09-16",
+"u":"https://news.google.com/rss/articles/CBMirgFBVV95cUxPSWhTZThMWnpKMHB0cDN1WmY2cnBZanpFN0JpY3o2U1FIUDFCVFotSUpTX3NfcEh0c0Z4Nno5TTNKVVUwUlhFbkRmVVVaTTBXeXNGZHJfZFZIRGp5UnRaRjE2ejIzS1RmbjJiM2ZBdDRDRDJXQWlPREtQV1lrWnFQZTgwcVRoQ2N2Mkp3dGQzZkdxc0VNWi15b2dTXzNzbWFSUFkzNGo4TjFWVVdWMmc?oc=5"
+},
+{
+"t":"ONEOK (OKE) is Funding a $4.4B Acquisition With a $9B Minority Investment. Is the 7% Capped Return Attractive?",
+"s":"Yahoo Finance",
+"d":"2026-09-04",
+"u":"https://news.google.com/rss/articles/CBMikAFBVV95cUxNWHVtU056T0YyMjNybVpYdnd5eVExcDF1eDRURDlaNEVlZkZ1LWp2RW5LbUsyUWdOcDJ6WWU0SkhFTXY5XzY0TlZmZ1h4QjVpa0RyMUszSDQyWG95Y2Y5NHByTkRaOUtPakF3ZlZKa1lCc1EyRXYySFRsT1RVVG1iNnBtdUtmdmlDSVZNR19rZl8?oc=5"
+},
+{
+"t":"ONEOK to Buy Brazos Midstream’s Permian Assets for $4.43 Billion",
+"s":"WSJ",
+"d":"2026-08-31",
+"u":"https://news.google.com/rss/articles/CBMirgFBVV95cUxOUjdyMEtmZTZxcDFOWDk0MFctNEpfRHJMSGtlZmZCTmNqY0oyejBmelFKRlhfejdramxSQUZDdTFQN00xa0NzcHBmUHlNNC0wbExWVGJ5dFducTZLTVFpc0lXZWMxdXV3UzBaODFpdFMwRkp4bDNNWjFZLWJpazVhTERlTk1MNEhQVGxkbWNXT1dHM1oyWGdhNXlBTmctUHRXTmtIUFRlWkJ3OE1qb2c?oc=5"
+},
+{
+"t":"Apollo to Repackage $9 Billion Oneok Stake Into Debt Deal",
+"s":"Bloomberg.com",
+"d":"2026-08-31",
+"u":"https://news.google.com/rss/articles/CBMiqwFBVV95cUxQcnVBSUx6TWFnNlVXdVZscEVqT1hnOHdFMk5kQnBaY3o3Rk9kMjRQUkM1SUl2UHNiQk5PX254YWh2RU5BX1NRSmR5cXZiQlZPLTlLNmRDbzJ0a1NXQVpyTXRyS2VLRTh2TnMxWHZWM3EzaUU4ck9KQ2NicVBtNWRTdE1wQWxTRUE2Z2JxVjJHNjhRWG1lVmVaQ09SajU5YVhtUEFHZERJdkVNSTA?oc=5"
+}
+]
+},
+"ET":{
+"name":"Energy Transfer LP",
+"desc":"American energy pipeline company",
+"hq":"Dallas, Texas",
+"employees":16248,
+"employeesYear":2024,
+"listed":"NYSE",
+"industry":"energy industry",
+"site":"http://www.energytransfer.com/",
+"wiki":"Energy Transfer Equity",
+"news":[
+{
+"t":"Should Energy Transfer (ET) Stock Get A Fresh Look After Its Texas Move?",
+"s":"Yahoo Finance",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMikAFBVV95cUxNeHNmU3hNMmtBSnBYSkFDaHNjUWVGVER5aE94NlhlUHRLRnMzRmpteWl0SEc1OEFqZ051bDVDazhPdTZkVl9rUGRTNFU3dml6MVh5RGZMWEQyNVV2R2VNTV9vdGJzY2o2SXFxTEtvcFU0Q2Mtc1Mzdms0RVVBeFNhYkk1ZWZoc0lFSUNaRHUxS2U?oc=5"
+},
+{
+"t":"Energy Transfer to buy Vaquero Midstream for $2.63 billion in cash-and-stock deal",
+"s":"Reuters",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMiswFBVV95cUxQaXBmRnVNVFNpZzVrY2RDclA1TlAyZVZhclVkZnl5NHFIY3ZUTlRSMmhoV0lVNU8xQi1VRElYc2pMZzlvSEFxTWxUU3ZBN2FJT1Vkdi01ZWdMX0VDSldmblJlVGphRXBjWnZEckNCRjJHZjZ5cVhhZmhhVmhnT3dLeWhXLVlfRnk0bmdOcU9OQzZmcWlCNTBlRkZDZ3c0THVfdThNalNWdElhM3dZeUdjZ1MyZw?oc=5"
+},
+{
+"t":"Energy Transfer to Acquire Vaquero Midstream for $2.63 Billion",
+"s":"WSJ",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMirwFBVV95cUxPRVNDalRDdW5HVXdDLUtoMGZ2QVo5Wk1JMEhqa0c1a3RHNkw4aE9ick9WUGtMUHIzdlZ6ZktHX21qUEc4YjNfNEk4SHJ6aldqRTVDR09jT1VwckYtS0J3RGk3Ni1TbXhBUVVJeE1YN0pJLWY3bnlMZ21XOW9pQUhITHo5UDE3Sk0wSzVyT0Y0RDNMbUFNTERrREJxQ3BHWUFiUXBPUlpWOGprdlN3SzlZ?oc=5"
+},
+{
+"t":"Energy Transfer to Acquire Vaquero Midstream in a $2.625 Billion Transaction",
+"s":"Business Wire",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMi0AFBVV95cUxNWC16alhocW1sa0dJYldETDdidmtlSXdNYWt1TVIwX3k1Ni1QVkZfWXBLWDNfaENrdWlJb1BWam55Mjg1UXkzMEo0MklRaW5CYVQxQzBaUGlOX1ZzWXpvdG9lYlBVaWtNUlptRWtLcnlVTG1rcTAtMkF6TVhjS2tpQXhMV3JvZ2ZLUWVjZklsek1GU2NsLUtKeUlpS18tLVdHZkNOSDNVR0N6NWlGQWs2MFd0VkczaEpKcElRUXI4b2U0VTVVSWFyY3VnUENaSVll?oc=5"
+}
+]
+},
+"LNG":{
+"name":"Cheniere Energy",
+"desc":"American liquified natural gas company",
+"hq":"Houston, Texas",
+"founded":1996,
+"employees":1605,
+"listed":"NYSE American",
+"site":"http://www.cheniere.com",
+"wiki":"Cheniere Energy",
+"news":[
+{
+"t":"Cheniere Energy, Inc. (LNG) Stock Price, News, Quote & History",
+"s":"Yahoo! Finance Canada",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMiUEFVX3lxTE5BQVd3bXh5d0t0S3kwX2dpQmtfa0Fpamh3bDhOTlVNYmdJWEgwVnlwVEE2RVVPUUY3aDZubEhwWEt5TkEwSkFJTmdQRWdQbnQ1?oc=5"
+},
+{
+"t":"Cheniere Announces Timing of Third Quarter 2026 Earnings Release and Conference Call",
+"s":"Cheniere Energy, Inc. | Investor Relations",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMivgFBVV95cUxQUENielM5ejFJMWdNVWRaYXgwY1hZTWFMZXhaZnFlRE5KN00xTG9LYXh1QV9tdVhLalZCTWpDS2RIdl9wLTdwakNTeUtEYmdTRkMzVWQ4WnVZNE5xQkRGWVhBMi1BMkVfeHNEQVBzTEp0Wmpoa0VxRElQaXNFLVBwVW1ibzF0TDFOaGV3c3BrWVhIYUl2enFXWTg0ZVpMSFhfNTgwc3dTcjg4bmdnTE1aYWpGTTNOeHVXTGR1bGJn?oc=5"
+},
+{
+"t":"Contractor dies at Cheniere Energy facility in Gregory, law enforcement investigating",
+"s":"kiiitv.com",
+"d":"2026-09-30",
+"u":"https://news.google.com/rss/articles/CBMiyAFBVV95cUxNTXV1Z0UwWTVMai15VWFzWUV3Um5xdHZXaFF1YzJWa1dwNEk1VGNfUzZxNlRuRzdnYm1vZzZvMWRjTGluY0hYVWpuNHhVeUUyeUlzS2RhSkg5Q2FMVW85T0l6WmFtZzlLZHpEbkFrdzg2R1JWMXgyRTQ4b3FNYm1RSXROWGE2NndTd2NqNkQzZjlHUDZDak1CdGd5QThMeVk2OW1jRjBaeWlyYl82cVhHVkNrN3RFYzVDTURsQVc3MnpIT1hqMUp1Wg?oc=5"
+},
+{
+"t":"Cheniere Energy closing in on $138M tax break for LNG expansion in Cameron Parish",
+"s":"Louisiana Illuminator",
+"d":"2026-09-28",
+"u":"https://news.google.com/rss/articles/CBMiYEFVX3lxTE9wS1pkSEhSTGJsRVNYbndGd1pLR0F0aTZNclJPbExvaXBmQXFFYXhpRWROc09UWXpZeHcxOUIzT1ZjbHdJYnFUT1VVT0VpV1M2dTU1WGwxZEdLN0pQY25RVQ?oc=5"
+}
+]
+},
+"NFE":{
+"name":"New Fortress Energy",
+"desc":"energy company",
+"listed":"NASDAQ",
+"industry":"energy industry",
+"site":"https://www.newfortressenergy.com",
+"news":[
+{
+"t":"A passive investor reports over 5% ownership of New Fortress Energy (NFE) convertible preferred shares.",
+"s":"Stock Titan",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMiyAFBVV95cUxNbjZtSlZrMnJlVWlwYXBGZzJ4T1R0Z1RzczItbnBQYXdEcThfYU1KMHZjTkd5d3ItaU5GQVo2SjZoTi10T1daZlpmSEZyRzMzQWE1Z05RZ0dIYXRFU1gyV1ZqdFd1QUF1SE8tQVJrLWJ0NTZKd1IycXZmMmR1UzZvQV9kc2xEd2xVVlZzZWxWYU9SMEwtMGN5YXFnc0RGdkh0NFR4NnBNSy1wVXJhT3NNaDd1dHVGVDVvQkJhTm5LTkhXMktmVHdrbQ?oc=5"
+},
+{
+"t":"Three 10% owners of New Fortress Energy (NFE) report preferred shares that convert in 2029.",
+"s":"Stock Titan",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMiygFBVV95cUxNa1B3VUYzdnN4c3pQdEFWTnplUWJZd08xZlFZZmoyYVBNZm9ZdmtoUGw3STV6aXlHcDBsWS0tNkZHLVota3UybWlPQnhhNFJhenBnblhheUxDOWhGc1luUHRnYUxRemNaczI5TXFxTU91QVBLTUp5UzMwakdlWU1uN0NsMkgyWHI1ZnNxOUwtTTNQWTdfQ1B0MmpPd3R3VnNWdlNRWEZuVTMyQ0JZcUlvYm85RW1tOUFKRzQ1NmVSTWVFSzRjcnNnYl93?oc=5"
+},
+{
+"t":"Funds buy New Fortress Energy (NFE) preferred shares that automatically convert in 2029.",
+"s":"Stock Titan",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMitwFBVV95cUxQeVVVdnVsa21xMGJBQzk3ZWJvT1dBdy1oSXcwNU1MektzVHIwR1l0cFJjR3NoSmFKUVNVLW5YNU55OVBtNFNaeEtubEJJajlNUnpFYVBXcFdEWFhRVmtRWVR6dGw0X2J1MWdiai01WExhMWxlMWZQSldtMEdnYzF0THMxY3ZVZXVDd0g5eW1BTE5MNTFtbWZUUTY1Z0loQTBrT2pncENkb1Bad1l3NlJpZWd5anpGYTQ?oc=5"
+},
+{
+"t":"[Form 3] New Fortress Energy Inc. Initial Statement of Beneficial Ownership",
+"s":"Stock Titan",
+"d":"2026-09-23",
+"u":"https://news.google.com/rss/articles/CBMiygFBVV95cUxNLVhrMkU1WkVDeWFTdkFKZzdlUzA3UGlMbG1CSUQwZ3lxS3p5NjJxNzk5RFBLZjFhQWg3TU83Zk1KZUJFNWpaYUZhYU5ySldKZ0pNT2tLd1NGYkdwT2NxbHItUWJxQzZhUFZkTTRTWW1fcE5rRVBRRGM5c1Q4aXdGWmtRNlhVRk9qTzY2S01MQVprSkphR1oxWGhqV1JOLTFGa1FsTUFOMHhjYVJGejVEV3JBT21hRm5kclVwd3NnNms2Ry13Si02OGNn?oc=5"
+}
+]
+},
+"VLO":{
+"name":"Valero Energy",
+"desc":"American energy company",
+"hq":"San Antonio, Texas",
+"founded":1980,
+"employees":9922,
+"employeesYear":2025,
+"listed":"NYSE",
+"industry":"petroleum industry",
+"site":"https://www.valero.com",
+"wiki":"Valero Energy",
+"news":[
+{
+"t":"Valero Energy Corporation (VLO) Hits Fresh High: Is There Still Room to Run?",
+"s":"Yahoo! Finance Canada",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMiiwFBVV95cUxNQ0hqd3BVaXFpZmQya3lpcmhOQ0twWFZJUGlxMGVBWFZOWXVlMUtzeGplbGI5MVVJYzVDdnNpVU1qQV9Od2pseDNtMmljZGMyd3VpTUlUYXRwTFc2bVBqOUYwRVRFcndDc0ZqVjY3M3hUaUVneWIxVGZzX0ROUC1TdmpselZYMzR2YVM0?oc=5"
+},
+{
+"t":"Will Valero Energy (VLO) Beat Estimates Again in Its Next Earnings Report?",
+"s":"Yahoo Finance",
+"d":"2026-10-02",
+"u":"https://news.google.com/rss/articles/CBMingFBVV95cUxPcUFPOFQwLWl3RVFSTDA3U1dPYVRtZzMxbFd5NEZyNUJ3cDd6ZFJJbUw3d21tUFEtejZyNGh6TmY3a0hEaTRVOW0tajdObm1tSTVZRUx3Tl9McHdvQ0ctXzkzdDlIZkdFUzlkYUNwWUpLZnZIYm0tZ1FieTZXQk84YTg4X2UxcHZfQVFybU9ZaXB1OXpwQVpld09sbmE3UQ?oc=5"
+},
+{
+"t":"What are the Prospects for Valero Energy's Refining Operations?",
+"s":"Yahoo Finance",
+"d":"2026-09-29",
+"u":"https://news.google.com/rss/articles/CBMiowFBVV95cUxOTGJ0eU14UC16dVN6V2dsQ0NobGs2QlJxMk11bWJiUFo4MXJWQnJxSVZZVVBGRTB2dG9vM2d1bW5hLTUyQUp6Y2NBUWwyVFRaMnJXajZBY2pTZ0V4OFRWV2U1RXF1RU9DbV83ZVFFWHpuc2ZpSEJzUGtJa1Mtd2pOTjhyTUdzQVhVOENfRXB1Mi1RUUszdFNOMDJHUnBld19IaG5F?oc=5"
+},
+{
+"t":"Valero Energy (VLO) Could Be 45% Overvalued After Strong Earnings And Margin Tailwinds",
+"s":"Yahoo Finance",
+"d":"2026-09-26",
+"u":"https://news.google.com/rss/articles/CBMiiwFBVV95cUxOQ1lYRFU0NmFsNmt0NWt1MjRBVWNGV1E5S1R4TWhtR0s2Q29zRVpiWVJIVzVPcWVxZWhHSm9vRUVyNjRaOWJOTDFXNC04R1NzaEtaWDcta3p1a0RxQzl3ampwb0FrOF9DdXp2M1JTcmxwb0JCZ3BZWFlRLVR2THlYUmEwVUxlNkQ5ZnpR?oc=5"
+}
+]
+},
+"MPC":{
+"name":"Marathon Petroleum",
+"desc":"American petroleum refining, marketing, and transportation company",
+"hq":"Findlay, Ohio",
+"founded":2009,
+"employees":18300,
+"listed":"NYSE",
+"industry":"petroleum industry",
+"site":"https://www.marathonpetroleum.com/",
+"wiki":"Marathon Petroleum",
+"news":[
+{
+"t":"Here's How Much a $1000 Investment in Marathon Petroleum Made 10 Years Ago Would Be Worth Today",
+"s":"Yahoo Finance",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMiogFBVV95cUxNRWg4SmFLMjRfUlI1TXNSbWF2cFgxc0pCbVZYRU5fbERpYS1veEFvaE1qTzEtYnFoRWo2eVFrN2tzelVGdFdTdWoyYkNxTjlGdFhfT1d6YmlLazN5YjYxdjFzTk5Pb1NWMlVSODZ1R3VNSGFDZEhWUnI3VWNkbUlsOU9iVmlYVFN3YjZTUnB6aWV3R2lCUnAtdnktZnFxT0p3Snc?oc=5"
+},
+{
+"t":"Contractor at St. Paul Park Marathon Petroleum site dies, police investigating",
+"s":"CBS News",
+"d":"2026-09-21",
+"u":"https://news.google.com/rss/articles/CBMihAFBVV95cUxQV3M1MGFYN2lpNXRtSmVlMmo1R2Jqb01PSUl0VF8ycHZjSlRkNDVfYTNubmRBeDVKRkFuTmZDaHAzWE5LSlpyU0hEVklkY0FpakFJWEJYZXIxVmppdzlaN19qWi1RUzMtTGw2SFNMSG82NjlCLU1HMGNJbENPMk9Wb1Z1TlU?oc=5"
+},
+{
+"t":"City of Carson reaches $370M settlement with Marathon Petroleum",
+"s":"Spectrum News",
+"d":"2026-08-28",
+"u":"https://news.google.com/rss/articles/CBMimAFBVV95cUxNclNwYXl4c3VkNkhYQl84U2xGdUJabjVwRDlfOFpFQkhWN2lUSEIzTVhFdHR6LWtrTWhlNi1zQ3ZlaVVTc3pCUW9rLVdZdWdJaUJEcGtZTW1iLVE0ZVM5T0VoZnFaNmdBcnFwenNscnNzMzFEaXVZM0tNb0NBbFVYUUlYY2I4a2NpV0Ntb212UnFnSG5QLUtKYw?oc=5"
+},
+{
+"t":"Congresswoman Escobar Urges TCEQ to Provide More Information on Marathon Refinery Incident",
+"s":"Congresswoman Veronica Escobar (.gov)",
+"d":"2026-08-26",
+"u":"https://news.google.com/rss/articles/CBMidEFVX3lxTE5kUWxseHNyNXN0eHdVWU51QVlvV0VHNWM1RmM0aWtrc0FqV3BneHZWVXpWbGE3dVdUeU9qTjdHdGJzbFlNMmdWUXpNZXFQYTVhdmxlWUpoWWVHQzlzeTdVeWpYNGhEOEVGb3hBbkhadWlqYVhJ?oc=5"
+}
+]
+},
+"PSX":{
+"name":"Phillips 66",
+"desc":"American multinational energy company",
+"hq":"Westchase, Houston, Texas",
+"founded":2012,
+"employees":12600,
+"employeesYear":2025,
+"listed":"NYSE",
+"industry":"petroleum industry",
+"site":"https://www.phillips66.com",
+"wiki":"Phillips 66",
+"news":[
+{
+"t":"Phillips 66 Teamsters Overwhelmingly Authorize Strike",
+"s":"International Brotherhood of Teamsters",
+"d":"2026-09-29",
+"u":"https://news.google.com/rss/articles/CBMiiwFBVV95cUxOX2ZpV1l6YzIzd2hxcEZfLVNYQlFKM29QMU9Vb2Z2N2wtcUdoWXNyWGJKME52M3l0Qmp1dW1iLVkxVFp2YTMxdENDNHZHOEtrYVRHbFZJeFNKelhsQ3JnRFBkSktVNzJvVU9JYksxa2dmeEliLTI5NDl3TjRybUJfdU05X29yem5KeHdF?oc=5"
+},
+{
+"t":"PHILLIPS 66 TEAMSTERS TO RALLY FOR FAIR CONTRACT",
+"s":"Yahoo Finance",
+"d":"2026-09-15",
+"u":"https://news.google.com/rss/articles/CBMikwFBVV95cUxOYTZvLWVIQW1QSWdpQmUtd2tJbHdybk9LX01MdWJRR0ZhNmlCSGZyNWVvZU41RFRZR3UxVktDSTNWbkUyZkFjVUlTdDVNRnpFVnItSXJBV254UWlNSnllOTQ5V3FjdHE1V25DUFBkeGJSMkZNcHdYVWFlWTFUNUhfbTFZR0ZnVUkwRmM3UkRHYkxVV28?oc=5"
+},
+{
+"t":"Is Phillips 66 (PSX) Stock Rich Or Reasonable After Pipeline Approval?",
+"s":"Yahoo Finance",
+"d":"2026-08-21",
+"u":"https://news.google.com/rss/articles/CBMilgFBVV95cUxNd0VsRjdVSl9qb1VWY2FxNzZtRDA4NGRWc3JraEhWV2QwT3pVbTg2bTJURUVmbWxxYTl3Mnlfb3lQWlFyVkNiWi0tN2FMT0hlcXEyZFpyOUNSTGsyWWtXNXRrd3NrdTVEOU5aSWpPb3RwU2Nzd3lkWVdaTFhUdnBTZEtuVmZBUlJGZzVPX182Mm5mM2p4bkE?oc=5"
+},
+{
+"t":"Are Phillips 66 (PSX) and Marathon Petroleum Corporation (MPC) Still Attractive After the $180 Billion Deal Collapse?",
+"s":"Yahoo Finance",
+"d":"2026-08-20",
+"u":"https://news.google.com/rss/articles/CBMioAFBVV95cUxPcjZnQTUzZU9JX0s1bHFnUGpoOHRkbGlTd0ZUd0pYRWkzTmdtMmQxV1FyaXo2Y2RRNnVWbnY0dElObXdodEJzQVM5dTdvTHQtV2ExN0xScGxienhrb2lxTUhnOG1MN3E3cFF3TTVOODlkWWMybGJzMWgwV3ZSQkpFeGhLZVF5TWtKdERCNE9zMGVMcEp1Wi1Ucm0xX3lwNmpW?oc=5"
+}
+]
+},
+"PBF":{
+"name":"PBF Energy",
+"desc":"Energy Corporation",
+"hq":"Parsippany, New Jersey",
+"founded":2008,
+"employees":3776,
+"employeesYear":2024,
+"listed":"NYSE",
+"industry":"petroleum industry",
+"site":"http://www.pbfenergy.com/",
+"wiki":"PBF Energy",
+"news":[
+{
+"t":"PBF Energy Inc. (PBF) stock price, news, quote and history",
+"s":"Yahoo Finance UK",
+"d":"2026-10-09",
+"u":"https://news.google.com/rss/articles/CBMiUEFVX3lxTFBqR1lrcENaMEdGUzlHN2dZMVV0NEE2ODVPZ1JOLWRQS0lQMHI1SHFjLXpTZHdTc2FTb1hzR1V3bVNoR1JCQW9LdnhsSk1CZ0Nf?oc=5"
+},
+{
+"t":"PBF Energy (PBF) Q1 2026 Earnings Call Transcript",
+"s":"Fortune",
+"d":"2026-10-03",
+"u":"https://news.google.com/rss/articles/CBMiZ0FVX3lxTFBBdkh4MHRhYlUwV1Z6OHphMkhyT1ptNjBoUWw3Nm1kXzVNNXd3YmhXaTlENkxqYkJDeUpUWVpIQ0VjQ0s5NGpNaWExNU1HTGVGdXB2YlprR2hWWElheElWRlluVl9IdUE?oc=5"
+},
+{
+"t":"PBF Energy Gains From Refining Scale & Cost Efficiency Efforts",
+"s":"Yahoo Finance",
+"d":"2026-09-25",
+"u":"https://news.google.com/rss/articles/CBMikgFBVV95cUxQMk9EOVlJXzVvYUtWUE9tanJ4NUM3MWMtSzFzN0NYeVZLTkc0WnFMVkp0OVlJby16WUFfN1NFY2FKR1lTRm5VU3JVMFRoYWJGdWV5SnBWQ25oTXpneGtUWGc5d0RzVlo4X3Z0OTlBcVdFMnpqanR4dWZlNmdQSXgxdXIySFZVMWlJb0ZDcW5tMXBNZw?oc=5"
+},
+{
+"t":"Earnings Estimates Rising for PBF Energy (PBF): Will It Gain?",
+"s":"Yahoo Finance",
+"d":"2026-09-18",
+"u":"https://news.google.com/rss/articles/CBMiowFBVV95cUxPMGd1dExfNU9uNHNuZ1pCY0hQbnJHaXhOWDR1SmNaNm9QdW51MUJDVzhzdnBwRlVoWEg2WUZFWXVlTVdPMU04Vk1RYUlORlZLWFliQzIyVmpKZUt6d1RxWGxGWHRVSHhlWHFrTnBUMm50aE9qeXR4OFNnaG03RzJvOG5fMXBVZ0xNWGNFQXB1MC1kY2c3SzJuQ2hVdVlLWjFfV19z?oc=5"
+}
+]
+},
+"DOW":{
+"name":"Dow Inc.",
+"desc":"American chemical company",
+"hq":"Midland, Michigan, U.S.",
+"founded":2019,
+"employees":34600,
+"employeesYear":2025,
+"listed":"NYSE",
+"industry":"chemical industry",
+"site":"https://www.dow.com",
+"wiki":"Dow Inc.",
+"news":[
+{
+"t":"Dow Inc. (DOW) Suffers a Larger Drop Than the General Market: Key Insights",
+"s":"Yahoo Finance",
+"d":"2026-09-29",
+"u":"https://news.google.com/rss/articles/CBMilgFBVV95cUxPM1FsSDZLMDVRNUJOUDhUenEwNjlvaDRVZ1dQbVJhOXE5NXRTVGRPU0pwUzJ0UWNSNU9md1FJNGZHSzlwRnVPYllUVVJwOElyc0R5TUF4S1N1NGVzSWRvalVGcjNfNVVqbmZqTUt5TUZoSDU4ZENvYkV5V3JoS1dYZ1dEY0FiTU5GVk1wc0R5RlRTa3hubUE?oc=5"
+},
+{
+"t":"Dow Inc. (DOW) Stock Sinks As Market Gains: What You Should Know",
+"s":"Yahoo Finance",
+"d":"2026-09-17",
+"u":"https://news.google.com/rss/articles/CBMikgFBVV95cUxNSjlXOXdHb3VSbm5rQl9QYWZ2QW9LbUs2OXd0RHR0Z0dOX05mSjFHZ0pwWHF0c085eXRxdVRsS2JPUTlYcU5NSnd1YWVTZldQaWJJYzhRd1Y1MDlGOUdKRzBFbElDaXlmVjdMQzR1R1ROeWR4M3lIaExZemktUDZrN1ZoWGl1ajJkSTc5dXZ5eU1MUQ?oc=5"
+},
+{
+"t":"Dow Inc. (DOW) Stock Sinks As Market Gains: Here's Why",
+"s":"Yahoo Finance",
+"d":"2026-09-11",
+"u":"https://news.google.com/rss/articles/CBMikgFBVV95cUxOTzVRUkFxYnRLTnNhS3VzRUoxU3p4WDhwUlBobERVZGFFWHhhVU1wLTV3NWYzTWhLNmpzTzBnMk5hVUZsWjB2NllBNHh0OFBzOGVpeW5Cakk3ejVTUG1kNFFUVC1nMFJxZF9YWkxfVHVjYWZVeWtuRG9sQ25sdmlOM0lDT01JVzJlcjJObWNWbTlfUQ?oc=5"
+},
+{
+"t":"Dow weighs exit from $20 billion partnership with Aramco, Bloomberg News reports",
+"s":"Reuters",
+"d":"2026-09-09",
+"u":"https://news.google.com/rss/articles/CBMixgFBVV95cUxNOFVTQ01iclNnTEVHaExha0ppdTRYRmRVMVI5U3REeVNTcmU2QzEzYkoweGplVUdhWF9BNmxLcXdTSmk0RzdnXy0zZi1fVWRYS0ZOck8ycWt5NHdaVF90MTdPY3ItYjQzRjBaREZUNzBrQjYwSy00YU9VT3l3QkQ2dElSeVEtTEk1WHVWZC1RUGdLaTV0QldLNXBjcEtoendweTNFTENCVWhzX2dxV19oaGZiVEpKTmpGN1J4U0ZLNkJZeEd5Rmc?oc=5"
+}
+]
+},
+"LYB":{
+"name":"LyondellBasell",
+"desc":"Netherlands-incorporated chemical company",
+"hq":"Houston, Texas and offices in London, UK",
+"founded":1985,
+"employees":20000,
+"employeesYear":2024,
+"listed":"NYSE",
+"site":"https://www.lyondellbasell.com/",
+"wiki":"LyondellBasell",
+"news":[
+{
+"t":"LyondellBasell Industries N.V. (LYB) Stock Price, News, Quote & History",
+"s":"Yahoo! Finance Canada",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMiUEFVX3lxTE1oenRUdVM4bW51YlF5VXZmdXBXWEdFM3Q0VDlySHNWaGpSLUdpcThwQXVNa2pVM3lteGJDak0tdGtIZVQwVTN4Ylp2OVRJempv?oc=5"
+},
+{
+"t":"LyondellBasell Industries N.V. (LYB) stock price, news, quote and history",
+"s":"Yahoo Finance UK",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMiUEFVX3lxTFBWUjVNdGhGcy1GUVRqSWIzeWJLLUFISWJ6OV9zTE9ubHBlc2tpanE4S05kQ2tZM0Z5OW1FQnY1M0Q2Ri1NNlpmMGFjanlKY1B2?oc=5"
+},
+{
+"t":"LYB and exoIQ collaborate on material solutions for industrial wearable exoskeletons",
+"s":"LyondellBasell (LYB)",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMi_wFBVV95cUxPLUd4dmVrOTliWHZObEFrZ1FFbzJSeml6NjhTMUJWYzhENEtSQWFJMUdWSWZ1ZmRNWkdWRF9xaXpTVDZTQXFYaEtIRmxHLWNXZjgxeDJxU2pwcE9yQzMyN1FJb1IzQ0hsNXhzQWFpYzllUUhIWFhlZUR0NlZpd0pZSU4tNGZudEpXM0hRTWZBSW9BYW9TbHRYaUF2NTZVRi1INE0yazRTdGUwcGtzZnFYeG1aSVNuM0hIa0Fad3EzY2xPdEIyMHZ4QXhmX0J4b0ZZS1g3MHR1REh3VDI4czJUc0dJcWhMYkFDSFVWMkN4V1dJNUV1UENZSXdKWHhMT0E?oc=5"
+},
+{
+"t":"The Dividend Cut Nobody’s Talking About: LyondellBasell’s $1.37 Payout Is Gone",
+"s":"TIKR.com",
+"d":"2026-09-16",
+"u":"https://news.google.com/rss/articles/CBMiogFBVV95cUxOeXdPTDF6Znc0dHhNVTdvMW5EYl8yVlQ0MzdueHNuVFRjdnRUejE5aVpIUWFPQ18zTFc2YWVOYjNwZW9JUG90dW1BWndTWWlvRnFOcExpV3ltcm9uUGNGRXZqSFd2NXVkUGx6ZXBrZkF2bmF6aWJha1ozSFh4N1VHUkF3UWxmQm94VFpHTnY2cEZ0U1RDY0llMUdSTFZ1NjVhSkE?oc=5"
+}
+]
+},
+"NEE":{
+"name":"NextEra Energy",
+"desc":"American utility company",
+"hq":"Juno Beach, Florida",
+"founded":1925,
+"employees":16700,
+"employeesYear":2024,
+"listed":"NYSE",
+"industry":"energy company",
+"site":"http://www.nexteraenergy.com/",
+"wiki":"NextEra Energy",
+"news":[
+{
+"t":"Virginia hearing examiner tells Dominion to release memo on FPL investigation",
+"s":"Utility Dive",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMitwFBVV95cUxQM1FWUklLLUNkOWlSQmtvQjQ5cW00WUFtVmtwR2pCSENEVno1Y3Nnb3dLRU1wY3ZvWWp4VXlSdU1QVkI1bUppNzl1RFY3OTF2VWh1WGJsT2dwTWliVC1zYlJUMmtxVldpT2lVRS00cy1EaUtnY3NFakVUR1JkaWpaZnBFY0xTS3k4SVFrQkVpMmZ1Z3ctTklnS09LQzhRNDBjNm1oMGtUN2hnZG5uYkhuazJyNlNOQ3M?oc=5"
+},
+{
+"t":"$67 billion NextEra-Dominion merger could raise U.S. electricity prices, lawmakers say",
+"s":"CBS News",
+"d":"2026-09-30",
+"u":"https://news.google.com/rss/articles/CBMid0FVX3lxTFBhT043Q2loejA4Ujd3X1pLZW9zT3VJV2ktamo3MXFNTTBkYV9WUm5JNk5vQTBBekJHZmpRQWVFN0RBc0J6RW1aTTBzLWhTTllFTk9NMTdxcjRnblZRUGJWd1dXMVRPLWNzRi0zaFgxRk1JdEQ3Qjhj?oc=5"
+},
+{
+"t":"The United States Department of Commerce and the Government of the Republic of Korea Announce Strategic Investment in Project Star, a $22.3 billion Energy Infrastructure Campus in Encinal, Texas, being jointly developed by Related Companies and Next",
+"s":"NextEra Energy Newsroom",
+"d":"2026-09-30",
+"u":"https://news.google.com/rss/articles/CBMipANBVV95cUxNbmpfOVgyaVJQMXdMR3RhQzhWbEs4Q2hNeXpWbzhOVjJnNHp4c2c0ZXYxaDQxLXlCOG9pUUttVUxxa1VFRXZ6c0gyb3pjemw4U2VGbDVmazIxV2tScjM5LTBIdTJHTTF6RG9CSGtPc2QwRGZhR2RKdVJ1V2pyYTdMQ2h5Q0hOdnB2WDg3VlNWWDBVWnZDQWFlWGZCblVZdTdfRVN0M1JNWFVQWmF6Q2VOYmlVRHRTUVlUek92cFA0WkJjd044SFMzNmhXbnZXdl9JVkxtT0psSzMzNHlIMTl0UnBHXzF0bmFFdnNxYmZscVFrRXpxVGhVemdMdXZEbWN3dEttSUY0eWRoSms2UG1QcDA2aC1US3NkN0RWQUFCOUhubzJyd1pMU2VnMXJEVmNlVG5DY21OZVVYUjF5WnlfX2czODZzdy1vYWJaRDdfb1hhc014ZGFFdW1EZmZjaTBzcDVJZzA2LVR1cDB4ODRReEx0YjN2LXlrQi1LcXdEdTE5bTQ0NmFnQ0JDRmdROU8tV3ZmTlhxUm0wbkxxdzc4cVJTM28?oc=5"
+},
+{
+"t":"NextEra Energy (NEE), What Is Behind The Fresh Attention?",
+"s":"Yahoo Finance",
+"d":"2026-09-27",
+"u":"https://news.google.com/rss/articles/CBMinAFBVV95cUxPM01kZkM5ZDhWRUdxTUpDQkVEMjZKUG1JZ21QSmJfRTRuX2JXVUJjdFJ1UW5JcEVoUEp0V2llZ2gtV0E1X1NRb08xcFdwRVZtTXBZY2R1OFlmMWJKLXVMbG5fVWRrbjZCQTlUMGJwZF84Y2tacDN6SDJRSGpfLTZLT211VEpTT3QxNTAySWpnUjJWOW1MaEJHWU5VWHk?oc=5"
+}
+]
+},
+"CEG":{
+"name":"Constellation Energy",
+"desc":"American energy company",
+"hq":"Baltimore, Maryland",
+"founded":1960,
+"employees":15339,
+"employeesYear":2025,
+"listed":"NASDAQ",
+"site":"http://www.constellation.com/",
+"wiki":"Constellation Energy",
+"news":[
+{
+"t":"Google and Constellation Energy sign latest nuclear energy deal",
+"s":"Axios",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMid0FVX3lxTE9lVGV4WWZRZVJjN1dnbFRBaHRPWlNwR1FqMTYtNUhOa1ZJUEdfQVR2WktzWGJibmNlSjRnRGFtZ3liM092eVNtUFZFa0doMzdrbkJYdnV2a1Z4U0ZSSFZOLUZXVExvd3NYVHdLa1FDTnJuODUtTDVZ?oc=5"
+},
+{
+"t":"Australian uranium miners rally after Google's power deal with Constellation Energy",
+"s":"Reuters",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMixgFBVV95cUxNTVpvUnVFLUNLc1dIRjdEU1BIcnpTMnJFbzZpX2xzcGtlNGRvcnFLS3VMWEcwSmtaZEwwMVVuS0lDQkY3Yk1pLVlkaVQzSS1qUW5jRzJhb2k1NTkzcXpZMEpyNmV1Ty1uQ2ZkWlBYMUMzSl83QXhXanlVdlJhVlNPRGxoOWlDM1k5SDJQb1hvSmRWbmhQVmJqVl9wMXpZUV8zQ1IyTW5DeFIyTmpoOVBiYloxdVd5TkJydVlXS3RaVzdDYnRaeFE?oc=5"
+},
+{
+"t":"Google and Constellation Announce Landmark Agreement to Bring 890 MW of New Nuclear Capacity to PJM Grid as Part of Long-Term Power Deal",
+"s":"www.constellationenergy.com",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMi7wFBVV95cUxPTHpOc1JtQzdMWVVKSzFmLUlTQnZVUW53QmVNdVFKR3NVNkhlY2Y0elV4dXV1MkRWSmlmeUswZmVZeTd5M3NwY2pyTDlMa2hJanpvM3d2TUZuT3ZoRk53bmpmVTF6UzRVdFNULVl0VGt1ekhwMWZ5T2Fhbm5TNlNlOTBUY0ZoNnZ6bVlxemR3NGd3MFNkVm5OcmtuOERhdGo2aG5neUZ6cWwtNk55U0JoVVR4Q1hzQ2xGMzY5eWpxZnduWXdjNTNEVVVzTWJoRHVPbndIa19JTmVFT2pMMDlUaFM4aXBuT1pmall5cWFONA?oc=5"
+},
+{
+"t":"Google enters massive 3.6-GW power deal with Constellation Energy",
+"s":"Reuters",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMitwFBVV95cUxQUGptbnU1SUxQWEJrRlFLQUhoSU9WMDhMQmhtZ29ZSGtMRHdvaFI4MGdJXzFWbmVuSHc0bFVkamJVTzBfY3VjRmVmNjN3ekpFMEtyS1Bxc2NMTmhiZlJGQUk5Tml5b2Q0NGZPc1REcExtWElITFFlOW01VWNETGMyZXVMM0x0cGJjWVFfaXZqSzlSNlUxdnFvVFNOMUg2ekVPRktkdVptSFRHa3lNcHREaktPU2RTZGs?oc=5"
+}
+]
+},
+"VST":{
+"name":"Vistra Corp",
+"desc":"Electricity retailer and generator",
+"hq":"Irving, Texas",
+"founded":2016,
+"employees":6850,
+"employeesYear":2024,
+"listed":"NYSE",
+"site":"https://www.vistracorp.com/",
+"wiki":"Vistra Corp.",
+"news":[
+{
+"t":"DOE intends to loan Vistra $4.2B for nuclear fleet improvements",
+"s":"Utility Dive",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMipAFBVV95cUxNbWNuU2g3djY3Q3lzY21uVllMX1EzdlBrbGc1SG9lMkxWOC0tUW9mNV8wTjVQVHdicnB3M213TFRvSUZKbFkyU3ZXYmJBcWRrVWs5WTNaLXdvQmNvVFpQTURFSEYzek1OcjFEQW1Vbm1vWVhrWUo5Zlh3eUZ1Z2drS3VhWVItd3ZFNUlMVnRDZENGSVBkNDJ1T0Y0VlZUNUJER3FDeQ?oc=5"
+},
+{
+"t":"3 S&P 500 Utility Giants Soar Above Key Resistance. This Is Why.",
+"s":"Investor's Business Daily",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMimgFBVV95cUxNMmUxaXZIbzVUWG5RNEZ2bXV3SjlTM1Y4aG9vYWFMdWtzS2h1MnFva25QWVFPVDNhS2k3MXo5eTMyTHpLTHNJTGhVRVNGVGVCb08yOTFWbjlGZWZtRHk3cHdzNUFzWVh6Y0FzNWRHb0Z6MUZQQ2hNSzI4Y0ktbE5LM3Vzb2NFdnRaLThYWUQ1UTFSNlFPRW03S2Vn?oc=5"
+},
+{
+"t":"Vistra stock jumps on expectations of Trump administration loan",
+"s":"Yahoo Finance",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMivAFBVV95cUxNWHFWdko2ZFVHQ0NEOGtCUEZLb0lQVzBxNGR0N1FUSi1PSjg4MDJVTk5UNmFlMXg2R3p3cUQ5S28wV05uLWRWTGJoazJxVHNUeHBUemFEbzgxaGlNQlpLUHZvdXBpV1ZoWm5wSHBlSldXQkZmSmYyV3JscXEtUklwVUNaa09BUUJ4NDEySlVpdUxmRTZyaEVxS2c2bl9QenVDUzRLYWIwOWdSVTVIN3h4RG91VXA4Qy1tT3BQWA?oc=5"
+},
+{
+"t":"Your Vistra Stock Thesis Has One Loose End",
+"s":"Trefis",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMipAFBVV95cUxNSXR1UzdDM0prSmVQN2QwNlR3cTdJMVhZRXhWMnotTy1qVm5jb3lFRDlsT0hlN1hPRWtvWDRhN2l0X21hYUtnUUNQMDI2QklUR25GOUh2eHFPcE4wTllFQkxWemd0N2JydklmeUVsVkxiWW5OZXhweVF2Z1UwbzdNV3dnQ0RSSWRObFQ4OUFVMlpzUWJhRVdZT1praVBSVG0xOWlvVQ?oc=5"
+}
+]
+},
+"NRG":{
+"name":"NRG Energy",
+"desc":"Energy company serving customers in the northeast United States and Texas",
+"hq":"Houston, Texas",
+"founded":1905,
+"employees":15673,
+"employeesYear":2024,
+"listed":"NYSE",
+"industry":"electricity supply company",
+"site":"https://www.nrg.com/",
+"wiki":"NRG Energy",
+"news":[
+{
+"t":"NRG Energy (NYSE:NRG) - Stock Analysis",
+"s":"Simply Wall Street",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMibkFVX3lxTE4yQ3ZmTHUzQ2x4UFNlUE1IaFpTTWxwcjNXS3FNN2N1dzJXaWFjN2MwdkJfaG5WSVp2T3ZzZTRsNkM4cmpOWU1PLTVnMzlpR0l2N3RubUJaTVlkUDBTY1hvRUt6NUtaQmJsa0pwclF3?oc=5"
+},
+{
+"t":"Is NRG Energy (NRG) A Bargain Following Its Pullback And EPS Growth Expectations?",
+"s":"Yahoo Finance",
+"d":"2026-09-26",
+"u":"https://news.google.com/rss/articles/CBMingFBVV95cUxPUUxQSnJWZDJjS3R0RFhlSEN2Z3BNZjhaVGFVSjZTS2pXeGI3ODc1N2NySkNEUkF4azZuWWdQTjJjSk1rSmJ1aGVHLWdBd1o1MDdQYXQ5MWpfSlpTOUZPdzlpaklEbUZ0SVBmck1INmdDQ09DbFYzUjhOcDVpcFVWS1d6bjBUSlRnVmdrRGNDaXZuYzMyMkZOc1hlTzd3Zw?oc=5"
+},
+{
+"t":"NRG Energy (NRG) Stock Sinks As Market Gains: Here's Why",
+"s":"Yahoo Finance",
+"d":"2026-09-17",
+"u":"https://news.google.com/rss/articles/CBMilgFBVV95cUxNRThKZkVrQjVkNmVZakY0S1h6dl9sYmxCTVJaNjhmRVZwdEdQWW5KRWVDVFFpNnc4dk8ySlY3VkN1WVhIZ2hxQm4wUF9abnlQckdLeUJQYVpuWk1PTDRzb0t4S3VJUnF2RWN3SmMybWU3RGNJbXZ6OUlRckRhRkV5RWUweS1FclV3TlZOdlMzeWJMV2NkN2c?oc=5"
+},
+{
+"t":"NRG Energy (NRG) Laps the Stock Market: Here's Why",
+"s":"Yahoo Finance",
+"d":"2026-09-11",
+"u":"https://news.google.com/rss/articles/CBMilAFBVV95cUxQRWhZTWVjdGk2OGNMLU94Ujgxc1pqV0RyQmd5amxhWUJCR0VHNEhKSHlLeE1yTnkzZ1RHallvUF9tRFc2b3g3MU9adVd3MnRadFFjWWllNHlIV2w0UGFzWVY0U0NWNWNKTWozZ2hkVVRFNjhMajlwSkVwemhkQ3Q2M3F5VGtTLTY1bnhKakVJVkd5T1JK?oc=5"
+}
+]
+},
+"AES":{
+"name":"AES Corporation",
+"desc":"American energy company",
+"hq":"Arlington, Virginia",
+"founded":1981,
+"employees":8336,
+"employeesYear":2025,
+"listed":"NYSE",
+"industry":"electricity generation",
+"site":"http://www.aes.com",
+"wiki":"AES Corporation",
+"news":[
+{
+"t":"Customers could pay higher AES rate before state could possibly reverse it",
+"s":"WFYI",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMitwFBVV95cUxNdFJwdVNYWFJwRnpHNWI2RlFaejlMdmJlcWZxYTVadlkxcy0yV0U3c0VBOS10VGJabUJ2b2ZSTmFHSU9nWXBsbHY2TEZzYWpyMnVOR1Ztc0lWdnNBamI5cXBlRUExMnhKY01nTEJBZEVxY0NqQlJaMjZzUHhKUzgzTXQ3X2k3al9zMWhNMHB0Tjk4VmhCOTBWampBdC1oT29TcXhNbm1pQjl2UnZIZ2xScWZicFZxc1k?oc=5"
+},
+{
+"t":"US lawmakers, including Sen. Warren, push regulators to block $33B AES buyout: Reuters (AES:NYSE)",
+"s":"Seeking Alpha",
+"d":"2026-09-30",
+"u":"https://news.google.com/rss/articles/CBMiqwFBVV95cUxOcmVvMlV2T0tmc2hvS2YzT2UtWGpzRlE5ZE1qczFCN3FtM2l1SjdISWNSZ1JpdWdQZXdGWTBTNEhaQUZrQ0htRFZ5eVRTY2RKaFBZNnlnU3NhS0c4NHBjMURTWThaNHFuNXRreDUtNE9MdXUxNEk5a0Z0OGVlRElZQTdDeFF0bER1WFJBZ0FtMFhfb0lnZVp2WTJTY1FKNmhHVWhDQ3hFUWxBaXc?oc=5"
+},
+{
+"t":"The AES Corporation (NYSE:AES) Stock Has Consensus Price Target of $15.71",
+"s":"MarketBeat",
+"d":"2026-09-25",
+"u":"https://news.google.com/rss/articles/CBMizgFBVV95cUxNR29BQjBEN2tIdkw4UVNmbEZ3ZlZyQzlnREQtYTNjcjlzNEUweXIzOGtrMm0za081dy1WczNpbDc5N2ItN1AyYkxPd3JHd1Q3b3pqR0lUdWZsamhCWTFWekNkUnAtX0ZPdlotNTJQNWh1QjhGSXEzbDNVdGlDTklvMXcxVF9XYzVVcWpnaXYzWU02SXJXQTlxdUxVeERfbWdyQlZIRXp3MGxzeTM1WHM5alhUUDg3a2hROVVPWVFnUkg5LUlIN01IeDJSTU9sQQ?oc=5"
+},
+{
+"t":"PUCO approves BlackRock AES takeover despite rate and profit concerns",
+"s":"Private Equity Stakeholder Project PESP",
+"d":"2026-09-24",
+"u":"https://news.google.com/rss/articles/CBMiowFBVV95cUxOSkMxbUZuV2QtRFNUeUNuNEtudThMa0g1WUF1NnVLX2FmM2tJdG1ab2dPSS13SDFmM09XSE04dUhNMkxKU01LUVFqeTctMGVjVHRrRm1ZdEc2Zk8yYkNabFFxNG0wRHIyZkI5Z3BlN2RKZmNtSkJ0Y0lBME1DVFd2N3AyaVZldkxTTk5VREl1NnJHM1hiNGlsRlRsREdxYlQzeEFz?oc=5"
+}
+]
+},
+"FLNC":{
+"name":"Fluence",
+"site":"http://www.fluenceenergy.com",
+"news":[
+{
+"t":"Fluence Energy, Inc. (FLNC) Stock Price, News, Quote & History",
+"s":"Yahoo! Finance Canada",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMiUkFVX3lxTE1hMjhkNnFud3RvZkNIejVaRzFsQzRoUEIzdVlqdERKRG9vRTRHLU9xTUV0Sm1MV3VaZVhUc3plR0QySWhDTFdUaGFBZ3ZObE9xaFE?oc=5"
+},
+{
+"t":"Fluence Energy (Nasdaq:FLNC) - Stock Analysis",
+"s":"Simply Wall Street",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMifEFVX3lxTFBjcG5obWF4bDNDSkVXVXlIVC1YVEY4VmZ1YU1LMmRrRmxSY2VFZkozQkwxbDQ0Wnk5Ym5sakY0akxrblRPNy1FSjFhZ0VZdmxqcG96c0gxSEdDMGxUY3RwYUxkbE5zSk5GNUFBeEJsNmFxWk9sZ0lmbk9YVnI?oc=5"
+},
+{
+"t":"Fluence Energy (FLNC) Stock Trades Down, Here Is Why",
+"s":"Yahoo Finance",
+"d":"2026-09-18",
+"u":"https://news.google.com/rss/articles/CBMingFBVV95cUxOUURzQWR4R2VWNUM1NHBsNnNCQmpDUjJjZ1FkcXB4V0EtWjZvY0lJX3Iwejd2WWFkLTZZV0lQcmFpWVRTS0FvNnN4MmFtQ2dHZWFwSmZmQ29ycVhpOEx1QVAyZXFwc3FsNGdReUtKWmdUZklqQkJ4LUZDQ0F1M01JakwzQXZTd2owV2RIWUtfalNuSGNYMHozcXE1T09pdw?oc=5"
+},
+{
+"t":"Why Fluence Energy (FLNC) Stock Is Nosediving",
+"s":"Yahoo Finance",
+"d":"2026-09-17",
+"u":"https://news.google.com/rss/articles/CBMimgFBVV95cUxPTjdPN1g4MzZXLWUtdzc4N3NUMDY3TFl5Mmp2dW1JMmNveGRsdmdUd2ttZnZUQ3ZqNk1mQ1lrM2dLS2dGX0taSXNlQXJBVjduZ094T29CdzZ1SWZMeS1uQW5rMGdjMlNjZENpZWhGZ2xia3Z2OXlYR2d6QzZ0cFMyV2FaVXNNSS1GVHN3RWpsZTJWLTZ1dDZyUWJR?oc=5"
+}
+]
+},
+"TSLA":{
+"name":"Tesla, Inc.",
+"desc":"American electric vehicle and clean energy company",
+"hq":"Austin, Texas",
+"founded":2003,
+"employees":134785,
+"employeesYear":2025,
+"listed":"NASDAQ",
+"industry":"automotive industry",
+"site":"https://www.tesla.com/",
+"wiki":"Tesla, Inc.",
+"news":[
+{
+"t":"Tesla Supplier Reports Record Earnings From EV And Energy Storage Batteries",
+"s":"InsideEVs",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMidkFVX3lxTE14VGQ0OXpWRzk5QmQyQjFZa0dtVUkzZm9OUW5mYkRXczUyaDlRY3ZSZXAySmZ2S0lSNHh5TFp4VEh6YTUweHhFRGRJTU9yWGZqaFZKWUdwS2NlakNzcVZCcmlFQVl0eURsU1JMV3JtWXdDcmFjMUE?oc=5"
+},
+{
+"t":"Not sold on Tesla Powerwall? There are great battery alternatives out there [update]",
+"s":"Electrek",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMitwFBVV95cUxOSV9nVDZIVG1KUHlSMGtuUFB1TjBZRXhwR01ERUJHTjJOdWNWd0t1M1FwTmw5SXFqdElETUN6SFRhQ1JYbUNQUDVzSlY0MVZHWWFSYXB3aHlEZGU4MERuSHdLbXA1RGN3M1BQTGw1Uks0TW50UWhUMmxkOGI4eHJCT2lmMGlrQWdIeWJQMmVRZGNhMk1FTS1ENzgyU0VkZ0hnNEg2R1lRbmo2U2RDMEhpRmNWQWlsbDA?oc=5"
+},
+{
+"t":"Tesla’s Q3 Deliveries Beat UBS’ Estimates — But Energy Storage Miss Keeps This Analyst Neutral",
+"s":"Yahoo Finance",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMimAFBVV95cUxNQkJiS0Zka0lvLVFkR3NMUEZzUUpDWmg2M25oYkdXaF9HZmhGdnE2cWR3OW5tZzNxektoYWJwNjlXZnBFdG94eUE5NW84S1pqYmI0anZLRlFhcTZ3cktwR2xUbV9GTjJtdmZUYTFRd252MnhTR1BzWFlpalZDTElBVTVyM2xDWXhpclJkeGVBNzF3NjFOVnk1cg?oc=5"
+},
+{
+"t":"Not Cars. Not Energy Storage. Tesla's Robotics and Robotaxi Ambitions Are the Real Reason the Stock Is Priced Like a Tech Company.",
+"s":"The Motley Fool",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMimAFBVV95cUxPdVBtWnVfb25LNm5kd21MUUxLR2JOblV6Y2lVUjBZUm14eG5Xb20wTzA5VDByZGdiVXNnaVlzaS05bk1zQWhNUURkVDZ4TjhEX1hyb25acUNRTFd1WHJxTzZJWHNVdUFjMi1iTHV3ZWtJVU5XXzBmbmRjYkdLQVVZVlY0b0VPLXFGSElmZGlTcXY1TUFXTDh0RA?oc=5"
+}
+]
+},
+"ALB":{
+"name":"Albemarle Corporation",
+"desc":"American chemical company",
+"hq":"Charlotte, North Carolina",
+"founded":1994,
+"employees":7800,
+"employeesYear":2025,
+"listed":"NYSE",
+"industry":"chemical industry",
+"site":"http://www.albemarle.com/",
+"wiki":"Albemarle Corporation",
+"news":[
+{
+"t":"Is Trending Stock Albemarle Corporation (ALB) a Buy Now?",
+"s":"Yahoo Finance",
+"d":"2026-09-30",
+"u":"https://news.google.com/rss/articles/CBMiqAFBVV95cUxQYVBGWTlBbWViT1dIam1ZdkEteEhuWkVEdjRfQzdwM0V1aW1zQjF6QThramN1dVd3bktIMzY4dG9fRmFXMGs4ZmxHTGRaOXNNdmRKVlYyNjAzbVgzemZYYzFZWnNSNGlEQTZ3ZkgzSlRPQUZrMXpkN3NFSE1DdWpLaVV5TkRWc1RQT0VhXzZ3TEEzbDM4Rm9kN3lUWVhGajhtYXViQzctTTU?oc=5"
+},
+{
+"t":"Is Albemarle Stock Outperforming the S&P 500?",
+"s":"Yahoo Finance",
+"d":"2026-09-22",
+"u":"https://news.google.com/rss/articles/CBMiogFBVV95cUxQRHN5bWtUSUw1UC12MHk5aWhWTlBlQU11ZGFSckxNa0s4LWFiOEQwXy04S0o3aFd5eEpPSmlVYm9JVG5VZlhINVFFZm4tSERRWlFtZElQb0lXUFYyNU5MREdtMkxkTEJTdDhwOWlsR2ZGMzRqUnU1ZE1GVkQ5STVDbDhXTHFJWWdzbnk2bEFGbDdtdDlrTGZzWW5WWDYwRGM3aWc?oc=5"
+},
+{
+"t":"Albemarle Corporation (ALB) is Attracting Investor Attention: Here is What You Should Know",
+"s":"Yahoo Finance",
+"d":"2026-09-18",
+"u":"https://news.google.com/rss/articles/CBMirwFBVV95cUxOa05oenFaTzhjN2xVTTFOaDVOTEtiR3U3UW50OFdUcVZ3aWU1eUV0SjU2ZE9nb1JJN0NMTjVtSDl4T0pXQ2VNdFVKYUJxZm53WkljcjBpMGNvV2xZclVfREc4aFdyRG5DMkVhWTBHaXZBNk5Hc3Z0ZTZxWmhRNlI0ZTFWRHRoT0E1TF9WdlBweVlZRDByVmNBVDdEZ1pUdkwwQVB2bXhVcDNoTXB5dU5v?oc=5"
+},
+{
+"t":"Albemarle Corp's Dividend Analysis",
+"s":"Yahoo Finance",
+"d":"2026-09-11",
+"u":"https://news.google.com/rss/articles/CBMinwFBVV95cUxOM0x3YlJ2aTA3RFZGS1AxSGRSLVltVlN5LWJ3YlFMNmxzWm96MHp4LU5OclMwRmRwT2VXTG0xdjRvYl9uMnRMa3Z2czcwY3lNZUFvME9jWXVWU3ZHUzZRZFVraEVBVF9tcHNlRW1vYWlNVl9UTHEwNE9LeW84VU1GWUZ5UG5NUFIyZ2g5MTVXVDZpUFVYZXByUllCcHBRMnM?oc=5"
+}
+]
+},
+"PLUG":{
+"name":"Plug Power",
+"desc":"American technology company",
+"hq":"Latham, New York",
+"founded":1997,
+"employees":3353,
+"employeesYear":2022,
+"listed":"NASDAQ",
+"site":"https://www.plugpower.com/",
+"wiki":"Plug Power",
+"news":[
+{
+"t":"Why Everyone Is Watching Plug Power (PLUG) Today",
+"s":"Simply Wall Street",
+"d":"2026-10-04",
+"u":"https://news.google.com/rss/articles/CBMivAFBVV95cUxNTmdEcUFpenh6OFdwRHY4TGZkajlISXdweXV5SUJ0dF9aZm9ZZGJoMk10U1BHUWhWbkdjbDRpTllQaUt4WTE3MFBhNWctZjRNTVgzODY3cW9PNEFjSkVZd2NtbVdWaDVpWlpGdzlySU9ReXRmNUxhMWN1TER5Z2pON1BIa2ZBY0FpWmpUdEJFWEc3T1VRMmt5Y1VEMnZ3QjNwSXRwRFlZVXJIdVhJUHdVWEFteDFycm1PbTRHc9IBwgFBVV95cUxORzVsOE9tenNVd3p0THVwVnpyTkxaTTV6YVVfV3dQRFhSejE0TXc1eERqN2hxR3dhVTNvY01SX1hvNlVLMWZxbmw1a2ZwTWd6WExOc000UUgtbXZqSnJoUk8tZFNaRkJHRmlMVkZtMlZBcWwxS2RmTjV2di1hWnIxZEpHWXFXYzdtNVdUZXZMUU9Rd0sxMmtVTEtjZmd0MmZiUktsMUJsZVltSEVkNlBCd1d0T3Baa21Nd3dZbTkwc2VRQQ?oc=5"
+},
+{
+"t":"Plug Power (PLUG) Stock Could Be Fully Priced Following Fresh E SAF Project News",
+"s":"Yahoo Finance",
+"d":"2026-10-02",
+"u":"https://news.google.com/rss/articles/CBMilwFBVV95cUxPTWtRaEdybXd4dHVUMHNraktpVTVtOHNuVndDRUZQb29jcHB1S1dDd1hWUEctOW9NN0VJM1ZVSzkwVnJnTmtOX1E2allvNnlOTHkzYzBfTG91dldXdkZ4eEhJTDE3dkx6TWMtVkljbG5CSm1VeGR6VkhDSFA2SzZBVThnMDRMaHFPajZmREVuNFZLT0plREM4?oc=5"
+},
+{
+"t":"Plug Power Gains 4% as Risk Appetite Returns; FuelCell Inches Higher, Bloom Energy Holds Flat",
+"s":"Yahoo Finance",
+"d":"2026-08-27",
+"u":"https://news.google.com/rss/articles/CBMikgFBVV95cUxQWkJoTjd0aFlURWRRc1Y5TER2SHQ4VTBDQmVvNTZGSHNUbFhhMmE0dGE0OUNrNTZnUFlrc3Y5UWFuV1NQa1JuUWxod0FPcVNyRzJESE12Q0ZaN0toZVV5NGljc0NRYWF0NlEyTGl4Q0dvd2xFQmVEdkJnWTJGVHpiZjdPVl9GaFVEeWV3MlZqWkk4Zw?oc=5"
+},
+{
+"t":"Plug Power Falls 4%, Bloom Energy Moves Up as the Hydrogen Trade Divides",
+"s":"Yahoo Finance",
+"d":"2026-08-24",
+"u":"https://news.google.com/rss/articles/CBMikwFBVV95cUxQY0dwMDdoNEJ1TldkSjZrbzk2SFcwbERvaE1zOTc1ek5waF9wLTJUQVE4QXpBVFlZZ21sVjY5ZFVZcl96RU9NOXRIRzFmZzhxMjhLQTFhN1ZwV1ZOYlM1RGtPVWs3dlZINkN0UGFVSkdfVWxxQlFvZEx6VG15WGRMaXVTUFBlS3RKbEFfRm9RNlpja0k?oc=5"
+}
+]
+},
+"DUK":{
+"name":"Duke Energy",
+"desc":"American electrical power and natural gas company",
+"hq":"Charlotte, North Carolina",
+"founded":1904,
+"employees":27037,
+"employeesYear":2023,
+"listed":"NYSE",
+"industry":"electricity generation",
+"site":"https://www.duke-energy.com/",
+"wiki":"Duke Energy",
+"news":[
+{
+"t":"Duke Energy to announce third-quarter 2026 financial results on Nov. 5",
+"s":"Duke Energy | News Center",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMiqwFBVV95cUxPX3dVZGZoMVBYc2tuaVpZV0RLWW9pNmZLVmpzY1hIRF85NzRqV1FtUS1SS1Voc2NkcExnMGJzT0ZlZDFMTGNlZ3ZlSlhyeklvaGRQRFUwVDY5TVF4aUN3SkIwSFpOemR0UmVfOVNqc0pQU0hadFRiRXVKejJmWXFHV0VQX3JjU3c3b3luMmRrczlfYzVBMEQxMGR3MHJhdjhyRko5djNzaVg0M0k?oc=5"
+},
+{
+"t":"'That don' make no sense' Florence Co. man disputes $3,100 Duke Energy bill",
+"s":"WPDE",
+"d":"2026-10-02",
+"u":"https://news.google.com/rss/articles/CBMingFBVV95cUxNWjFuMW9OdlNWME5fMGx3SmQxNzZGQXo4TFRzN0xjaG9TOXprNEVWRWswbDlRTEJrZ3oxZjY4OHlxZEFCT3lGSXlacHN4XzJoc0ZJZDdwZ3c1Qno2d1E4NU81MU9fWnlrVEVZYjE5Rkxhd3hodEJEckI3aG1mc1BwM09JbERIcUZBdFJtZ2hjTS0teGd0WTNNNGI2YkRoQQ?oc=5"
+},
+{
+"t":"Holly Springs homeowners dispute Duke Energy claim denials after power surge",
+"s":"WRAL",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMiiwFBVV95cUxOU3p3ME9ILXBCckhuMklGVmlYdzY3alVLMWpFSHl4SVJ4TndObllKRHpVYkpLNVNfQUFJeTV2MnBha20zR2RNLVllNy1JUVFmOTI2Zl8zQzlxV2NSdGhCTHFzd2tOV19FVG56SVVreUwycjBnMWpCc28zaEdjVmhCa2J4M0hqSFZyRDhn?oc=5"
+},
+{
+"t":"DOE announces $50 million selection of Duke Energy to strengthen grid reliability and support growing communities in the Carolinas",
+"s":"Duke Energy | News Center",
+"d":"2026-09-24",
+"u":"https://news.google.com/rss/articles/CBMi-wFBVV95cUxOWWxVZ3NNb2gtajdJNTg0clpLb3NVVG5JbTZiRXBJZmR3MkxXY3BWMmsyVGdxQ1NpaHhpbGlmeE5ZRW9NNkl2UE9oNXVJX1hMLXc0Nkh1U210Z3FUcGFicDZucWRwZmg4T0FxYlJoSGJzd04xcnFyeDNYMkJpZlFickhDUG9QUndmcUlHdDhsa2c2dlFIcklyMEw2cjc1cDlRcHdSQ1FwRDd5bUZWN1ZnWnhTVjNtS3M3MzUyamZQZ25mSDg4eDJEUjVabXhEM2hoWmRqeG95cEVQOHk3YWxZX2hQQ1EyQnFJR3hHZGFCQmdFUkxXQWU2cHZkYw?oc=5"
+}
+]
+},
+"SO":{
+"name":"Southern Company",
+"desc":"U.S. electricity corporation",
+"hq":"Atlanta, Georgia",
+"founded":1945,
+"employees":28600,
+"listed":"NYSE",
+"industry":"energy industry",
+"site":"http://www.southerncompany.com/",
+"wiki":"Southern Company",
+"news":[
+{
+"t":"The Southern Company (SO) stock price, news, quote and history",
+"s":"Yahoo Finance Singapore",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMiT0FVX3lxTE9XZ1VQX3lmaWk5aUZSSFpaQ3lkSm53ZHFrVHdKVHdtOFZmdXFDMEJJSllZVlRuczQtRGpTamUtUE16d1pRSVpmaERQOVM1TWM?oc=5"
+},
+{
+"t":"Nearly 100,000 Alabama Power accounts affected by Southern Company data breach",
+"s":"WBRC",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMirwFBVV95cUxQa0N4VmJ3WDIzVWFBYnR4dEg4blhubkQ3dnRLTktUSzhDTjFXdmcyRE9lbktDa2ZIeEVuTy1idUV1bTVYOW45VnR3RlhQY2RaS21jcmdaV3NJTTNwb09xeHBHMXJBckZNSTFOS0VqRFJkdHVCM015WmVCOTZaeHo2MHZ4clJxak5EUF9VeXNpWGxsM1ZQd3lSVUhUZlpQMEtmYUJfbW9qWTM5R1J3Q0JF0gHDAUFVX3lxTE8yTnlsclkyVGpENXlMSW5BeURtR1NHQ0RXT0xNYjJkT0JXMngzdmFzWWNoTWJTOVB5OF9sWTE1bjAxSmRPWXdZWGVGeTlwZHoyZFk1b1FhaVptTWJZTTlvbEVzclN5aTZJTUFOQ2JfUk1KSFMyUEM1Nzg3OFFkeF93WmViRU55VFdGOW5Dajl4VkhpbnQxb1BuQlVsZDBrQlB1WlNOMU42a29aa29leVRXYm1EdFJXYWRHaUROU2VWYTdROA?oc=5"
+},
+{
+"t":"Southern Company hit by data breach",
+"s":"Fox 10 News",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMie0FVX3lxTE4wZ2ZQaG9lY05DTXQzdmhKUlFwQ2k4Y3NDdHEzakU0OXFWTFRKTE0wQ2lfZG9neWNUeGxfdFZoQ04xTE1NbzJKbXZEY0NVRzFSTXAwLWZVM0dnM1FlUDJQWE5QRnRzOWJpa2lEUDJYOHh6ek4wOGZPYTJFNNIBjwFBVV95cUxQM1hHSExjdTVHVzFUaGhYVlFsMXlpYzVHVEpsRjFpSlpubFJiTTRzWHZ1eDdkQ2RBTlFWYnUyM0pVTTl5RWN2LWFkMUplZmU0RGFGMzhPWUVpVXRDR203cGZ2a3FzS1BLOE9tS0NoSFp2Qm1YQkRxUDZXWEFERFZha2pBU2k3aTloWm5OaW1EMA?oc=5"
+},
+{
+"t":"100,000 Alabama Power Customers Affected in Southern Company Data Breach",
+"s":"WBMA",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMixgFBVV95cUxOVEJLTEl3N05kWHlpQ2pIVkN5dFRqLTQ4bGh4c1VZTXhGYnZDMW1xOFpXZVJTSDE4NUJ0cEVDR3F4NGNjYXd2R004eFVScW5Na0FiUWprUGxpWDY0OWkxeXRKSXZKRzl6Tk1rQ2dHWC1tSzhyVGYwbU81clFSSzhLMEtLMWlxNHdJN05pQ2RJR2trdEVRYkdNVkZTcldGUWhLSzJFY1lmOFlWQmZpaFp0RERMVTEzMHNEUHEydEk2NWg2ZU5YdlE?oc=5"
+}
+]
+},
+"D":{
+"name":"Dominion Energy",
+"desc":"American energy company",
+"hq":"Richmond, Virginia, U.S.",
+"founded":1983,
+"employees":15200,
+"employeesYear":2025,
+"listed":"NYSE",
+"industry":"energy industry",
+"site":"https://www.dominionenergy.com/",
+"wiki":"Dominion Energy",
+"news":[
+{
+"t":"Virginia hearing examiner tells Dominion to release memo on FPL investigation",
+"s":"Utility Dive",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMitwFBVV95cUxQM1FWUklLLUNkOWlSQmtvQjQ5cW00WUFtVmtwR2pCSENEVno1Y3Nnb3dLRU1wY3ZvWWp4VXlSdU1QVkI1bUppNzl1RFY3OTF2VWh1WGJsT2dwTWliVC1zYlJUMmtxVldpT2lVRS00cy1EaUtnY3NFakVUR1JkaWpaZnBFY0xTS3k4SVFrQkVpMmZ1Z3ctTklnS09LQzhRNDBjNm1oMGtUN2hnZG5uYkhuazJyNlNOQ3M?oc=5"
+},
+{
+"t":"Thousands of Dominion Energy customers without power across Hampton Roads",
+"s":"13newsnow.com",
+"d":"2026-10-03",
+"u":"https://news.google.com/rss/articles/CBMi7wFBVV95cUxPUW9qczBMYnhfcDRCT2lUa29GRVVJNElDZzVfZ0w0MzdqMFBReWpxUDJ2T3hXalhTUjRhOFN4RkdOdy0tcHJqTDVSZWJBMGxZS2JiN3NkRks1R2NBak5zWUotRHVqSmxBLVQ1NWZaMEhGVWQ2X1pJeW1jNXJoTlFTX05sU1ZIUVV2OEd1NUVwRjQxMWdsRTltcTlhdU03dzFDX1NMbk1QRlNYczIxR3RzS190RDg4S2h4WXlpcUh6anZfZ0JxQlVkRmVyX2swT2Fpb3lhbDhHX3dOTmpJYlJXUXU5UE1DY1RvTUdpZVpTVQ?oc=5"
+},
+{
+"t":"$67 billion NextEra-Dominion merger could raise U.S. electricity prices, lawmakers say",
+"s":"CBS News",
+"d":"2026-09-30",
+"u":"https://news.google.com/rss/articles/CBMid0FVX3lxTFBhT043Q2loejA4Ujd3X1pLZW9zT3VJV2ktamo3MXFNTTBkYV9WUm5JNk5vQTBBekJHZmpRQWVFN0RBc0J6RW1aTTBzLWhTTllFTk9NMTdxcjRnblZRUGJWd1dXMVRPLWNzRi0zaFgxRk1JdEQ3Qjhj?oc=5"
+},
+{
+"t":"Dominion, Valley Link Transmission line developers unveil route changes",
+"s":"Virginia Mercury",
+"d":"2026-09-30",
+"u":"https://news.google.com/rss/articles/CBMipwFBVV95cUxNcUd0WFZMdDJkTGM5NTQ3Q1N2QkRQQjAxQjQ3Z1BzNWlVSHpPUDA2QlpRVnVPVFFjMDlGdkRTTlNCZnpaQjdWWXpTVUFiV250bnBWcmhuSVhRMWRsblRic0ZwbnJseDdNbzZvVG42ZHZXam1PdUYxbFVOMmVEbUJJUi1XbzRvTnNjOEN0d1RRZDJpVTFyOG5ETU1qUjV3R0dsdDJydDlWdw?oc=5"
+}
+]
+},
+"AEP":{
+"name":"American Electric Power",
+"desc":"United States utility company",
+"hq":"Columbus, Ohio, U.S.",
+"founded":1906,
+"employees":16330,
+"listed":"NYSE",
+"industry":"electricity generation",
+"site":"https://www.aep.com",
+"wiki":"American Electric Power",
+"news":[
+{
+"t":"Alicia Knapp exits American Electric Power as President Nuclear Development",
+"s":"TradingView",
+"d":"2026-09-30",
+"u":"https://news.google.com/rss/articles/CBMi0wFBVV95cUxPaUJjWlI4WGluT0pkUjBUazFVNERJem9QZWVQbHdDeTJUZTY3Q051Ny1mSDBjbHFZUUhFUnpjOWtORHF5dmNYTFNWTmN6VnJ4NXRtS1NabFNHVHlYemlHbGpNcTNkeWRQMnBPQU82Q2lQRnN2M3RhXzh0aS0xWjVWQ1I1dnFCcTk4UUdvdmhqeFNBY0h2SGMzeGJZdENoeXlhM0dWS0ZKbEp3SjJjNG1ET280S0ppR1piTGJmdktkQUhvckF6UGlud1hiWmZPa2FlTThj?oc=5"
+},
+{
+"t":"Federal Funding Supports Transmission Grid Upgrades",
+"s":"AEP.com",
+"d":"2026-09-24",
+"u":"https://news.google.com/rss/articles/CBMiV0FVX3lxTE9meXA0VERINFpVbVAtLTV6SUtyWUw3aTVmc1FYWVNzUFY3OE9KYWRVRFc3Nm1jc2Z1LWFqNWZiRkdZS0VSdHFhMWxMV3h2NGthNGdzNjRCMA?oc=5"
+},
+{
+"t":"American Electric Power Company (AEP) Files Updated Niagara Project Documents With FERC",
+"s":"Yahoo Finance",
+"d":"2026-09-20",
+"u":"https://news.google.com/rss/articles/CBMilwFBVV95cUxNbnlXUXFNczRab0ZUMGsteDhwa29ZYWpVQ2tkZU15UDhhVjd2MmNMQ3pzak5MaGNTU21SWEFJY0Z2M2x5cnYzU3ZnRHY5RE9fUTA1QmNZTjljRDVSYVV3YXBKOFY5aE1OQS1RcUk2cENLTDdWUkx2OVhBWWlJZlhPN1lHLTVDbmpuX3BFVlc0Z090MG52WjZ3?oc=5"
+},
+{
+"t":"American Electric Power Is Quietly Benefiting From the Data Center Boom. Is AEP Stock a Buy?",
+"s":"Yahoo Finance",
+"d":"2026-09-19",
+"u":"https://news.google.com/rss/articles/CBMiqwFBVV95cUxNWUU5ancwTUI5UUt1cVZDWFBtOWRYakw4S2xkYzV0LXdwQThqbnprblF1T0doTnFpeXlvOWJtR2x3RTZ3V0sxSC02UTRNYkU3YlNaUVRzbTBibTVDekNmVllJckVDWXdla1NNTEhjUGdmQkcxamh6ckxxc1hCYXpudkpmR2c2YU5QVXJaVjRxU0RaeVFTRW41Ui1mdWM1dE9rN0xDUFhVZGZmZVk?oc=5"
+}
+]
+},
+"EXC":{
+"name":"Exelon",
+"desc":"American utility company",
+"hq":"Chicago",
+"founded":2000,
+"employees":20014,
+"employeesYear":2024,
+"listed":"NYSE",
+"industry":"energy industry",
+"site":"https://www.exeloncorp.com/",
+"wiki":"Exelon",
+"news":[
+{
+"t":"Exelon (EXC) Q1 2026 Earnings Call Transcript",
+"s":"Fortune",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMiYkFVX3lxTE1GQW41RHh0a3lkWjNlaWFhWndDbUJtOW9fMm8zMXlRVUYydk1qVHV4eEJSWm96UjJCRFJFbzZOMlNWUi1INzhuZ0l3X3R2b1QtbkhXOGhVLXd5bXdNZ0d0Sm1R?oc=5"
+},
+{
+"t":"Exelon Corporation (EXC) Stock Price, News, Quote & History",
+"s":"Yahoo! Finance Canada",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMiUEFVX3lxTE9pVlNUX1pzd1hBYTVTMXB1UVE1QjV0RWxMTWNTRTBYMEFUMjNfSEVmbFhCaW1EemZhMVc2UkkxcWNQMWlCYjV5WTF6OUJZMElv?oc=5"
+},
+{
+"t":"BGE finds a Democrat to back its controversial Maryland energy proposal",
+"s":"The Baltimore Banner",
+"d":"2026-10-02",
+"u":"https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQ0s3RnBnV0RVWFNxRjMyY2w3VFRjY2dWbHdRcC1oam1sNXpCRjlfM0dBS0NrTEFCRnltbTVhMkhOUmViRE4yeVpFd2xhSXNMXzg5NElJNHBhYTdEWllSWU1YbXVRWHB6a1U1WEtPTEdUeUMzUmwyTTlWZHctTWtGbGpQcnIzZnpseS1mWElwQUFUZDdmdGJxbERhd1VQb01QaFFTNFBrbU1xUHVDeFdTMElyVXNWWWhFd2dhNmZBRXJOang4SjVRbg?oc=5"
+},
+{
+"t":"Exelon CEO Calvin Butler on powering the AI future",
+"s":"Atlantic Council",
+"d":"2026-09-22",
+"u":"https://news.google.com/rss/articles/CBMikwFBVV95cUxOY3JPUmlmYmxGRlNFczBNbk80X0pKSGVnMGxheXNlS2YwQVBRSll6YjE2aVlzSFl3N2JoOTNINkN0cjFoY0ZIWnlJeEtQTlVQRFpHR0NzR2FCUENkSHNmY1N3cWJ1TExrcHVpM2JZOVlPaFNvcmlqU2x6M2Nic29uUHZFNnB2OEZRRC1ZM2Mxa0ZRUHc?oc=5"
+}
+]
+},
+"SRE":{
+"name":"Sempra",
+"desc":"American utility holding company",
+"hq":"San Diego, California, U.S.",
+"founded":1998,
+"employees":16773,
+"employeesYear":2024,
+"listed":"NYSE",
+"industry":"public utility",
+"site":"http://www.sempra.com/",
+"wiki":"Sempra",
+"news":[
+{
+"t":"Sempra (SRE) Stock Price, News, Quote & History",
+"s":"Yahoo! Finance Canada",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMiUEFVX3lxTE0xWHJnRVJ0VHNNeEZWREFJdzlDbm1iOTFuNEVLeURDWno1Q2tfOWdtZDN3bjE1RVpHTVpTR1pxTVprTXc1emVXeG5UUXZoWXY5?oc=5"
+},
+{
+"t":"Sempra (SRE) Just Locked In Two Decades of LNG Demand",
+"s":"Yahoo Finance",
+"d":"2026-09-19",
+"u":"https://news.google.com/rss/articles/CBMiiwFBVV95cUxPNUd2WExocnhPQmtWS1NySV9xR0prelJOdS0xeU01UVJEVllLTEhYVDltQjB4dlFWR215QnRtUDBLNG5IZHZDQ0JCcWZ4Nm40QzRiWFBycExpSnVyZ0RGeHJuVlBHbXZ6eFlRUWswSjFtUzRDYzJUdHVYcHNFazJNaVpnTjlqdUpONC1r?oc=5"
+},
+{
+"t":"Sempra marks next chapter of utility growth strategy at New York Stock Exchange",
+"s":"Sempra",
+"d":"2026-09-15",
+"u":"https://news.google.com/rss/articles/CBMiqAFBVV95cUxPSktSX0dxQnVSSGdRWldVRG9tMHo5Y09ad3VkMHl1MUlwT0Zhbms2WU1WblhhVHhQeDFVbmJJaERJb2xKaXhyaHMzV3NkR3UzODB2SDI5clBkejhlOU95c3hlbnpweGlpZVdKWmNZd3FGWWxDa0hORmJTb01RamkzSE9qNU1zZ2FtVFpET2F4U0VrSTdXS3ZjWG9rcjllRFc1VUpzc0JqdFo?oc=5"
+},
+{
+"t":"Sempra Infrastructure Announces Long-Term LNG Supply Agreement with Petrobras",
+"s":"Yahoo Finance",
+"d":"2026-09-14",
+"u":"https://news.google.com/rss/articles/CBMinwFBVV95cUxOM2gxV1Q2NERWVDFvRWJQeVFSNjlCWGlZUTJvblpqRDFPSzJEVXFsenM4bmIwUUd3dlNlQUZPUmt4Uk1nNXp0czFQd2RuWVk4X3J4RzJsYzdrQ0F0WFJMbGtUSDVaZW83OGR2NzYxbTZkRlBSYXpYZ1JHZDV0OFF1YVZlWmQwYUdObE5SVkhxeDBZbDRpVkxzRlQ1QS12dWs?oc=5"
+}
+]
+},
+"NI":{
+"name":"NiSource",
+"desc":"American utility company",
+"hq":"Merrillville",
+"founded":1912,
+"employees":7687,
+"employeesYear":2024,
+"listed":"NYSE",
+"industry":"public utility",
+"site":"http://www.nisource.com/",
+"wiki":"NiSource",
+"news":[
+{
+"t":"NIPSCO, NiSource Foundation provide assistance to storm-impacted customers",
+"s":"Daily Energy Insider",
+"d":"2026-09-30",
+"u":"https://news.google.com/rss/articles/CBMitwFBVV95cUxOOG1ZOThHbzFSVl9jSDdrbHUyejdVTFFUR3ZlMndHREQ4QUtobURBRlFzV2lDZnNaVEpyZ3VxNWF5TW1tTTlFVUNPdE00SmpWdkp6eGpvUlRVVHhnRHRnVzZKMmJkc19GT0taNlpjYzg1VUVCNFBjMzJWUm5KOVVSMndPY3UtZDVSWU9URzFpRnBYQWxoaGpLcXc3ZFQzVjB4STMydmVOWHFnX0YzN3pLUFRkS0dmTFk?oc=5"
+},
+{
+"t":"NiSource Stock: Is NI Outperforming the Utilities Sector?",
+"s":"Yahoo Finance",
+"d":"2026-09-23",
+"u":"https://news.google.com/rss/articles/CBMiqgFBVV95cUxPN01fR21jRjhBczVHWVc2aGxnVkRtdlVPckF3TjlRaXI0cVFUYlhUTVk3OGswemU1THNmbW41VC16NTFCQ293R25LQ21CTzk4WkY2aEl0azlDNGhJQjJuWWVaTHN5ZWhuUHhqZXdXMFBySGlwaFR6MzJsajhSX3k0Qk5SYmFLelZFbFFiRlI1TkEyT1l5QWZYclRYbFVQbjJxMksybWh3MmN5Zw?oc=5"
+},
+{
+"t":"NiSource: Faster Growth Comes With A Higher Cost (NYSE:NI)",
+"s":"Seeking Alpha",
+"d":"2026-09-19",
+"u":"https://news.google.com/rss/articles/CBMikgFBVV95cUxOVTF3S216SnVMNFZaZVBWSzRVdzhYOHJWUXhhektidzdaRWhLWGduRTRzNFJEc0tFNUd0VHJRc0pkWW1JRW5HN29XSlVud3BleWRvLXk2T2VhLURwMVQtNVNjcTFFbEp1NWlwa3RaWU95ZjFhemNlNnZLeWJLcUo5S1g3X3p1WnA1cGg2dE1xUGpHZw?oc=5"
+},
+{
+"t":"NiSource Inc Agencies, 2000",
+"s":"OpenSecrets",
+"d":"2026-09-15",
+"u":"https://news.google.com/rss/articles/CBMipAFBVV95cUxOQVpUZm1pSnF1cUhiakxaOEdyYTJmT1B6dXhaT0NXZlRWNC1QTEhKc3dKZUJSRzhRYjA2R3NGYWxDVU5DQXFIX2stRXJqNDVnYzBfaUJZSmRNLTAweThCUEdaVnJMTTdIYTFJNjN0XzEwUEYtaFN5MXFDQmJ2RkhpTW82ZU43Wk9WMW1hdHY2OGM3cGIwMVQtX0RwNFNTZ3RCMXFpWg?oc=5"
+}
+]
+},
+"ATO":{
+"name":"Atmos Energy",
+"desc":"American energy company",
+"hq":"Dallas, Texas",
+"founded":1983,
+"employees":5019,
+"employeesYear":2023,
+"listed":"NYSE",
+"site":"http://www.atmosenergy.com",
+"wiki":"Atmos Energy",
+"news":[
+{
+"t":"Atmos Energy Corporation (ATO) Stock Price, News, Quote & History",
+"s":"Yahoo! Finance Canada",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMiUEFVX3lxTE9hQktHYmx0WGFDX0hnY2pMYjVmLWpQQ0xlM2VTOTdvNlJqRERJTE0zSlpwYU5QYTFWbzRxVktlS0lRQ2FzN0ZqdnQyX0U3NnNz?oc=5"
+},
+{
+"t":"Atmos contract workers hospitalized after pipe ‘exploded' in Dallas Monday: DFR",
+"s":"NBC 5 Dallas-Fort Worth",
+"d":"2026-09-28",
+"u":"https://news.google.com/rss/articles/CBMi3AFBVV95cUxPc1o5VWJ5ZV9kbW0yRW9tR2VncnRpT2Z2cGtwUGt4akYwNjNYUTZNRHY2aS1KYmkxR3FvQkdxb1NyaGl2REtXYVFzX0lCWlRnbmJLQTVSNkdPdXpSZ2tGTHgyR0pQZG9PRXY5QV8wc3FURmN6eVRrN0d6MHRKMkJtNmJUWS1PSzh2X0x2R1pHMjZrNDl5RFRKdHh6UlpVcEtLOE5iSHEtRjc3MlN3Y1RtaFB3dUVQSmZ5WkRvRWxuM29EM3FfY3NJMHZyWERtVktyRDZZZUk2QkVCRFpN0gHkAUFVX3lxTE95Q3pPUkRQRTRUOW9oeFpRb0pqckMzTzlXVTdGT0lETlkwX2FfQWpEdGtFazZvQ2ZLcWZKZzVvLWJEaUhVYkgyd2loZWtIM1BxaUJGbVpjdGRPdWJKaDlBUEJna2M5SmVfZnJwMGRqY010am4zZ21NSHZIOVR2SXFuOWZsZk5iVlJTNWZVMVRKZlVBM0dFZ0F4bmUxMFJyVUd3WVZYNVVfMEtaYzlRcm1ieEtaZzB0OGY3UHhFRzRINkFmeDNJMFZKUTBQLThrZFQ5LWhKVkE3T1VXbFNtNS1oanJLRg?oc=5"
+},
+{
+"t":"Gas leak keeps residents out of Turtle Creek apartment",
+"s":"FOX 4 News Dallas-Fort Worth",
+"d":"2026-09-22",
+"u":"https://news.google.com/rss/articles/CBMilAFBVV95cUxNdlFPekRpb0x2cFBzcERvTWhSaWxNWVF3VTZIV3NyNThOaVhnUVE1V09nTUlJYmtpRU1QLVRkeWFyblEtY2Q3YTNNQjZ6UUtDSmkxVUpQYXJCNGpoVFRFS1g4bndXLXpFS0JZMWFrd1FsX2ZRRklEVWFwUnhOSWNJZlJlY21FdzZHTTdVUVhOcExia09a0gGaAUFVX3lxTFBaZGREb3duRzJsNVVjRkRUdnlXR0c1cDRxVmhqNU9LRkFqR2hRdktQMmtvNTdVdGttNnRpdC1OdkpMSGdwaWlRNVptU0xKSFdiYzM5cTZBVVZiSHNqZGFzM1R4N2hMWVl2NDFmN1J0N201U0pkR2ZMdlpyR1NlWEpaaHZOdl9CeUdSbmo4ZC0tcWFheHFGZ09IbXc?oc=5"
+},
+{
+"t":"Is Atmos Energy Stock Underperforming the Dow?",
+"s":"Yahoo Finance",
+"d":"2026-09-21",
+"u":"https://news.google.com/rss/articles/CBMipgFBVV95cUxQRm5CeFVDLU5XWlhCMTZkN3J4WUlnTC1FeS1hQVdKTS1IQms4UzY0c1B3aVJpTVYwMl9aQ0tDdjh4QS0xTHVnQ3YwRUY5NXBzUDFNOHk2RDN3RDlwamxLTnFTeUNKWXluMHZQY2d3RkxjdVlwbWlrUVNzUmdmWGRtYU00Wmo4OWVmZ1Bsa0JqcEZpUEMyXzdVSjNGV2xtSjY0MjRzRU5R?oc=5"
+}
+]
+},
+"SLB":{
+"name":"Schlumberger",
+"desc":"Oilfield services company",
+"hq":"Houston",
+"founded":1926,
+"employees":111000,
+"listed":"NYSE",
+"industry":"petroleum industry",
+"site":"https://www.slb.com/",
+"wiki":"SLB",
+"news":[
+{
+"t":"SLB Quarterly Profit Slips as Iran War Dents Middle East Oilfield Activity",
+"s":"EnergyNow.com",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMiqAFBVV95cUxQdHNkcm83RDlFanJRcUx4STBQQUc3UHZtYjBDbkF1d0kxWExmSTR5SlZkU0x4OGZvaXhiU2pZWGFpLVZMNktXUzZrRHp6ODZEaGpEWGpncm9EQmJyRGx5RG5CLVd1WllGd2tPMTg0LWdna3dDRERfcmYtV3BhbWhVYk9iT1FTQWREWXRYZzV2NUFER3plb2pDUEVsa1VHQ1BLVnllVTg0R00?oc=5"
+},
+{
+"t":"Top US Oilfield Services Firm SLB Beats Quarterly Profit Estimates",
+"s":"EnergyNow.com",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMingFBVV95cUxOOGRtYzlIS2xuT1N3NUlBZlUtTEx1TW5hTWh1SjViY2ZoZ0xsRTY3ZExIZkEtZG9TRS1ZV3J0QkE0Uk9ZaEJrR2wzUmxVZk5sY0NhTE9xWmE4Wmk4UXIxaVBIZWNjN2FiaGdtZTRpNDRSUFJENDhBRnhZaGtwWGRoTEZuWUlvMm9lV3lTc3pMY1R2SEVGNE9BS1NzNzNQUQ?oc=5"
+},
+{
+"t":"SLB’s Move Beyond Oil Fields Has Jim Cramer’s Attention",
+"s":"Yahoo Finance",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMilgFBVV95cUxQaXpScXZqTmszelVYTWRRMmcybkRZXzhHVi1LVm0wS19IdTZEWVozY182dG92TVBhT3g4RHhCQlRXY1dzOXYwMU1aaUVuMlZjbTdVS0hiWVJZMEVmOVV3SGxvWGZnM3VQRm1IZTBuVzVPczR1Um9rcjAwWW9mTjdiY3FuQVR5bTNvcU0yVkJQekxiWWlvQUE?oc=5"
+},
+{
+"t":"Halliburton and SLB Are 2 Energy Stocks Riding the Oilfield Recovery. 1 Is Clearly the Better Buy.",
+"s":"Yahoo Finance",
+"d":"2026-09-22",
+"u":"https://news.google.com/rss/articles/CBMikgFBVV95cUxQbFVQc3V1QnFsMWV1N2JXZGRCY3BEaHJXWlFfOVY2WEZkQXdwTDFBMlhQZ0RVZVZYaG9EY3FfTGdpaGk2T20zVG0taXV6T05ZZGtuaHRlek9JY1hidk9rWk81OUR5d20xMzZ3WkFfRXgtLVVKV3k1cVQ1QUZoRDJXOGVydWZld2ZZOWZIWmVDRGZ4Zw?oc=5"
+}
+]
+},
+"HAL":{
+"name":"Halliburton",
+"desc":"American multinational corporation",
+"hq":"Houston, Texas, and Dubai, UAE",
+"founded":1919,
+"employees":48000,
+"employeesYear":2024,
+"listed":"NYSE",
+"industry":"petroleum",
+"site":"http://www.halliburton.com/",
+"wiki":"Halliburton",
+"news":[
+{
+"t":"Halliburton Shuns Falklands Oil Project",
+"s":"Crude Oil Prices Today | OilPrice.com",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMikAFBVV95cUxORERjSWlZVVVQX1ZtU2lGWC12X3ROc3A3bkNyVEplcHBPOXZpeUN3ejJlUzZsVVVieEhzQkN6ekRrNDNfS2NoSUozWERGOEMxM3A1QmhXZ3VsdnJtMzFpZFNmeVFyMThiSDJQRG1qcEg0eE1CVllQN0dMVVZnY0Q3VnlIZ2psa1F6LXRoN0ZMTG7SAZYBQVVfeXFMTkdNb0NxMUxkNE9SNkxBMXAwQ0pkWXI5WmU0YWFkUWh5SVdHRFFuelh1bkg4NEpXYU9IVXNuSllHRXVpWHdpN0J2VWZMT0pxRkpNR041NDJFUTJ3Ti11dWlyZFRnS2RGVFJvRmVCLXhFemJBdW05Q1hqN3loaWZVanU2RlFHVy1ZaEpqN0lzSFBTNl9HTHN3?oc=5"
+},
+{
+"t":"Halliburton signs Venezuela energy pacts with Eneva, WESCA",
+"s":"Reuters",
+"d":"2026-09-21",
+"u":"https://news.google.com/rss/articles/CBMirgFBVV95cUxPa2w3TmpnTVNVQVgzdUF5My03STVyMFE1RVpqbmlKSWJLbmQ1ZmhidHNqSmFmWXY5VExfb1ljeXZUTFNfUnJDNnUzaXI3UXZvempLSTNFc1VzVFMyd3J4S2dvcnJTamd2cGFSV01UMHIwUm5uWjhhOF9FZW9mbWpqYzJqV3ktTnRGLThJSnhkWlJEU29DLWh3SVFEVm14X2tiQUQzMmZWaFVHNE9WTnc?oc=5"
+},
+{
+"t":"Halliburton (HAL) Rises As Market Takes a Dip: Key Facts",
+"s":"Yahoo Finance",
+"d":"2026-08-26",
+"u":"https://news.google.com/rss/articles/CBMioAFBVV95cUxPWTFCcmcwVUdnWGFTdHFqTTlsUjhtY3gtNldTcVpDVk1JMVJRUEhDUVpIZzZ0anJkNDJQMTNkS1ZyY0pIRVJIRUhzN01odklLdjBCUm9xeFVlb3dTZmFLVnBDQzR0TGI2QnNxOEVsdXhUQXFmVzdMNTVMZ0FaR1otQTNSek0ydXdJTkd1UUdfREVUelA5ZDhJanVJM3pfanR5?oc=5"
+},
+{
+"t":"Halliburton Wins BP Contract for Bumerangue Field Appraisal",
+"s":"Yahoo Finance",
+"d":"2026-08-26",
+"u":"https://news.google.com/rss/articles/CBMinAFBVV95cUxNdmlrbjJ6eUdVQUdya1Z4U0dzdFIwSUVCYjF5Vm9jZHdPTmtBMG9zUUtteTNqLWtoNnR1eGdqUHEyOWpXOWRVeTM2dWdUYmE4WnozekR6WkRkSFd6RC0yN0gyVmkwOGNSME00bFZMS1BMeE81TGZxWlM3bzM4Q1JmZG91NEl4Umh2VWZIRG42THh6cHRBTl9vWko2c0k?oc=5"
+}
+]
+},
+"BKR":{
+"name":"Baker Hughes",
+"desc":"American energy technology company",
+"hq":"Houston, Texas, U.S.",
+"founded":1908,
+"employees":56000,
+"employeesYear":2025,
+"listed":"NYSE",
+"industry":"petroleum industry",
+"site":"http://www.bakerhughes.com",
+"wiki":"Baker Hughes",
+"news":[
+{
+"t":"From Activity‑Based Work to Risk‑Based Decisions",
+"s":"Baker Hughes",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMif0FVX3lxTE5IZkJQR0dXSTFYQ05aZUkzeVpkM2l5SlVDQXk4MHhUN01nMXNnNnFNZTc2Sm40ZlNQTEdxN3d4ZHlxeTZGRmFiM1pOZTJSRlBFMDVTajVLVS1hX1FCU0lPMVB3cHl4c1Y3NWpTQVNIV3JCX2dFNmRDemNoQy1uN0U?oc=5"
+},
+{
+"t":"Baker Hughes signs agreements to expand Venezuela gas infrastructure",
+"s":"Reuters",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMiuAFBVV95cUxNODZwRnlLSm5GQ3dRbmFhUVozQUJvbWxRek5Xc2R1WlVyWmp2ZGZlNVpxeGRvZUNoVFRmeWlESnFUWlB3N2dfQ01wdFJyb1pFNGRveHJmZm9UWDYxUFBpOFdzV3oxMXRqdmZTOFl0Y3NPVGV6ZFBxd0tRLWFqNGZyYk5aU0FfeXdQa2FRTjRkVHgwUzk2VjFmRE1Ob0FhMlFkdFFERXBLRDFQX05tTnV3UXUxVXVlS1da?oc=5"
+},
+{
+"t":"Why Baker Hughes Stock Is Having Its Worst Day in More Than a Year",
+"s":"Barron's",
+"d":"2026-09-10",
+"u":"https://news.google.com/rss/articles/CBMie0FVX3lxTFB6a3J1aE9SQ2NySWF3eS1SMGY4Y3ZscmVjQUg5dEFCN09EMDBNYmRTUHl4WGZBMTk4dEdCc2p0alo5STNjelVlUnhoVldaLVp4WS1ZNDNIWEoxZDZKMkNZN0FTbkNGNWEwa1lTTFNpVlhGMk1uV0ttSEtSWQ?oc=5"
+},
+{
+"t":"Baker Hughes raises annual forecasts after Chart purchase, signals LNG recovery ahead",
+"s":"Reuters",
+"d":"2026-09-09",
+"u":"https://news.google.com/rss/articles/CBMisgFBVV95cUxPNkpuWnlRMnlqRTNBSnRETVlvSWF6WXpTMV9YVEVzUU4zOVhOODBWLWltMFlSTFFYdWN2SjBzMllXOUdGVno3TXUxSURKQWpGOTZPQWdWR3VScGhpWUhjTURCYmxhZWNCcUhxYTJxY0NnVHA4SzlQd29wSWpEejdERndFc1JzcDZFUW82eGJQaHpHdXM0bkhwZEx3Uy1SMnJwVno2RFNWaVMzTE9YQlU5V0dB?oc=5"
+}
+]
+},
+"NOV":{
+"name":"NOV Inc.",
+"desc":"U.S. energy company",
+"hq":"Houston, Texas",
+"founded":1862,
+"employees":34010,
+"listed":"NYSE",
+"site":"http://www.nov.com/",
+"wiki":"NOV Inc.",
+"news":[
+{
+"t":"Oil-Gear Maker NOV Cuts Earnings Guidance as Iran War Hikes Costs and Snarls Deliveries",
+"s":"EnergyNow.com",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMiugFBVV95cUxQTkc4VE5VcFJuNzNERXo0bDRSdWJkMnQzcGJNUjdRdzM3bDdZYy1lRFppVWhNT0tsSnhmbnZGM2FXaEJtbzV5MlpwYUlqRFNVWnl0RE1lM1FGcEZCYlJ0WFJteS1ZZVM4SWkzY21tX09XOXBSWTNwMlhUWkhIZGdaM3lNZHVtNUhsbWxMcUdwdW5xblFoYXRWX0pSblZxbkVhVE4zVzBGRzhBUTRFaHVfNG1Wbk9UbG1zVUE?oc=5"
+},
+{
+"t":"Orbit Garant Drilling (OTCPK:OBGR.F) - Stock Analysis",
+"s":"Simply Wall Street",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMif0FVX3lxTE44TUd6LUdTLU9MaDdnSjMyZnFQTDg5QjdCczVLbzgxQXB0MDRWWDkzcVMtbUhybWlXYTRrUGppMW9NVnFGZUN0RHczSVpaMnJFLXQ4SFlyMDMxWllrLXN2a3lZWGRpSGZoLV9NSDNpcDNKcDNiOU10MnVCMW5LeVU?oc=5"
+},
+{
+"t":"NOV Inc. (NOV) stock price, news, quote and history",
+"s":"Yahoo Finance UK",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMiUEFVX3lxTE9iUklPSkwza1ppa0VhbWxMYUktQ0tEZXJlZ2J5TDRnNTZQak1BSE1NaG95aWFOSUNDXzR0bHVlRG5tTDJoUDBZZENHa2hISlRO?oc=5"
+},
+{
+"t":"China’s antimony export ban pause runs through Nov. 27. Rua Gold is drilling for the metal.",
+"s":"Stock Titan",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMiswFBVV95cUxNSXJ2NjVvcDZaTnc4eThTN1dxakUxWnZRTnhhUzBTX1ctZjQwejF1cXJFS2dFaVdvNV90bjFBcVJIeXh1ZEREZlBqaWozTG1keXQ1dG1aWTcyZWR3VzdQUFdlMHhaczRTWE41WjZTZmFiLWZobzB5S2lGUzZwa0t3YlhROHItYS16Mml5dnF6QktTcVBCYUIxZk5kWEFDcmRreUllZG1XXzRBQ3NXMmFnVnFEZw?oc=5"
+}
+]
+},
+"GEV":{
+"name":"GE Vernova",
+"desc":"American energy technology company",
+"hq":"Cambridge, Massachusetts",
+"founded":2023,
+"employees":70000,
+"listed":"NYSE",
+"industry":"energy technology",
+"site":"https://www.gevernova.com",
+"wiki":"GE Vernova",
+"news":[
+{
+"t":"How GE Vernova Has Jumped Into the Lead in the Nuclear Race",
+"s":"Barron's",
+"d":"2026-09-29",
+"u":"https://news.google.com/rss/articles/CBMiiAFBVV95cUxNR0hBUi1SNzZId05LS2Z0QmtBRFdHUENnbzdVUWJGRlkxXzF6dTMzUzJWSkRpbFROVFRKSzdyZjBLeExGeUZkWVpKSkMwT2RYZ0l0dVdxQVR0MzFjN0RKdVhQZ1BXVEdISmxIb1BsWVdKa25ZTHBGMGV1cjlaeWVIZjJadU55WHFE?oc=5"
+},
+{
+"t":"NRC issues first U.S. construction permit for a BWRX-300 small modular reactor at Tennessee Valley Authority’s Clinch River site",
+"s":"GE Vernova",
+"d":"2026-09-29",
+"u":"https://news.google.com/rss/articles/CBMizgFBVV95cUxQYVZOZEJhS2tDNXdUMGhITVZTcTR3eWZSV1F4SG1BaDQ5eHk5NDI5R3ZXVFpVTnE1N202eC1ERlN5ZlVjbTN2VTFGWk1tdFhocVM4Mi1WbWNLT3kwWmRtY0FCU0dlY3UtUHVtbzFFWUl6dXU5UllseFd6VVFCUjVaT1MtSWVIeGZRZXVDX0t5OWl0bWRQWjE0U0ZDLVFoMkpzVTBOQTd3V0kzcmF4RHM0ZjVSWGpjaW5qRXBVUXhvYXkxWmNOOGNjX25PTW9ydw?oc=5"
+},
+{
+"t":"GE Vernova’s (GEV) $200 Billion Backlog is Coming Sooner than Expected",
+"s":"Yahoo Finance",
+"d":"2026-09-20",
+"u":"https://news.google.com/rss/articles/CBMilgFBVV95cUxNUFFsSkZGQi03SFdsYWtKc2pkRVJuUzhkUVJKaVl0anNnTk10cUFsNWJRZHJHbThTQjVCQW01cGtJNWNPV1RvWjMzNl94eUxzZ2hCQ3lKSEVUbVpxRHM2TXo2LUxsMjd1cXAwMzRvckUxTGlZYlUwb3E0SGkzM2R2d2tiMGxiQUZSMEcwTzBOS3V6S2IxTnc?oc=5"
+},
+{
+"t":"GE Vernova, Vineyard Wind settle legal battle over New England wind farm",
+"s":"Reuters",
+"d":"2026-09-16",
+"u":"https://news.google.com/rss/articles/CBMiwAFBVV95cUxPTk5Fdi1sc0ticXRfWHVkeHZyZ2hHYS1oaldVaDdmNC1MOFFlWjhZcmpsdk0zZ1N6REFxbVhEdHZ4NVZqcmQ1QzZQcFRHRnJremEwNzNKYlVyMG9RMW9zdHBtYzY2TWhxWGZrVVNQWDQxSE9mbm5vZWFnOGtMc3Q4bWNESF9ScEdLTVBBVjc2bUtUTFJ0V2tsN1ZQdlpfSHB0SHRjY0R5amtjeGZUVEpaeFdLOFR2RDhzZ2ZibGJwdlA?oc=5"
+}
+]
+},
+"ETN":{
+"name":"Eaton Corporation",
+"desc":"Multinational power management company",
+"hq":"Dublin",
+"founded":1911,
+"employees":94000,
+"employeesYear":2024,
+"listed":"NYSE",
+"industry":"industrial manufacturing",
+"site":"https://www.eaton.com/us/en-us.html",
+"wiki":"Eaton Corporation",
+"news":[
+{
+"t":"Can Eaton Corporation (ETN) Turn COL Group Into a Growth Engine?",
+"s":"Yahoo Finance",
+"d":"2026-09-28",
+"u":"https://news.google.com/rss/articles/CBMimwFBVV95cUxNNi1ZM0VtRmozdmtpdHpqZjd2bmprdW5tOEQzUDlvY21wRUpyU19NRkdNWC1VYkx2ZE5KZ1J3d2ZFSmM4YVluZDBmbkFvWTRCcy11SWtGZkhvem9lWHRPOXh0Z3V0ZHJUbDhyTjF1WWVWQy05VkNUVjBDV09ZbllIVmFHVXlIU0M2am5pbjBiTzQ2bzBfZlpyS3c5TQ?oc=5"
+},
+{
+"t":"Eaton to acquire Italy's grid equipment maker COL Group for €810 million to expand in Europe",
+"s":"Reuters",
+"d":"2026-09-25",
+"u":"https://news.google.com/rss/articles/CBMivwFBVV95cUxOM3NfZ1dXaGRROEdXcERsZjNZLVhPSU5KMERucGNwcDY0NmNtV2RNTFBGLU5jZTd4bWN5UFVVMFZ5bWxMUlRCYkZncTZpaTZ2Q0xjOUdDRUFrZEZjTHRtb2dKRnk3X0dFU05FUUpSMGNuNldkSXRpc0NXQVdLUFU1RTQ3al9DTlZVUWRDVDdyQVJGQkdCV1NYNGZGeGsxLW0wVEtlOG1sNnNfVVYyc3gtbE53UkZZNER4cl9Gd1Fmdw?oc=5"
+},
+{
+"t":"Inside Eaton’s $9.5 billion bet to dominate the AI infrastructure boom",
+"s":"CNBC",
+"d":"2026-09-04",
+"u":"https://news.google.com/rss/articles/CBMirgFBVV95cUxOSGpWaDN6cTEybmRTX1JORjZVb09HNWdfZ2ZkYmJBYXhRWXd3SFNGeHFQZ1J5UWsyRFc0OS1UbDFGUXp6bWdBeGw4dkJKcTRRVVRsM0E0a1hQLUswS0pqdFlmUTRHbzN4YmdBZENQekJxVXZlbS1TQk9hMkNURUZLUjJUSGJkbEdLVVQwdFBOVHp5dVVSdGZkMjdCSHJhNnVjZmJxQmdFVUFQVVpHRUE?oc=5"
+},
+{
+"t":"Eaton to open manufacturing facility in North Little Rock, creating 1,200 jobs",
+"s":"KARK",
+"d":"2026-09-02",
+"u":"https://news.google.com/rss/articles/CBMitAFBVV95cUxPbnF2WlRkT3Q5Uk5rWjc0NElJTWgxWUxCTjRCY3dlUGFjS0QyZk5MczJUci1URHpoblZUVzg5Z3N6dmRRaFFLSWk4cXFRSEQwWXNLZVNCaWxqQjg2QXlHeks4dGc5RXpVeW5ZRE9CdzB0Nl9FSnZTanhBOHdSRVFyNUZJX2ZhcTBUUGhMbmRWSFJvTDkyUmRxRHhGaHRRODdtWmdHX0tNNUxTWEhYUzZxNnpQd1E?oc=5"
+}
+]
+},
+"PWR":{
+"name":"Quanta Services",
+"desc":"American infrastructure services corporation",
+"hq":"Houston, Texas",
+"founded":1997,
+"employees":62000,
+"listed":"NYSE",
+"site":"https://www.quantaservices.com/",
+"wiki":"Quanta Services",
+"news":[
+{
+"t":"Is Quanta Services (PWR) Outperforming Other Construction Stocks This Year?",
+"s":"Yahoo Finance",
+"d":"2026-09-25",
+"u":"https://news.google.com/rss/articles/CBMipwFBVV95cUxNdmVaSUpucTVJTWE3eWNwRDZOVnpLUFVSRVdQQnVrN25RUXBrQUZfcXlwaVdIeWxqYVM4V3B2cG1CY3JCR2dTcjN6cjF1Mi0tbVAyWGdHNzB0SEh1bjJWVFh1SHQ2VjFXNUhqRlprRDZlT0pIRmR2WTlmdmt5WU0yV2FUNlJfZDktQU41aXVpazBpRW5tbmczYXptYUJBWGNXYUdJUFdGbw?oc=5"
+},
+{
+"t":"Quanta Services (PWR) Stock Looks Pricey Against Its Cash Flow Outlook",
+"s":"Yahoo Finance",
+"d":"2026-09-25",
+"u":"https://news.google.com/rss/articles/CBMinAFBVV95cUxQN1c4N1dlWHJhYXBzWVEtdW85S1Z2WEM0bkxMcHlyX0JKV2lDWkptUEJWWU9nUFlFck9oUmVoTkQweE1LQnBxbzhrVmVOWlAzNnBROWlFMDFHZnR2WndxcERzQnpBS3pZN0Z4V2dhLVJRdk9lT2pGQkxvSE1vVUMwM0VHdFFnS01QbEpmaWp0SndkbWxRVjdDdnA3Y0s?oc=5"
+},
+{
+"t":"Quanta Services Stock: Recent Selloff Creates Compelling Buy (NYSE:PWR)",
+"s":"Seeking Alpha",
+"d":"2026-08-27",
+"u":"https://news.google.com/rss/articles/CBMimgFBVV95cUxNNVpPN1ozWExEb0xlT0U4Mzdma0g5cEtNd1VxcXd3NUdWREtiRjFBdG9jeGpwSmx4cS1wTTFfN0tnRmJYVTVoaHVtWFRTcDVYLW9MWWxHb0UtSXpsWThRd01aeGwyWGFGWFdUM055RVlVYVprM3M5YTNMbXY3RFQ5ZHFDSWFKY0tvMXFQelV1NGJfUjhNbVJySGRB?oc=5"
+},
+{
+"t":"Quanta Services (PWR) is an Incredible Growth Stock: 3 Reasons Why",
+"s":"Yahoo Finance",
+"d":"2026-08-24",
+"u":"https://news.google.com/rss/articles/CBMipAFBVV95cUxNOV93NU43UU03aUVZWXN1WFZjREpwaFF1SFNrQVpEdVA2dDJJNWM5RWFqR3FqNUpGeVE5ZTFJWmFPMGV0cTBBNHozNmI4X1VyZjJLa0V1Z0pPZFdQX19OdGd4WVA1dnpnTUJUOW54OFlfOHkxaFFaTVUyS09Zai1aY2pIMTEtcmw3LUhfSkY0R2FXN005dzU5X0lmcHMyZmJzQ3Q4Yw?oc=5"
+}
+]
+},
+"EMR":{
+"name":"Emerson Electric",
+"desc":"American multinational corporation",
+"hq":"St. Louis, Missouri",
+"founded":1890,
+"employees":71000,
+"employeesYear":2025,
+"listed":"NYSE",
+"industry":"electrical industry",
+"site":"http://www.emerson.com",
+"wiki":"Emerson Electric",
+"news":[
+{
+"t":"Emerson Electric Co. (EMR) Stock Price, News, Quote & History",
+"s":"Yahoo! Finance Canada",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMiUEFVX3lxTE8yQU1FUWU4T0NnYU9PRHFYLVVLNjg4S0llRDJ1VVBvbTItdWgzSmk5aGxhTEdOTTdGcVd5TDZyd0VsTDJHTEFWUGpIRUszSFRR?oc=5"
+},
+{
+"t":"Why Emerson Electric (EMR) Dipped More Than Broader Market Today",
+"s":"Yahoo Finance",
+"d":"2026-09-30",
+"u":"https://news.google.com/rss/articles/CBMinAFBVV95cUxObjU0VE80bnNENG42Q3d1QmF4X1NxNHdMZE1wZ2Z5eFE5dURPYUlPSUwyc1FQdEJ5MVNrbzBVdmJzTUw1T1pqS1NVYW16dERoeHRlVzBZQW9Bd1JsdXVfTGwxWFpiaDZsRmRVWThiZ1lyOVJYTEcwS3E1b0Z3UktPcFZwUXZvRHlLQTI2TmQ5N1AwMjRzM3JDWVIyUGY?oc=5"
+},
+{
+"t":"Investors Heavily Search Emerson Electric Co. (EMR): Here is What You Need to Know",
+"s":"Yahoo Finance",
+"d":"2026-09-28",
+"u":"https://news.google.com/rss/articles/CBMiqgFBVV95cUxNSnJZVC05OHpzY0NLemQ5dW0wRUxlejh3MUthTEVEN2hWTFMyN2ROalA5WnJmQS0xb25LbVhZOW91SF9DYVZmZW9FVjAyX01aeTZRSEhxcDdETnFYVEl5cHZOWDVCcmV0Qm4wUEtMZXZIUkZTWmVZVGV0RHVwaVkzcWk2RTVNUEhDemZVeHNzd0U2Qk1oeWY0bEYyYUpHd2E5SUdSM3J0QzdQZw?oc=5"
+},
+{
+"t":"Is Emerson Electric (EMR) Getting Too Stretched After Its 84% Run?",
+"s":"Yahoo Finance",
+"d":"2026-09-25",
+"u":"https://news.google.com/rss/articles/CBMingFBVV95cUxOeGlmcWpQdTlhMFlkeG1YazJxS0NwTUt4NERQcV9xYXZ2RFpUT3RMMFRSdjU5MjFZNGRZSHJaNFpzVTBkbkppcTdtYlRlZ3R3Z01MUGhscFh2TGE1QW9neVQydDJ5TVRBekx3Z3k3TFFlb3ZDYTdqUFJKeHZaVXdhWEhISnIySElqYkF5eE1SRVplN3ljblppajZQZzNYQQ?oc=5"
+}
+]
+},
+"HUBB":{
+"name":"Hubbell Incorporated",
+"desc":"American industrial company",
+"hq":"Shelton, Connecticut",
+"founded":1905,
+"employees":17700,
+"employeesYear":2024,
+"listed":"NYSE",
+"industry":"electronics industry",
+"site":"http://www.hubbell.com/",
+"wiki":"Hubbell Incorporated",
+"news":[
+{
+"t":"SSL Manufacturing in America – Hubbell Lighting",
+"s":"Department of Energy (.gov)",
+"d":"2026-09-24",
+"u":"https://news.google.com/rss/articles/CBMikwFBVV95cUxQV1VIUm5sWUdLMG5tNkgwa2dsLUlLSmdCLWlXNlhuNm9OdFVmbklqV194UnIwUllKWGtGUFlGczNSMUh3cl8zUkd4NDAwTVRQNGNvVkNmeFNjNU00UDhzaDlFeUNGSnRGdFV2LVp2d0puWDEwUGxucm5GeFI4X3JoeGRGN05PNGJZelh3bHR2U1B2Mkk?oc=5"
+},
+{
+"t":"Hubbell to Participate in Upcoming Investor Conference",
+"s":"Yahoo Finance",
+"d":"2026-09-09",
+"u":"https://news.google.com/rss/articles/CBMiswFBVV95cUxOeTZVUzVoVGp1cHhUVFVKN0EyNVBndDNDa0htX25xUjJqZm5xWndyV0RTTGM1WkxFTlY3em5WcTJua1psM3JJMlUtSEZTTEF3am50dDVVNFBubGJsT0w3LXdOdHUtM3R3V2JIWVZHSzZOR3lTZzBSZk9jRnZWYnREVEtpS3lTZGVzWHpfMkZGQk52dnBEdm9LTkc4aHY5Y0ZQM01DTHU4blN6Z0dpV3NMRldfTQ?oc=5"
+},
+{
+"t":"Indiana Court of Appeals orders retrial of 1999 Bartholomew County murder case",
+"s":"Fox 59",
+"d":"2026-09-01",
+"u":"https://news.google.com/rss/articles/CBMipAFBVV95cUxObDluWWk3NkhMeFZGZXpCRnRFdmtpa3doS2NIT01yMlJSMXh0Uy1tVV9NSWtEajNyOE8wSXBJQXBxNlFqRjJFTnVUdHFDSXRqd25BOG1uTVlXSnNXb1BTdFZNV2swUC16VDU2Nk8yVVJKOXdQcHJab05adlZzYTFJQW0zWXgwTWlRY1Z4bjh3Mk9IZjhzNTFGellRc0VpbTJ6ODdZedIBqgFBVV95cUxORVA0djBkblMzWHJRM1gycnp6VENsYnNtVmlMb3ZMdEhMRGlKMGpqTTFMQWU3ZU1hY0ZQTDZxVk82SkZ0aG9ReUktXzZtWXUwYzNRcFpfLUtidDMzWkEybC1fa215aWFEdk91eHJEbGNla3NMVk93LUVSU3N3WFFUMnBJT000UXZDZ3ZpZ0VWelRQX3BfdzROUEpNTDdtc0dGaGRQSjByQUtiUQ?oc=5"
+},
+{
+"t":"Hubbell Inc's Dividend Analysis",
+"s":"Yahoo Finance",
+"d":"2026-08-31",
+"u":"https://news.google.com/rss/articles/CBMimwFBVV95cUxQY2lBT1RPYnR3NHhFZW5oMjlkWlB5djJ5eE1xWEJ3UGdZeXB4c0pWRDctcEE1MTVJSm5POHFPaVNiejRtb2ZtVm5LZlJXS0NqbnJOR2ZCQ2FxOHRKek5oMGJqNGlXNV9mS2JtSFAweEd5ZVZrQTZ3Ui1uXzNhNEV3eTQzWjhqc2R6eXJsVWxxQ1pJUVhxMlBPdlhQOA?oc=5"
+}
+]
+},
+"SQM":{
+"name":"Sociedad Química y Minera",
+"desc":"Chilean chemical company and lithium producer",
+"hq":"Santiago, Chile",
+"founded":1968,
+"employees":8344,
+"employeesYear":2025,
+"listed":"NYSE",
+"industry":"industrial chemistry",
+"site":"http://www.sqm.com/",
+"wiki":"Sociedad Química y Minera",
+"news":[
+{
+"t":"Sociedad Química y Minera de Chile S.A. (SQM) Stock Price, News, Quote & History",
+"s":"Yahoo! Finance Canada",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMiUEFVX3lxTFBEc0YxcTRJY1NKVF9Dek9TQWJUazNobUxXTHZhUElUTEhwdUd4YldXR3Jia3UzMjNINVR1TmsyMUVBbFVQTXRZZ3dYNThDQV9G?oc=5"
+},
+{
+"t":"Did Lithium Expansion Plans Just Shift SQM Stock's Investment Narrative?",
+"s":"Simply Wall Street",
+"d":"2026-10-02",
+"u":"https://news.google.com/rss/articles/CBMi5gFBVV95cUxOdC0ySHlDdUxzQU1lS3VfMmg0b1RXb0JZd3ZEVEdTOFNIZWFub2ZkM1l1ZE5xQkxJQ0lpd29KT0dkMzZ4b1hjUHRlYkVEYWVwZERPTURyQ1RsNWVKWC1ocnJfbTh6Q1RhWnM2dDkyb0w2ZF9QeHI5TGJNb0wwRDBZeUhOZ1RqUTltNUY5S0Nsd3BqQ3AwdTZUdUxPMktoM21ncmxiRGszaDR6a2RJeGFIN05KeHVlUnN3bHExWC1wWDZyQ2dwWVllS3pKZ0J0ek1qNWMwYTlmendDTGZxVVVCdEpxdXpuQdIB6wFBVV95cUxPQkFrbkVVS2xGa3F6aURqWms5NlZFN1liYTdxVWFhVG9XLWFfUEZmTkx5VDNWRDZCeE03RXJVVnI1U2haYmU0TDRYNUcxazZTVEFKREJhTnIzVjVPelNXTmNSRjdmWVd1M1kzZXdXc1hvcDNTdFh3aE8tMXlEdTI3OThMVTM1NHBvNjFQU0h3UDhNWmpZY1VBTkpHZlhjRTJDZ25PX3VnMjhYYVJSS1FELS1LaWUwd3JTS3VVVmlzWjBQMTBabG5fYlJsMzVCMlFJVjFZNlpJWTJ6c09zYlNLclQ3MTd1bTBTRXE4?oc=5"
+},
+{
+"t":"Sociedad Química y Minera de Chile S.A. (SQM-B.SN) stock price, news, quote and history",
+"s":"Yahoo Finance UK",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMiV0FVX3lxTE1DbC1WcnNKS2tvQURyQ0FORkdqU3R6NXRUZnJGTUNpZFFta2NXd296bFBqdHhBaDhWZzA1UW1pZ0JUNW0zMndDc3gtLVFzYm5kUXdvbldHQQ?oc=5"
+},
+{
+"t":"Financial Benefit Sharing in the Codelco–SQM Lithium Mining Agreement",
+"s":"CGEP",
+"d":"2026-09-28",
+"u":"https://news.google.com/rss/articles/CBMivgFBVV95cUxPM2dYMmVZVzdtZVNZNTFOSnFIUTdWWGNrX3BPbWpBSTFyUURDalhPelpibEVXd3pualhibU1WNmNtS1JKVjF6QWh3UDJYMm50ekVpa25IeHZYYTRKVUY2dEJTaDA1bWNpbFA4RjgzbVV6V00wR19BSFc1ZU1QZDM5QVVyOEx5N0Z1OUtzbmhTU0RkZ21UNUl1VURsNDU4YWJ2cmdJWGxLUm0yMnBqQkxiT291TFhSMXNoRmhXVElB?oc=5"
+}
+]
+},
+"MP":{
+"name":"MP Materials",
+"desc":"American Rare Earth materials company",
+"hq":"Las Vegas, Nevada",
+"employees":681,
+"employeesYear":2024,
+"listed":"NYSE",
+"site":"http://mpmaterials.com/",
+"wiki":"MP Materials",
+"news":[
+{
+"t":"MP Materials Corp. (MP) Stock Price, News, Quote & History",
+"s":"Yahoo! Finance Canada",
+"d":"2026-10-08",
+"u":"https://news.google.com/rss/articles/CBMiT0FVX3lxTE9INnVLZkdNWXVHellsZXFxVDNDQmpoMFRoSS1jUGlPVmllbmF2cWdDd1VDNWNYVHgzZ1dGT3RHVFRvb2lDX01WUnRPUVBRYjQ?oc=5"
+},
+{
+"t":"The Pentagon Bet $400 Million That One U.S. Company Could Break China’s Rare Earth Monopoly. MP Materials Is About To Deliver GM’s First Rare Earth Magnets Not Made In China",
+"s":"Yahoo Finance",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMijgFBVV95cUxOVmF1UVZHelEya0k2d0lzNDl6cDk4SVpNRW5Nb0lWUEFXZWdJeERtV3MzUkZpam1JbUdMY01PMmo0VzNDb3RwQjNxS2VKT3dQcTZ1LVBHczdMcDhsVEVjY3ZMREJKSlFPaVl4c1QzdkFyOEhyb0pPN1oyYWZ5amZrUmRrQjVlVDJvQTdfcDJR?oc=5"
+},
+{
+"t":"MP Materials Just Sank 21% in a Month. Is It Time to Sell, or Is This a Prime Buying Opportunity?",
+"s":"Yahoo Finance",
+"d":"2026-09-28",
+"u":"https://news.google.com/rss/articles/CBMilAFBVV95cUxPRWlwd1B1d05YZURxNWlPeG1OTE1EeFcwOG1CZTZjMUNBdjlQMjVkb0ZVTDYxSXd0NXRMajIzd1J2R0NpdXY2OHdQNlJqM3F6OW5uRkM4RnRxekFETmFtYVNDMUZlYmdZQ1BnbXAzN2N5VE1NdHp0aE9oSlVxMndhMElHLWtTZV8yY3BMeW11Q1lnc1Fr?oc=5"
+},
+{
+"t":"EXCLUSIVE China Rare Earth Group in talks to buy MP Materials shareholder Shenghe Resources, sources say",
+"s":"Reuters",
+"d":"2026-09-21",
+"u":"https://news.google.com/rss/articles/CBMiwAFBVV95cUxOTkdhN0lPRzNSeXM5dTFpNnJCX3NIam42ZHlIMFg2SHVJVlFnbk1JQTJNM19XQk1EWFBhcmthUDV0SFA5YlZNUFB5XzA1MW9mUDRNRDEyQzh0X2VqM1U4dVd5dkVZQlZocXFwNTNVWi04dUw5VWNIdjc4QWt5N0Fza0NFU2FVU1lIc3JxSWRnOHpJQm9yUmZXTmVVUGVxR3JTb29ad2MzTjdZVEpLTkl6cHFLbFJUT3dRWmhMdGlkcWk?oc=5"
+}
+]
+},
+"FCX":{
+"name":"Freeport-McMoRan",
+"desc":"American mining company",
+"hq":"Phoenix",
+"founded":1912,
+"employees":28500,
+"employeesYear":2024,
+"listed":"NYSE",
+"industry":"mining",
+"site":"http://www.fcx.com",
+"wiki":"Freeport-McMoRan",
+"news":[
+{
+"t":"Freeport-McMoRan (FCX): Can Copper Tightness Outrun Rising Costs?",
+"s":"Yahoo Finance",
+"d":"2026-09-25",
+"u":"https://news.google.com/rss/articles/CBMiqwFBVV95cUxONktyYlBWMm1UZFU2YkliUE1fLW5uaWNBbFg3SVlndWlzTExYd3hyQVl3dHNvRE1YX2lwRFBmemZBS1pKRHZ5TmhYaTlBZEY2Si0yZWFQRDhocGc3d3QwbHNGQzgwU053RUdDQTcxUnp6SUkyN0d1dF9IMmZIb2RvMGhOVHhjOWM5VS1wamR0Qm9IeXJhNnA1SnZCMjRYME9RTjdHa2U4RzA0aTA?oc=5"
+},
+{
+"t":"Freeport-McMoRan (FCX) Registers a Bigger Fall Than the Market: Important Facts to Note",
+"s":"Yahoo Finance",
+"d":"2026-09-23",
+"u":"https://news.google.com/rss/articles/CBMipAFBVV95cUxNV181RElnQ2FfZkJfaFRjbFkwZjhtaHN4bDVZTURpQnhRRUUwNkRkNDNEbTVqSGVmNW43V0FMSjA4b3NRczZLbzlKOUFqSjBoRG1mNlVJQm5YZTgyOFB3X1hnTlVuVXlyRWJYazRtWjF4a0pSeEZuVzhycE5KQ3Z5Tk1XMk81aGFDN0pZTVdwMmhJRXg1T3I4OE1ZdkZISkRPTENMMQ?oc=5"
+},
+{
+"t":"Freeport-McMoRan Inc. (FCX) is Attracting Investor Attention: Here is What You Should Know",
+"s":"Yahoo Finance",
+"d":"2026-09-23",
+"u":"https://news.google.com/rss/articles/CBMiogFBVV95cUxNYWdzZXllcXFEaWQ1UUF0T1hhb2d2a1RSenNQc2NSR0JUeFhKWWxwSUJ6a19BT2N1T29RV1ZmYXpLTTdERzlnR1JVSS1pSzhDcVRmNzZwQnVUc01PZHh3UUFxYktUSFIydHNQLTVCVG9Ubi1MODgyMDUtZVQ0a25nblZCa1d6R1lGTUhTN01CM0FNUm5qNjNETG5sNnY3X1pQbEE?oc=5"
+},
+{
+"t":"Freeport McMoRan (FCX) Stock Fair Value Edges Higher After Split Analyst Revisions",
+"s":"Yahoo Finance",
+"d":"2026-09-19",
+"u":"https://news.google.com/rss/articles/CBMinAFBVV95cUxNWEgyd19DdHpKajNvNWZFa1ozTHNZSVJFMDZBdTdmRFpNdm10X29SZUtYbDNEZ2pGVXdQS3FhWWhZX0tHOUxFb1hkbVlzaVN3Mk94WlZCVlpIWG9kWktRaEt5YXdmRFlYTEJBdEhHSjctVU54TEZTYlU5M3puN3JEQ3BYOTFxVlc1Z3F3Q1RQLTV3UW41OG1pejVPNXI?oc=5"
+}
+]
+},
+"MSFT":{
+"name":"Microsoft",
+"desc":"American multinational technology company",
+"hq":"Redmond, Washington",
+"founded":1975,
+"employees":221000,
+"employeesYear":2022,
+"listed":"NASDAQ",
+"industry":"technology industry",
+"site":"https://www.microsoft.com/",
+"wiki":"Microsoft",
+"news":[
+{
+"t":"February H2IQ Hour: Hydrogen Fuel Cell Generator Demonstration at Microsoft Data Center",
+"s":"Department of Energy (.gov)",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMiuAFBVV95cUxOZzFxY3BnVXNMZ1VVMTZyOEhuSUxCYlB5dmRUcFB2bC01andLaDVQRmlPWnA3ZjNhX3pVZEpxbUt2dVhESUFZTFdxZXd0UV9WbkUzY0VDcU9xaUFNQ1ZsdjdLUXZFWDZKMzRnWjdmX0NxWjQ2VnFVZzRLNFItZklfN2hVVDJMcndtTXdPYi03MERmblRlenZQaU5oc0dsYnJlcmpOaW5saVlPazlEVUVhNFkwQkJ4bkxS?oc=5"
+},
+{
+"t":"New Jersey hits Microsoft-linked AI data center with record fine for 62 unpermitted power generators, issues 45-day shutdown deadline — site tied to $33 billion deal also built illegal 1.5M-gallon fuel tank",
+"s":"Tom's Hardware",
+"d":"2026-09-25",
+"u":"https://news.google.com/rss/articles/CBMiswJBVV95cUxQM2RYNXhvTVNWWTVmLXBrT214OVA1bkg2alpWODRYd0tCbFI4by12d1NlU2JxekJyZ1FQeUswSWhvamE5eW4zS3dPRVNmbXU5MzMzbUtUdElqMENTVGtOTW5vNFdqWTRzTThpNEQteVI1dTRXUWs5N0VGU2hEcHFleFpCVUJ6QkFmcUJRaW9MWWtxdWN1bzhTQXVFZDRzci1NTTg0V2c0NTFydGlPYWNUWHF3R1NQUkNlVE5XRExGVVdQdFUxaG9YWmgtWldOQWs5MGk1UXh6VXBHRjNRRFhKVjJFOHFBbjFmWjNSOTRRN0pIU04yTzc2NlBvbWZPaGZ4ODd3cVZfeTJXZnhUa2dMdm1laWMzNThvNUY0d29NQ1dHU0tEUXRPdjZnTEVpUGYyekFF?oc=5"
+},
+{
+"t":"Virginia fines a Microsoft data center for emissions violations",
+"s":"CBS News",
+"d":"2026-09-16",
+"u":"https://news.google.com/rss/articles/CBMiiAFBVV95cUxOMmxNNV9PYXRldFB6MTh2eE92a3VRUjF6M3NSTUpfM19naEtCb3dPT0NMME5YWWhOUUl5c2c4bldURk1zLU9BeDB0NW1vWE9tY0hkNFFWdk9IOEJ0ckxHS1U2SXRUUDRrOGZhQXNpd05JVS05dkRwNnYyd0R0X0o5NlVLSWVRVHNI?oc=5"
+},
+{
+"t":"US House to vote on data center power cost bill",
+"s":"Reuters",
+"d":"2026-09-16",
+"u":"https://news.google.com/rss/articles/CBMimgFBVV95cUxNSFdkZndFejdNLWhkTjNXT1VvR3JaSEhFTDg4WXU3Z2Z6a2hmeXUxYndIekRjYnl6dzRseURSV25wa1FPZjlBbmk0Wk1Zci1oQzA2eVpSRkRyNkdmai13RVpyOGo4WVBTRXhCaFg1bjFMcXh4T0RZTGxGc19KWTFOZFFGMmdUVGl1QWRDaVBFWFFKZW1hTTJhQ293?oc=5"
+}
+]
+},
+"AMZN":{
+"name":"Amazon (company)",
+"desc":"American multinational technology conglomerate",
+"hq":"Seattle",
+"founded":1994,
+"employees":1576000,
+"listed":"NASDAQ",
+"industry":"retail",
+"site":"https://www.amazon.it/",
+"wiki":"Amazon (company)",
+"news":[
+{
+"t":"Duke Energy protects customers from data center costs",
+"s":"Duke Energy | News Center",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMilgFBVV95cUxNSDl1WjNmdGM2cW1NTV9ZLVRRSzZlZ1JNTnY2YkhNNm4zRXRydVlQVjZweVlORld2alE1Y0djbld6VE0zUzhRdEhZdExmbll4SFYxMUZ2VFZhY0F3UFBaN0FaZHRRamt5YVoxbUt3MXJvX2JaX3FzR0QzckdjRVBrdnV5YWtNbzN4VGZFMlgxeHpVUi1COXc?oc=5"
+},
+{
+"t":"Amazon's answer to data center backlash: $1 billion for community college and home energy upgrades",
+"s":"Fortune",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMihgFBVV95cUxQUUw2ZVlaZmJITmF6UWlvN2NDMVppb2Y3RHNBaXVxcEU1QW0zNmlSS2s1TkN1ckhsdkF2N2tQanJudi1DRzNPUVpVbXlVTUljZk9weWc4Mm9YYy1JbHZiYmhHc0FTTTNvdENfdFAtbWRKQjd1MU9RWU8wZFBMZnJzbUo2eFJEUQ?oc=5"
+},
+{
+"t":"Amazon Commits Over $1 Billion to Workforce Education, Energy, Water Solutions in Data Center Communities",
+"s":"ESG Today",
+"d":"2026-10-05",
+"u":"https://news.google.com/rss/articles/CBMixwFBVV95cUxOLW1WVzEwQVduTlVRbnhUNmpKU0ZQc2VmUkQwQ2hKWnNrdDBGaEhWV19oNmpDalFqQkR6ekFENVZyaXRrXzB3TUpPbWxPejQwVXUwLUZBcGF0czhsbUhmalhIUG5rcXVKYkhKV2tPUlFkVFhNcVlJbjVwdXlrbzlmVHU3aTMybnVod09NelZpVHdxT1lqNHRxRTAyYXJRV2w5SUYxQncwMDF2Tk5vdTlLNkNRS2ZXTTlTdGRZaEo4QWV3NHIxYXRF?oc=5"
+},
+{
+"t":"The race our nation can’t afford to lose, plus a new commitment from us and a fresh set of community investments",
+"s":"About Amazon",
+"d":"2026-10-02",
+"u":"https://news.google.com/rss/articles/CBMihwFBVV95cUxQSmVvOXNHN3ROUU96WTF0R3hKSnhDcFNXclNzUzBNMEM1bngzV044M3VNdUFNWkJVYjhlcTc3enNfbkV3MTRBNE9CVzUwUURTYThWazJnX2x6MmtWNjZnWXB2bGFZNjhxMjVzZU9Id0lqWnA5SHR5NDl0OVFlS1hROURLOU1qRlE?oc=5"
+}
+]
+},
+"GOOGL":{
+"name":"Alphabet Inc.",
+"desc":"American international technology company",
+"hq":"Mountain View, California",
+"founded":2015,
+"employees":198933,
+"listed":"NASDAQ",
+"industry":"information technology",
+"site":"https://abc.xyz/",
+"wiki":"Alphabet Inc.",
+"news":[
+{
+"t":"Duke Energy protects customers from data center costs",
+"s":"Duke Energy | News Center",
+"d":"2026-10-07",
+"u":"https://news.google.com/rss/articles/CBMilgFBVV95cUxNSDl1WjNmdGM2cW1NTV9ZLVRRSzZlZ1JNTnY2YkhNNm4zRXRydVlQVjZweVlORld2alE1Y0djbld6VE0zUzhRdEhZdExmbll4SFYxMUZ2VFZhY0F3UFBaN0FaZHRRamt5YVoxbUt3MXJvX2JaX3FzR0QzckdjRVBrdnV5YWtNbzN4VGZFMlgxeHpVUi1COXc?oc=5"
+},
+{
+"t":"Black Hills plans $1.8 billion investment to power Google's data center",
+"s":"Reuters",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMiuAFBVV95cUxOQkl1VUxHdjl1Q2g0c0xiXy12bG8tYWVPMC1mV1RpQ1RnTzcteWgwVGRBcmdpMG5iSE4yYllhZkFWVWdYVWdUM0FLVFVtV0phVEZlbHVWVE9KQ1pRV3FtbW94Tmw4bHRKalV4TDNfaG8zcUF2WTc1WlI1TWUxSU5DVnFYYVBkaml0b1doaHVuOFVUTXU0M0w5UEV1eU9BNTNSSzVaSmk0TUhpR29HSnZ3bnVIYXhoVWFv?oc=5"
+},
+{
+"t":"Google enters massive 3.6-GW power deal with Constellation Energy",
+"s":"Reuters",
+"d":"2026-10-06",
+"u":"https://news.google.com/rss/articles/CBMitwFBVV95cUxQUGptbnU1SUxQWEJrRlFLQUhoSU9WMDhMQmhtZ29ZSGtMRHdvaFI4MGdJXzFWbmVuSHc0bFVkamJVTzBfY3VjRmVmNjN3ekpFMEtyS1Bxc2NMTmhiZlJGQUk5Tml5b2Q0NGZPc1REcExtWElITFFlOW01VWNETGMyZXVMM0x0cGJjWVFfaXZqSzlSNlUxdnFvVFNOMUg2ekVPRktkdVptSFRHa3lNcHREaktPU2RTZGs?oc=5"
+},
+{
+"t":"State regulators approve 20-year DTE contracts for Google data center in Wayne County",
+"s":"ClickOnDetroit | WDIV Local 4",
+"d":"2026-10-02",
+"u":"https://news.google.com/rss/articles/CBMiywFBVV95cUxQU3N4ZWp0RmhLcnVEYTZ0UF9ZVHc0aEp0SndfVGVBYUpTWWxDdzVvdFJHTDhPaVpVdXdzODVkM2dNTXAyQmdueU9tcG1henI2bGxIREFPOTRYbkF0bUtKYU54Zi1LNnlORkJiUVRxVTlNTlQ5WHJOZE1LSGF4eUZyVVFaQ1IySHFobWtHdzhJTzB3Nm9GM05kNTZ2U182QURUQThXUkx4RVFCdzBWUGtDbXVPVWRPU19OcG1PeGtqSWR2MTV1RC1QcVNWWQ?oc=5"
+}
+]
+},
+"META":{
+"name":"Meta Platforms",
+"desc":"American multinational technology conglomerate",
+"hq":"Menlo Park, California",
+"founded":2004,
+"employees":75472,
+"listed":"NASDAQ",
+"industry":"information technology",
+"site":"https://www.meta.com/",
+"wiki":"Meta Platforms",
+"news":[
+{
+"t":"What does Louisiana’s AI Data Center Boom Mean for the State?",
+"s":"Tulane Law School",
+"d":"2026-10-01",
+"u":"https://news.google.com/rss/articles/CBMihgFBVV95cUxQcml0VmxYRGxZLVc1MXdDamdseFlick5TV2Mzek1fNWpSSXZ3U0lQejJlS3VHdUtfXzVVQ0NKSEl5MnltWFJLaHMzSTJhMzFFTDZaZm95Rzh1cnByUU1OWkV2eEZzaHd5YnR3ZmQ1dUZPVUJSb0pNa293aER4THA1UW1zSVN0Zw?oc=5"
+},
+{
+"t":"Death by Data Centers",
+"s":"Dissent Magazine",
+"d":"2026-09-25",
+"u":"https://news.google.com/rss/articles/CBMijwFBVV95cUxNLVJDcU1HSWtCV04tbzBYanFyU0l1bWNCdHE4ckRicmc1SmlRcEdmZHBqRGFqeV9aOU5CT3dpZkloeXdXSzdoRVY4WUs0YmlWS3RPLXVZRFNjMk1zVVVoUU9qQnEyTWR4S2R2X3dFTlRPc1lFdExRV2MtTFkzeWFLUFI2LXhWLXhCVlVNRG9mQQ?oc=5"
+},
+{
+"t":"These Data Centers Could Use More Power Than Major Cities",
+"s":"Visual Capitalist",
+"d":"2026-09-24",
+"u":"https://news.google.com/rss/articles/CBMikwFBVV95cUxPVEdIVExBUmdTTW9GenFRdDQ2RlBuMTdWMjlhczVYU1JoZkNCd0Q1cXRNbmxvQWhnZWlnSG9pdXp5SFYwaFlIYlNjWk0weDV3dXhhZkpFbzRvZjdkN3VGdXRTQzlEMnlSdXpFbWw3cHR3UmZLbnNJSkQ4amcwWGtFSmM2MUp1VTNNYjR2RnltRWpvOUk?oc=5"
+},
+{
+"t":"Meta data center boosts Alberta appeal for hyperscalers, Capital Power says",
+"s":"Reuters",
+"d":"2026-09-21",
+"u":"https://news.google.com/rss/articles/CBMiwAFBVV95cUxQTldhVlJRcngtVWZhZFV3Q3l5TllveS1oQ2FzY3BMSlpHRTY1OS1BNWdxSF9aREtHdmN0WDZIMnl3dmtwOVI3ek1EejFhLVNKMjh3OXYtZmVhRWJBYThHcGg0eGZmeEZVeVctN2ozZ2l6SHZEYnNXWnhST19VR0VjZmlPOHF2U1IwNDlNTWNKdHhYNXlBRUZHSFdyMF8xRXhrZ0F1aW10ak9MYnpWeVFtNENzdjQ4QmhzeU1EZzNVT0Y?oc=5"
+}
+]
+}
+};
+const NEWS_ASOF="2026-10-09";
+/* <<<END DATA>>> */
 
 /* ---------- companies ---------- */
 const CO={
@@ -459,6 +2919,7 @@ function pick(tk,nodeId,chipEl){
   const [name,kind,about]=CO[tk];
   const node=byId[nodeId]||null;
   const gcol=node?G[node.g]:G.svc;
+  const D=(typeof DATA!=="undefined"&&DATA[tk])||{};
   picked={tk:tk,nodeId:nodeId};
 
   $("pTar").innerHTML=`<span class="dot" style="background:${gcol}"></span>${tk}`;
@@ -466,43 +2927,104 @@ function pick(tk,nodeId,chipEl){
   nmEl.textContent=(name===tk?"":name);
   nmEl.style.display=(name===tk?"none":"");
   $("pKind").textContent=kind;
+  const dsEl=$("pDesc");
+  dsEl.textContent=D.desc||"";
+  dsEl.hidden=!D.desc;
   $("pLoc").textContent=node
     ? `0${node.c+1} ${COL_TITLES[node.c]} · ${node.label}`
     : `ENABLERS · ${(ENABLERS.find(e=>e.id===nodeId)||{}).label||""}`;
   $("pAbout").textContent=about;
 
+  /* company facts — only what could actually be sourced */
+  const ind=D.industry?D.industry.charAt(0).toUpperCase()+D.industry.slice(1):null;
+  const facts=[["Listed",D.listed],["Industry",ind],["HQ",D.hq],
+               ["Founded",D.founded?String(D.founded):null],
+               ["Employees",D.employees?[fmtNum(D.employees),D.employeesYear]:null]];
+  const fx=$("pFacts"); fx.innerHTML="";
+  const rows=facts.filter(f=>f[1]);
+  rows.forEach(f=>fx.appendChild(fact(f[0],f[1])));
+  $("secFacts").hidden=!rows.length;
+
+  /* flows */
   const flow=$("pFlows"); flow.innerHTML="";
   if(node){
     const out=EDGES.filter(e=>e.a===node.id), inn=EDGES.filter(e=>e.b===node.id);
-    if(out.length){
-      flow.appendChild(sect("SUPPLIES TO"));
-      out.forEach(e=>flow.appendChild(row("→",byId[e.b].label,e.l)));
-    }
-    if(inn.length){
-      flow.appendChild(sect("RECEIVES FROM"));
-      inn.forEach(e=>flow.appendChild(row("←",byId[e.a].label,e.l)));
-    }
+    out.forEach(e=>flow.appendChild(row("→",byId[e.b].label,e.l)));
+    inn.forEach(e=>flow.appendChild(row("←",byId[e.a].label,e.l)));
     if(!out.length&&!inn.length) flow.appendChild(muted("A terminal stage — no outgoing flows."));
   }else{
-    flow.appendChild(sect("SUPPLIES"));
     flow.appendChild(row("→","Every stage of the chain","services · equipment · materials"));
   }
+
+  /* recent news */
+  const nw=$("pNews"); nw.innerHTML="";
+  const news=D.news||[];
+  if(news.length) news.forEach(it=>nw.appendChild(newsItem(it)));
+  else nw.appendChild(muted("No recent headlines found."));
+  nw.appendChild(moreNews(name));
+
+  /* links */
+  const lk=$("pLinks"); lk.innerHTML="";
+  const rowEl=document.createElement("div"); rowEl.className="lnks";
+  if(D.site) rowEl.appendChild(linkOut("Website",D.site));
+  if(D.wiki) rowEl.appendChild(linkOut("Wikipedia",
+    "https://en.wikipedia.org/wiki/"+encodeURIComponent(D.wiki.replace(/ /g,"_"))));
+  if(rowEl.childNodes.length){ lk.appendChild(rowEl); $("secLinks").hidden=false; }
+  else $("secLinks").hidden=true;
+
+  /* provenance */
+  $("pAsof").textContent=(news.length
+    ? `Headlines via Google News, as of ${fmtDate(NEWS_ASOF)}. `
+    : "")+"Facts from Wikidata and Wikipedia.";
 
   document.querySelectorAll(".chip.sel").forEach(c=>c.classList.remove("sel"));
   chipEl.classList.add("sel");
   if(node) focus(node.id); else blur();
   panel.classList.add("open");
 }
-function sect(t){const d=document.createElement("div");d.className="sec";d.textContent=t;return d;}
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function fmtDate(s){
+  const p=String(s||"").split("-");
+  return p.length===3?((+p[2])+" "+MON[(+p[1])-1]+" "+p[0]):(s||"");
+}
+function fmtNum(n){ return Number(n).toLocaleString("en-US"); }
+function fact(k,v){
+  const d=document.createElement("div"); d.className="fact";
+  const a=document.createElement("span"); a.className="k"; a.textContent=k;
+  const b=document.createElement("span"); b.className="v";
+  if(Array.isArray(v)){
+    b.textContent=v[0];
+    if(v[1]){ const y=document.createElement("span"); y.className="yr";
+      y.textContent=" "+v[1]; b.appendChild(y); }
+  } else b.textContent=v;
+  d.append(a,b); return d;
+}
 function row(ar,label,note){
-  const d=document.createElement("div");d.className="frow";
-  const a=document.createElement("span");a.className="ar";a.textContent=ar;
+  const d=document.createElement("div"); d.className="frow";
+  const a=document.createElement("span"); a.className="ar"; a.textContent=ar;
   const s=document.createElement("span");
   s.textContent=label+(note?" ":"");
   if(note){const n=document.createElement("span");n.className="lb";n.textContent=" · "+note;s.appendChild(n);}
   d.append(a,s);return d;
 }
 function muted(t){const d=document.createElement("div");d.className="muted";d.textContent=t;return d;}
+function newsItem(it){
+  const d=document.createElement("div"); d.className="nit";
+  const a=document.createElement("a");
+  a.href=it.u; a.target="_blank"; a.rel="noopener"; a.textContent=it.t;
+  const m=document.createElement("div"); m.className="meta";
+  m.textContent=[it.s,fmtDate(it.d)].filter(Boolean).join(" · ");
+  d.append(a,m); return d;
+}
+function moreNews(name){
+  const d=document.createElement("div"); d.className="lnks"; d.style.marginTop="13px";
+  d.appendChild(linkOut("More news","https://news.google.com/search?q="+encodeURIComponent(name)));
+  return d;
+}
+function linkOut(label,href){
+  const a=document.createElement("a"); a.className="lnk"; a.textContent=label+" ↗";
+  a.href=href; a.target="_blank"; a.rel="noopener"; return a;
+}
 function closePanel(){
   picked=null;
   panel.classList.remove("open");
