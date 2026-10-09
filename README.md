@@ -42,7 +42,10 @@ The shape is deliberate: every stage holds real companies, including the demand
 side, so the end-use column is not a label. Marine Transport exists because
 stage 02 is the transport stage and pipelines alone left the marine leg of the
 chain invisible; the same-column `lng → marine` edge is drawn as a hook out of
-the right side of the column rather than a backwards line through the cards.
+the right side of the column rather than a backwards line through the cards. Two
+further forward flows are drawn so their tickers do not read as terminals:
+`pipe → chem` ("NGLs" — the TRGP gathering/processing leg into DOW and LYB) and
+`util → trans` ("charging" — the EV networks CHPT and EVGO).
 
 Three edge styles carry the meaning: solid arrows = energy flow, dashed grey =
 supplies/services, dashed orange = capital returns.
@@ -148,8 +151,10 @@ Both panes open the company panel, and the rail collapses with the `›` control
 
 ## Verified
 
-Rendered in Chromium at 1660×1000 (the SVG viewBox): 18 nodes, 32 edges, 89
-ticker chips, no chip escaping its card, no label collisions (13 static labels,
+Rendered in Chromium at 1660×1000 (the SVG viewBox): 18 nodes, 34 edges (27
+flows — the two forward edges `pipe → chem` ("NGLs") and `util → trans`
+("charging") complete the petrochemical and EV-charging legs), 89
+ticker chips, no chip escaping its card, no label collisions (14 static labels,
 none within 11px vertically and 70px horizontally of another), content inside the
 viewBox, horizontal scroll below 900px (`min-width` on the SVG, scrollable
 `#stage`). Hover/trace behaviour checked by dispatching `mouseenter` and asserting
@@ -157,7 +162,11 @@ the edge and dim classes. Panel checked by dispatching `click` on chips: XOM →
 ExxonMobil with three SUPPLIES TO rows and its three edges highlighted; NEE → four
 RECEIVES FROM + two SUPPLIES TO; SLB (enabler) → "supplies every stage"; MSFT →
 Data Centers. Esc, background click and the × all close it and leave no `.sel`,
-`.dim`, `.hl` or `.fade` classes behind. The panel's fetched layer was asserted for
+`.dim`, `.hl` or `.fade` classes behind. The panel's Flows block was re-checked after the
+`pipe → chem` / `util → trans` additions: TRGP now lists five SUPPLIES TO rows
+(with `→ Chemicals · NGLs`), DOW gains `← Pipelines & Storage · NGLs`, and both
+CHPT and EVGO gain `← Electric Utilities · charging`; hovering `pipe` and `util`
+highlights six edges each, including the two new ones. The panel's fetched layer was asserted for
 several tickers — XOM renders five fact rows (NYSE / Petroleum industry / Spring,
 Texas / 1882 / 57,900 (2025)), four dated Reuters/WSJ/Yahoo headlines and both the
 Website and Wikipedia links; ARLP degrades to a single Industry row and a Website
