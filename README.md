@@ -19,23 +19,30 @@ Hermes web UI Projects tab via `~/Code/hermes-web-ui/scripts/start-energy-infogr
 
 ## What it shows
 
-Five stages read left to right:
+Five stages read left to right, 89 tickers across 20 sector nodes:
 
-1. **Primary Energy** — Oil & Gas (XOM CVX COP OXY EOG FANG), Coal (BTU CEIX
+1. **Primary Energy** — Oil & Gas (XOM CVX COP OXY EOG FANG EQT), Coal (BTU CEIX
    ARLP), Uranium & Fuel (CCJ LEU BWXT), Solar & Wind (FSLR ENPH SEDG RUN),
    Bio & Hydro (DAR GPRE BEP)
-2. **Midstream & Transport** — Pipelines & Storage (ENB KMI WMB OKE ET),
-   LNG & Export (LNG NFE)
+2. **Midstream & Transport** — Pipelines & Storage (ENB KMI WMB OKE ET EPD TRGP),
+   LNG & Export (LNG NFE VG), Marine Transport (FRO INSW GLNG FLNG)
 3. **Conversion & Generation** — Refining & Fuels (VLO MPC PSX PBF), Chemicals
-   (DOW LYB), Power Generation (NEE CEG VST NRG AES), Storage & Hydrogen
-   (FLNC TSLA ALB PLUG)
+   (DOW LYB), Power Generation (NEE CEG VST NRG AES TLN), Storage & Hydrogen
+   (FLNC TSLA ALB PLUG APD LIN BE)
 4. **Delivery** — Electric Utilities (DUK SO D AEP EXC), Gas Utilities (SRE NI ATO)
-5. **End Use** — Homes & Buildings, Transport, Industry, Data Centers
-   (MSFT AMZN GOOGL META)
+5. **End Use** — Homes & Buildings (GNRC JCI TT), Transport (CHPT EVGO CLNE),
+   Industry (NUE AA), Data Centers (MSFT AMZN GOOGL META)
 
-Plus an **ENABLERS** band (oilfield services, power & grid equipment, materials
-& mining) that feeds every stage, and a dashed **revenue & capital returns**
+Plus an **ENABLERS** band — Services & Drilling (SLB HAL BKR NOV RIG VAL NE),
+Power & Grid Equipment (GEV ETN PWR EMR HUBB VRT) and Materials & Mining
+(SQM MP FCX) — that feeds every stage, and a dashed **revenue & capital returns**
 loop from end use back to the producers.
+
+The shape is deliberate: every stage holds real companies, including the demand
+side, so the end-use column is not a label. Marine Transport exists because
+stage 02 is the transport stage and pipelines alone left the marine leg of the
+chain invisible; the same-column `lng → marine` edge is drawn as a hook out of
+the right side of the column rather than a backwards line through the cards.
 
 Three edge styles carry the meaning: solid arrows = energy flow, dashed grey =
 supplies/services, dashed orange = capital returns.
@@ -93,8 +100,9 @@ python3 tools/fetch-company-data.py --inject   # …and splice it into index.htm
 ```
 
 Nothing is invented. Every field that cannot be sourced comes back `null` and the
-panel omits that row, so four companies (ARLP, DAR, NFE, FLNC) show a shorter
-Company block — none of them has a Wikipedia article to fall back on. Headlines are
+panel omits that row, so six companies (ARLP, DAR, NFE, FLNC, INSW, FLNG) show a
+shorter Company block — none of them has a Wikipedia article to fall back on.
+Headlines are
 filtered to the last 120 days, sorted newest-first, and the panel footers the list
 with the fetch date ("Headlines via Google News, as of 9 Oct 2026") so a stale
 snapshot is always visible as one. HTTP responses are cached under `.cache/`
@@ -102,8 +110,9 @@ snapshot is always visible as one. HTTP responses are cached under `.cache/`
 
 ## Verified
 
-Rendered in Chromium at 1660×1000 (the SVG viewBox): 17 nodes, 29 edges, 65
-ticker chips, no chip escaping its card, no label collisions, content inside the
+Rendered in Chromium at 1660×1000 (the SVG viewBox): 18 nodes, 32 edges, 89
+ticker chips, no chip escaping its card, no label collisions (13 static labels,
+none within 11px vertically and 70px horizontally of another), content inside the
 viewBox, horizontal scroll below 900px (`min-width` on the SVG, scrollable
 `#stage`). Hover/trace behaviour checked by dispatching `mouseenter` and asserting
 the edge and dim classes. Panel checked by dispatching `click` on chips: XOM →
@@ -118,9 +127,9 @@ link with no Wikipedia article; CEG shows live Oct-2026 headlines about Google's
 3.6 GW nuclear PPA, which is the same `gen → dc` PPA edge the diagram traces. No
 document overflow at 1560px with the 400px panel open.
 
-Data coverage from the last fetch: HQ 62/65, founded 55/65, employees 61/65,
-exchange 62/65, official site 65/65, descriptor 64/65, news 65/65 (260 items,
-all within the last 120 days).
+Data coverage from the last fetch: HQ 83/89, founded 73/89, employees 80/89,
+exchange 80/89, industry 67/89, official site 87/89, descriptor 85/89, news 89/89
+(356 items, all within the last 120 days, none of them ticker/quote pages).
 
 ## Note
 

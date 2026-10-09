@@ -105,6 +105,31 @@ COMPANIES = {
     "AMZN":  ("Amazon (company)", "Amazon data center energy", None),
     "GOOGL": ("Alphabet Inc.", "Google data center energy", None),
     "META":  ("Meta Platforms", "Meta data center energy", None),
+
+    "EQT":   ("EQT", "EQT Corporation", "Q5323987"),
+    "EPD":   ("Enterprise Products", "Enterprise Products Partners", None),
+    "TRGP":  ("Targa Resources", "Targa Resources", None),
+    "VG":    ("Venture Global LNG", "Venture Global LNG", None),
+    "FRO":   ("Frontline Ltd", "Frontline tanker", "Q529157"),
+    "INSW":  ("International Seaways", "International Seaways", None),
+    "GLNG":  ("Golar LNG", "Golar LNG", None),
+    "FLNG":  ("Flex LNG", "Flex LNG", None),
+    "RIG":   ("Transocean", "Transocean", "Q686785"),
+    "VAL":   ("Valaris", "Valaris", None),
+    "NE":    ("Noble Corporation", "Noble Corporation drilling", None),
+    "APD":   ("Air Products", "Air Products", "Q407744"),
+    "LIN":   ("Linde plc", "Linde", None),
+    "BE":    ("Bloom Energy", "Bloom Energy", None),
+    "TLN":   ("Talen Energy", "Talen Energy", None),
+    "VRT":   ("Vertiv", "Vertiv", None),
+    "GNRC":  ("Generac", "Generac", None),
+    "JCI":   ("Johnson Controls", "Johnson Controls", None),
+    "TT":    ("Trane Technologies", "Trane Technologies", None),
+    "CHPT":  ("ChargePoint", "ChargePoint", None),
+    "EVGO":  ("EVgo", "EVgo", None),
+    "CLNE":  ("Clean Energy Fuels", "Clean Energy Fuels", None),
+    "NUE":   ("Nucor", "Nucor", None),
+    "AA":    ("Alcoa", "Alcoa", None),
 }
 
 EXCHANGE_SHORT = {
@@ -123,6 +148,11 @@ CORP_HINT = re.compile(
 NOT_PERSON = re.compile(
     r"businessman|businesswoman|entrepreneur|\bborn\b|human|politician|investor|"
     r"person|actor|athlete|singer|footballer", re.I)
+# headline-shaped junk: ticker/quote pages, and a Wikidata "industry" that is a list
+QUOTE_JUNK = re.compile(
+    r"stock price|quotes?\s*[&,]|share price|stock analysis|price target|"
+    r"price, news, quote|market summary|stock quote", re.I)
+LIST_INDUSTRY = re.compile(r"^list of ", re.I)
 
 
 # ------------------------------------------------------------------ plumbing
@@ -393,7 +423,7 @@ def best_hq(*cands):
 
 
 # ------------------------------------------------------------------ news
-def news_for(query: str):
+def news_for(query: str, name: str | None = None):
     url = ("https://news.google.com/rss/search?q=" + urllib.parse.quote(query) +
            "&hl=en-US&gl=US&ceid=US:en")
     try:
@@ -401,6 +431,8 @@ def news_for(query: str):
     except Exception:
         return []
     cutoff = datetime.now(timezone.utc) - timedelta(days=NEWS_DAYS)
+    norm = lambda s: re.sub(r"[^a-z0-9 ]", "", (s or "").lower()).strip()
+    name_n = norm(name or query)
     out = []
     for item in root.iter("item"):
         title = (item.findtext("title") or "").strip()
@@ -424,7 +456,13 @@ def news_for(query: str):
         title = title.strip()
         if len(title.split()) < 4:
             continue
-        out.append({"t": title.strip(), "s": source.strip(), "d": when.strftime("%Y-%m-%d"),
+        # skip ticker/quote pages and bare company names — they are not news
+        if QUOTE_JUNK.search(title):
+            continue
+        bare = norm(title)
+        if bare == name_n or (len(bare.split()) <= 6 and bare.startswith(name_n)):
+            continue
+        out.append({"t": title, "s": source.strip(), "d": when.strftime("%Y-%m-%d"),
                     "u": link})
         if len(out) >= 30:
             break
@@ -449,7 +487,7 @@ def build(ticker, spec):
         "hq": hq_from_extract(extract),
         "founded": None, "employees": None, "employeesYear": None,
         "listed": None, "industry": None, "site": None,
-        "news": news_for(f"{news_q} when:{NEWS_DAYS}d"),
+        "news": news_for(f"{news_q} when:{NEWS_DAYS}d", name),
         "_infobox": box,
         "_extract": extract[:400] if extract else "",
     }
@@ -496,7 +534,7 @@ def main():
         elif tk:
             r["listed"] = tk
         ind = [labels.get(q, "") for q in c_qids(cl, "P452")[:1]]
-        if ind and ind[0]:
+        if ind and ind[0] and not LIST_INDUSTRY.match(ind[0]):
             r["industry"] = ind[0]
         site = c_string(cl, "P856")
         if site:
