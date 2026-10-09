@@ -41,8 +41,9 @@
   .chip:focus{outline:none}
   .chip:focus-visible .chip-box{stroke:var(--ink);stroke-width:1.4}
 
-  .g-node{transition:opacity .18s}
+  .g-node{transition:opacity .18s,stroke .18s}
   .g-node.dim{opacity:.2}
+  .g-node.pin .node-box{stroke:#AEBBC8;stroke-width:1.4}
 
   .edge{fill:none;stroke:#A9B6C4;stroke-width:1;transition:opacity .18s,stroke .18s,stroke-width .18s}
   .edge.dim{opacity:.07}
@@ -2856,11 +2857,12 @@ NODES.forEach(n=>{
   }
   if(n.tag){ yy+=7; const tg=el("text",{x:n.x,y:yy+12,class:"node-tag","text-anchor":"middle"},g);
     tg.textContent=n.tag; }
-  g.addEventListener("mouseenter",()=>focus(n.id));
-  g.addEventListener("mouseleave",()=>{
-    /* keep a clicked company's own trace pinned while the user moves around */
-    if(picked&&picked.nodeId&&byId[picked.nodeId]) focus(picked.nodeId); else blur();
-  });
+  g.addEventListener("mouseenter",()=>{ if(!picked) focus(n.id); });
+  g.addEventListener("mouseleave",()=>{ if(!picked) blur(); });
+  /* Clicking the card itself (chips stop propagation and open the panel) pins
+     this node's path. Hover previews are suppressed while something is pinned,
+     so the trace cannot shift until the user clicks away from it. */
+  g.addEventListener("click",ev=>{ ev.stopPropagation(); pinNode(n.id); });
 });
 
 /* ---------- trace on hover ---------- */
@@ -2911,9 +2913,9 @@ function bindChip(nodeEl,tk,nodeId){
 /* ---------- company panel ---------- */
 const panel=document.getElementById("panel");
 const $=id=>document.getElementById(id);
-document.getElementById("pClose").onclick=()=>closePanel();
-document.addEventListener("keydown",ev=>{ if(ev.key==="Escape") closePanel(); });
-svg.addEventListener("click",()=>closePanel());   // a click on empty canvas clears it
+document.getElementById("pClose").onclick=()=>clearSel();
+document.addEventListener("keydown",ev=>{ if(ev.key==="Escape") clearSel(); });
+svg.addEventListener("click",()=>clearSel());   // a click on empty canvas clears it
 
 function pick(tk,nodeId,chipEl){
   const [name,kind,about]=CO[tk];
@@ -2921,6 +2923,7 @@ function pick(tk,nodeId,chipEl){
   const gcol=node?G[node.g]:G.svc;
   const D=(typeof DATA!=="undefined"&&DATA[tk])||{};
   picked={tk:tk,nodeId:nodeId};
+  markPin(nodeId);
 
   $("pTar").innerHTML=`<span class="dot" style="background:${gcol}"></span>${tk}`;
   const nmEl=$("pName");
@@ -3025,10 +3028,28 @@ function linkOut(label,href){
   const a=document.createElement("a"); a.className="lnk"; a.textContent=label+" ↗";
   a.href=href; a.target="_blank"; a.rel="noopener"; return a;
 }
-function closePanel(){
+/* Pins are sticky: a node card click pins the trace, a chip click pins it and
+   opens the panel, and only clicking away (background, another node/chip, Esc,
+   the × ) releases it. Hovering elsewhere does not disturb a pin. */
+function pinNode(id){
+  const same=(picked&&picked.nodeId===id);
+  picked={nodeId:id, tk:same?picked.tk:null};
+  if(!same){
+    document.querySelectorAll(".chip.sel").forEach(c=>c.classList.remove("sel"));
+    panel.classList.remove("open");
+  }
+  markPin(id);
+  focus(id);
+}
+function markPin(id){
+  document.querySelectorAll(".g-node").forEach(g=>
+    g.classList.toggle("pin",!!id&&g.dataset.id===id));
+}
+function clearSel(){
   picked=null;
   panel.classList.remove("open");
   document.querySelectorAll(".chip.sel").forEach(c=>c.classList.remove("sel"));
+  markPin(null);
   blur();
 }
 
@@ -3046,7 +3067,7 @@ function closePanel(){
 const h1=el("text",{x:60,y:92,style:"font-size:25px;font-weight:700;letter-spacing:-.3px;fill:#0F172A"},svg);
 h1.textContent="The Energy Value Chain";
 const h2=el("text",{x:60,y:118,style:"font-size:12.5px;font-weight:500;fill:#5B6B7C"},svg);
-h2.textContent="Public companies by sector. Hover to trace a node; click any ticker for the company.";
+h2.textContent="Public companies by sector. Hover to preview a node, click to hold that path, click a ticker for the company.";
 
 const legend=[["Hydrocarbons",G.fossil],["Low-carbon",G.lowc],["Infrastructure",G.infra],["Services",G.svc],["End use",G.use]];
 let lx=1620;

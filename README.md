@@ -45,6 +45,11 @@ supplies/services, dashed orange = capital returns.
 - Hovering any node dims everything unrelated, thickens the traced edges, and
   reveals the flow labels for those edges (only a curated subset is labelled in
   the static view — the rest appear on trace; unrelated labels fade back).
+- **Clicking a node card pins its path.** The trace then holds — the node keeps a
+  slightly stronger outline and unrelated nodes stay dimmed — and hover previews
+  are suppressed, so the selection cannot shift until you click away: the canvas,
+  another node, another ticker, Esc, or the panel's ×. Clicking a ticker chip pins
+  the same way and opens the panel.
 - Hovering a ticker chip shows a one-line tooltip: ticker + company name (no
   sector subtext — the sector lives in the panel and the diagram's own card).
 - **Clicking a ticker chip opens the company panel** on the right: ticker (in its
