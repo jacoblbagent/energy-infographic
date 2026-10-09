@@ -127,8 +127,9 @@ link with no Wikipedia article; CEG shows live Oct-2026 headlines about Google's
 3.6 GW nuclear PPA, which is the same `gen → dc` PPA edge the diagram traces. No
 document overflow at 1560px with the 400px panel open.
 
-Data coverage from the last fetch: HQ 83/89, founded 73/89, employees 80/89,
-exchange 80/89, industry 67/89, official site 87/89, descriptor 85/89, news 89/89
+Data coverage from the last fetch: HQ 83/89, founded 73/89, employees 78/89
+(headcounts older than 2018 are dropped rather than shown stale), exchange 80/89,
+industry 67/89, official site 87/89, descriptor 85/89, news 89/89
 (356 items, all within the last 120 days, none of them ticker/quote pages).
 
 ## Note
