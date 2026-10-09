@@ -28,7 +28,6 @@
   .col-title{font-size:10px;font-weight:700;letter-spacing:1.5px;fill:var(--faint)}
   .node-box{fill:var(--node);stroke:var(--line);stroke-width:1}
   .node-label{font-size:12.5px;font-weight:600;fill:var(--ink)}
-  .node-tag{font-size:10px;font-weight:500;fill:var(--faint);letter-spacing:.2px}
 
   .chip-box{fill:var(--chip);stroke:var(--chipb);stroke-width:1;transition:fill .16s,stroke .16s}
   .chip-text{font-family:var(--mono);font-size:10.5px;font-weight:600;fill:#42526A;
@@ -3683,10 +3682,10 @@ const NODES=[
   {id:"util",  c:3,label:"Electric Utilities",  g:"infra", cos:["DUK","SO","D","AEP","EXC"]},
   {id:"gasut", c:3,label:"Gas Utilities",       g:"infra", cos:["SRE","NI","ATO"]},
 
-  {id:"homes", c:4,label:"Homes & Buildings",   g:"use",   cos:["GNRC","JCI","TT"],tag:"residential"},
-  {id:"trans", c:4,label:"Transport",           g:"use",   cos:["CHPT","EVGO","CLNE"],tag:"road · air · marine"},
-  {id:"ind",   c:4,label:"Industry",            g:"use",   cos:["NUE","AA"],tag:"manufacturing"},
-  {id:"dc",    c:4,label:"Data Centers",        g:"use",   cos:["MSFT","AMZN","GOOGL","META"],tag:"hyperscale compute"}
+  {id:"homes", c:4,label:"Homes & Buildings",   g:"use",   cos:["GNRC","JCI","TT"]},
+  {id:"trans", c:4,label:"Transport",           g:"use",   cos:["CHPT","EVGO","CLNE"]},
+  {id:"ind",   c:4,label:"Industry",            g:"use",   cos:["NUE","AA"]},
+  {id:"dc",    c:4,label:"Data Centers",        g:"use",   cos:["MSFT","AMZN","GOOGL","META"]}
 ];
 
 /* l = always-on label;  everything else is revealed while a node is traced */
@@ -3730,8 +3729,8 @@ NODES.forEach(n=>{
   if(cur.length)rows.push({items:cur,w:rw});
   n.rows=rows;
   const chipsH=rows.length?rows.length*CH+(rows.length-1)*CGAP:0;
-  let h=14+18+(chipsH?8+chipsH:0)+(n.tag?(chipsH?7:7)+14:0)+14;
-  n.h=Math.max(h,n.c===4?88:76);
+  let h=14+18+(chipsH?8+chipsH:0)+14;
+  n.h=Math.max(h,76);
 });
 const byId={}; NODES.forEach(n=>byId[n.id]=n);
 [0,1,2,3,4].forEach(c=>{
@@ -3865,8 +3864,6 @@ NODES.forEach(n=>{
     });
     yy-=CGAP;
   }
-  if(n.tag){ yy+=7; const tg=el("text",{x:n.x,y:yy+12,class:"node-tag","text-anchor":"middle"},g);
-    tg.textContent=n.tag; }
   g.addEventListener("mouseenter",()=>{ if(!picked) focus(n.id); });
   g.addEventListener("mouseleave",()=>{ if(!picked) blur(); });
   /* Clicking the card itself (chips stop propagation and open the panel) pins
