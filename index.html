@@ -9,16 +9,21 @@
     --bg:#FBFBFA;--ink:#0F172A;--muted:#5B6B7C;--faint:#93A2B3;
     --line:#DFE5EC;--node:#FFFFFF;--chip:#F7F9FB;--chipb:#E6EBF1;
     --fossil:#C2410C;--lowc:#0E9F6E;--infra:#2563EB;--svc:#64748B;--use:#334155;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
   }
   *{box-sizing:border-box}
-  html,body{margin:0;padding:0}
+  html,body{margin:0;padding:0;height:100%}
   body{
     background:var(--bg);color:var(--ink);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
     -webkit-font-smoothing:antialiased;
   }
-  #frame{overflow:auto;width:100%}
-  svg{display:block;width:100%;height:auto;min-width:1060px}
+
+  /* stage (diagram) + panel side by side; the panel is a real column, so the
+     diagram reflows instead of being covered. */
+  #app{display:flex;height:100vh;overflow:hidden}
+  #stage{flex:1;min-width:0;overflow:auto;display:flex;align-items:center;justify-content:center}
+  svg{display:block;width:100%;min-width:900px;height:auto}
 
   .col-title{font-size:10px;font-weight:700;letter-spacing:1.5px;fill:var(--faint)}
   .node-box{fill:var(--node);stroke:var(--line);stroke-width:1}
@@ -26,11 +31,15 @@
   .node-tag{font-size:10px;font-weight:500;fill:var(--faint);letter-spacing:.2px}
 
   .chip-box{fill:var(--chip);stroke:var(--chipb);stroke-width:1;transition:fill .16s,stroke .16s}
-  .chip-text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
-    font-size:10.5px;font-weight:600;fill:#42526A;letter-spacing:.2px;pointer-events:none}
-  .chip{cursor:default}
+  .chip-text{font-family:var(--mono);font-size:10.5px;font-weight:600;fill:#42526A;
+    letter-spacing:.2px;pointer-events:none}
+  .chip{cursor:pointer}
   .chip:hover .chip-box{fill:#EDF2F7;stroke:#B9C6D4}
   .chip:hover .chip-text{fill:var(--ink)}
+  .chip.sel .chip-box{fill:var(--t);stroke:var(--c);stroke-width:1.4}
+  .chip.sel .chip-text{fill:var(--c)}
+  .chip:focus{outline:none}
+  .chip:focus-visible .chip-box{stroke:var(--ink);stroke-width:1.4}
 
   .g-node{transition:opacity .18s}
   .g-node.dim{opacity:.2}
@@ -42,6 +51,7 @@
     transition:opacity .18s;paint-order:stroke;stroke:var(--bg);stroke-width:3;stroke-linejoin:round}
   .edge-lbl.on{opacity:1}
   .edge-lbl.static{opacity:1}
+  .edge-lbl.fade{opacity:.13}
 
   .svc{stroke:#B7C1CD;stroke-dasharray:3 4}
   .cap{stroke:#DDBBA4;stroke-dasharray:4 5}
@@ -52,45 +62,147 @@
   .foot{font-size:9.5px;fill:#A3AFBC}
   .legend-t{font-size:10px;font-weight:600;fill:var(--muted);letter-spacing:.2px}
 
-  #tip{position:fixed;pointer-events:none;background:#0F172A;color:#fff;font-size:11.5px;
-    font-weight:500;line-height:1.25;padding:6px 9px;border-radius:6px;opacity:0;
-    transition:opacity .12s;white-space:nowrap;z-index:20;transform:translate(12px,12px)}
-  #tip .tk{font-family:ui-monospace,Menlo,monospace;font-weight:700;color:#BFD3EA}
-  #tip small{display:block;color:#94A3B8;font-weight:500;font-size:10.5px;margin-top:1px}
+  /* ---- company panel ---- */
+  #panel{flex:0 0 auto;width:0;overflow:hidden;background:#fff;
+    border-left:1px solid transparent;transition:width .22s ease,border-color .22s}
+  #panel.open{width:376px;border-left-color:var(--line)}
+  .pin{width:376px;height:100%;overflow-y:auto;padding:26px 26px 40px;position:relative}
+  #pClose{position:absolute;top:20px;right:20px;width:26px;height:26px;padding:0;
+    border:0;border-radius:6px;background:transparent;color:#A3AFBC;font-size:18px;
+    line-height:1;cursor:pointer}
+  #pClose:hover{background:#F1F5F9;color:var(--ink)}
+  .tkr{font-family:var(--mono);font-size:21px;font-weight:700;letter-spacing:.4px;
+    display:flex;align-items:center;gap:9px}
+  .tkr .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+  .cname{font-size:16.5px;font-weight:600;margin:3px 0 5px;letter-spacing:-.1px}
+  .kind{font-size:11.5px;font-weight:600;color:var(--faint);letter-spacing:.2px}
+  .loc{font-size:9.5px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;
+    color:#B6C1CC;margin-top:15px}
+  .rule{height:1px;background:var(--line);margin:17px 0}
+  .about{font-size:13px;line-height:1.55;color:#42526A;margin:0}
+  .sec{font-size:9.5px;font-weight:700;letter-spacing:1.3px;color:#A3AFBC;margin:0 0 9px}
+  .frow{display:flex;gap:7px;align-items:baseline;font-size:12.5px;color:#42526A;
+    margin-bottom:7px;line-height:1.35}
+  .frow .ar{color:#A9B6C4;flex:0 0 auto}
+  .frow .lb{color:#8A99AA;font-size:11px}
+  .muted{font-size:12px;color:#A3AFBC;font-style:italic}
+
+  @media (max-width:880px){
+    /* narrow: the panel overlays rather than crushing the diagram */
+    #panel{position:fixed;top:0;right:0;height:100%;z-index:30;
+      box-shadow:-14px 0 30px rgba(15,23,42,.10);transition:transform .22s ease,width 0s}
+    #panel{width:340px;transform:translateX(100%)}
+    #panel.open{width:340px;transform:translateX(0)}
+    .pin{width:340px}
+  }
 </style>
 </head>
 <body>
-<div id="frame"><svg id="svg" viewBox="0 0 1660 1000" xmlns="http://www.w3.org/2000/svg"></svg></div>
-<div id="tip"></div>
+<div id="app">
+  <div id="stage"><svg id="svg" viewBox="0 0 1660 1000" xmlns="http://www.w3.org/2000/svg"></svg></div>
+  <aside id="panel" aria-live="polite" aria-label="Company details">
+    <div class="pin">
+      <button id="pClose" type="button" title="Close (Esc)" aria-label="Close">&times;</button>
+      <div class="tkr" id="pTar"></div>
+      <div class="cname" id="pName"></div>
+      <div class="kind" id="pKind"></div>
+      <div class="loc" id="pLoc"></div>
+      <div class="rule"></div>
+      <p class="about" id="pAbout"></p>
+      <div class="rule"></div>
+      <div id="pFlows"></div>
+    </div>
+  </aside>
+</div>
 <script>
 (function(){
 "use strict";
 const NS="http://www.w3.org/2000/svg";
 const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;};
 
-/* ---------- data ---------- */
+/* ---------- companies ---------- */
 const CO={
-  XOM:"ExxonMobil",CVX:"Chevron",COP:"ConocoPhillips",OXY:"Occidental Petroleum",
-  EOG:"EOG Resources",FANG:"Diamondback Energy",
-  BTU:"Peabody Energy",CEIX:"CONSOL Energy",ARLP:"Alliance Resource Partners",
-  CCJ:"Cameco",LEU:"Centrus Energy",BWXT:"BWX Technologies",
-  FSLR:"First Solar",ENPH:"Enphase Energy",SEDG:"SolarEdge",RUN:"Sunrun",
-  DAR:"Darling Ingredients",GPRE:"Green Plains",BEP:"Brookfield Renewable",
-  ENB:"Enbridge",KMI:"Kinder Morgan",WMB:"Williams",OKE:"ONEOK",ET:"Energy Transfer",
-  LNG:"Cheniere Energy",NFE:"New Fortress Energy",
-  VLO:"Valero Energy",MPC:"Marathon Petroleum",PSX:"Phillips 66",PBF:"PBF Energy",
-  DOW:"Dow Inc.",LYB:"LyondellBasell",
-  NEE:"NextEra Energy",CEG:"Constellation Energy",VST:"Vistra",NRG:"NRG Energy",AES:"AES Corp",
-  FLNC:"Fluence Energy",TSLA:"Tesla",ALB:"Albemarle",PLUG:"Plug Power",
-  DUK:"Duke Energy",SO:"Southern Company",D:"Dominion Energy",
-  AEP:"American Electric Power",EXC:"Exelon",
-  SRE:"Sempra",NI:"NiSource",ATO:"Atmos Energy",
-  SLB:"SLB",HAL:"Halliburton",BKR:"Baker Hughes",NOV:"NOV Inc.",
-  GEV:"GE Vernova",ETN:"Eaton",PWR:"Quanta Services",EMR:"Emerson Electric",HUBB:"Hubbell",
-  SQM:"SQM",MP:"MP Materials",FCX:"Freeport-McMoRan",
-  MSFT:"Microsoft",AMZN:"Amazon",GOOGL:"Alphabet",META:"Meta Platforms"
+  XOM:["ExxonMobil","Integrated major","Oil and gas production, refining and chemicals, with a growing low-carbon arm."],
+  CVX:["Chevron","Integrated major","Upstream production, refining and fuels retail; large Permian and Kazakhstan positions."],
+  COP:["ConocoPhillips","Upstream E&P","Pure upstream producer with no refining; big Permian, Eagle Ford and Alaska acreage."],
+  OXY:["Occidental Petroleum","Upstream + chemicals","Oil and gas producer with a dominant Permian position, plus OxyChem petrochemicals."],
+  EOG:["EOG Resources","Shale E&P","Shale operator focused on oil and gas in the Permian, Eagle Ford and Bakken."],
+  FANG:["Diamondback Energy","Permian E&P","Low-cost Permian pure-play oil producer in the Midland and Delaware basins."],
+
+  BTU:["Peabody Energy","Coal producer","Thermal and metallurgical coal miner with a large seaborne export business."],
+  CEIX:["CONSOL Energy","Coal producer","Coal miner supplying US power plants and export thermal coal markets."],
+  ARLP:["Alliance Resource Partners","Coal producer","Appalachian and Illinois Basin coal producer with export and royalty interests."],
+
+  CCJ:["Cameco","Uranium mining","Uranium producer with mines in Canada and Kazakhstan, plus fuel services."],
+  LEU:["Centrus Energy","Enrichment","Uranium enrichment and nuclear fuel components for US and international reactors."],
+  BWXT:["BWX Technologies","Nuclear equipment","Nuclear components, fuel and reactor services for defense and commercial power."],
+
+  FSLR:["First Solar","Solar manufacturing","Thin-film cadmium-telluride solar panel maker; supplies utility-scale projects."],
+  ENPH:["Enphase Energy","Solar equipment","Microinverters and home battery systems for residential solar."],
+  SEDG:["SolarEdge","Solar equipment","Solar inverters and power optimizers for residential and commercial systems."],
+  RUN:["Sunrun","Residential solar","Residential solar installer and financer; also sells home battery storage."],
+
+  DAR:["Darling Ingredients","Biofuel feedstock","Renders animal byproducts into feedstocks for renewable diesel and biodiesel."],
+  GPRE:["Green Plains","Ethanol","Ethanol producer and corn processor; also makes protein feed and corn oil."],
+  BEP:["Brookfield Renewable","Renewable power","Owns hydro, wind and solar generation; sells power under long-term contracts."],
+
+  ENB:["Enbridge","Pipelines","Pipelines and gas utilities; moves crude oil, liquids and natural gas across North America."],
+  KMI:["Kinder Morgan","Pipelines","Natural gas pipelines plus products pipelines, terminals and CO2 infrastructure."],
+  WMB:["Williams","Gas infrastructure","Natural gas gathering, processing and interstate transmission, mainly in the US East."],
+  OKE:["ONEOK","NGL infrastructure","Natural gas liquids and natural gas pipelines, processing and fractionation."],
+  ET:["Energy Transfer","Midstream","Midstream pipelines, storage and processing for natural gas, NGLs and crude."],
+  LNG:["Cheniere Energy","LNG export","Runs the Sabine Pass and Corpus Christi LNG terminals — a top US gas exporter."],
+  NFE:["New Fortress Energy","LNG terminals","LNG liquefaction, terminals and power plants for emerging markets."],
+
+  VLO:["Valero Energy","Refining","Largest independent refiner; also ethanol and renewable diesel production."],
+  MPC:["Marathon Petroleum","Refining + retail","Refining plus the largest US fuel retail network; also midstream stakes."],
+  PSX:["Phillips 66","Refining + chemicals","Refining, midstream and petrochemicals through its CPChem joint venture."],
+  PBF:["PBF Energy","Refining","Independent refiner with East and West Coast refineries and logistics."],
+  DOW:["Dow Inc.","Petrochemicals","Plastics, industrial intermediates, silicones and coatings."],
+  LYB:["LyondellBasell","Petrochemicals","Olefins and polyolefins producer; makes plastics from refinery-derived feedstocks."],
+
+  NEE:["NextEra Energy","Utility + renewables","Largest US regulated utility holding and the world's biggest renewables developer."],
+  CEG:["Constellation Energy","Nuclear power","Largest US nuclear operator; sells power to utilities and under corporate PPAs."],
+  VST:["Vistra","Independent power","Competitive power producer and retail supplier with a large gas and nuclear fleet."],
+  NRG:["NRG Energy","Retail power","Competitive retail electricity and generation for homes and businesses."],
+  AES:["AES Corp","Global power","Global power generation, utility-scale renewables and battery storage."],
+
+  FLNC:["Fluence Energy","Storage systems","Grid-scale battery storage systems and energy management software."],
+  TSLA:["Tesla","Storage + EVs","Electric vehicles plus energy storage (Megapack) and solar."],
+  ALB:["Albemarle","Lithium","Lithium producer for batteries; also bromine specialties and refining catalysts."],
+  PLUG:["Plug Power","Hydrogen","Hydrogen fuel cells, electrolyzers and green hydrogen production."],
+
+  DUK:["Duke Energy","Regulated utility","Regulated electric and gas utility serving the Carolinas, Florida and the Midwest."],
+  SO:["Southern Company","Regulated utility","Regulated utility holding with electric and gas service across the Southeast."],
+  D:["Dominion Energy","Regulated utility","Electric and gas distribution in Virginia and the Carolinas."],
+  AEP:["American Electric Power","Regulated utility","Regulated electric utility in 11 states; one of the largest US transmission owners."],
+  EXC:["Exelon","Wires-only utility","Transmission and distribution utility (ComEd, PECO, BGE) with no generation."],
+  SRE:["Sempra","Utility + LNG","Utility holding (SDG&E, SoCalGas) plus LNG and Mexican energy infrastructure."],
+  NI:["NiSource","Regulated utility","Regulated gas and electric distribution across six Midwest states."],
+  ATO:["Atmos Energy","Gas distribution","Largest pure-play natural gas distribution utility in the US."],
+
+  SLB:["SLB","Oilfield services","World's largest oilfield services company: drilling, completions and digital."],
+  HAL:["Halliburton","Oilfield services","Cementing, stimulation and completions services for oil and gas producers."],
+  BKR:["Baker Hughes","Oilfield + equipment","Oilfield equipment and services plus industrial gas turbines and power gear."],
+  NOV:["NOV Inc.","Oilfield equipment","Drilling rig equipment and oilfield hardware for onshore and offshore work."],
+  GEV:["GE Vernova","Power equipment","Gas turbines, grid equipment and wind turbines — the GE energy spin-off."],
+  ETN:["Eaton","Electrical equipment","Electrical grid, power management and data-center equipment."],
+  PWR:["Quanta Services","Grid construction","Builds and maintains electric transmission, substations and grid infrastructure."],
+  EMR:["Emerson Electric","Automation","Automation and control systems for energy, power and industrial plants."],
+  HUBB:["Hubbell","Grid hardware","Electrical grid and utility hardware components."],
+
+  SQM:["SQM","Lithium + chemicals","Lithium, iodine and specialty plant nutrients from Chile's Atacama brine."],
+  MP:["MP Materials","Rare earths","Mines and processes rare-earth elements at Mountain Pass; makes magnets."],
+  FCX:["Freeport-McMoRan","Copper mining","Copper producer — the metal that wires grids, motors and data centers."],
+
+  MSFT:["Microsoft","Data center buyer","Hyperscale data centers; buys clean power at scale, including nuclear agreements."],
+  AMZN:["Amazon","Data center buyer","AWS data centers plus Amazon's own renewable and nuclear power procurement."],
+  GOOGL:["Alphabet","Data center buyer","Google data centers; a 24/7 carbon-free energy buyer with advanced nuclear deals."],
+  META:["Meta Platforms","Data center buyer","Data centers for AI workloads; a very large PPA buyer now adding nuclear."]
 };
+
 const G={fossil:"#C2410C",lowc:"#0E9F6E",infra:"#2563EB",svc:"#64748B",use:"#334155"};
+const TINT={fossil:"#FAF0E9",lowc:"#EAF7F1",infra:"#ECF1FD",svc:"#F0F3F6",use:"#EDF0F3"};
 
 const COL_TITLES=["PRIMARY ENERGY","MIDSTREAM & TRANSPORT","CONVERSION & GENERATION","DELIVERY","END USE"];
 const CX=[230,530,830,1130,1460];
@@ -120,7 +232,7 @@ const NODES=[
   {id:"dc",    c:4,label:"Data Centers",        g:"use",   cos:["MSFT","AMZN","GOOGL","META"],tag:"hyperscale compute"}
 ];
 
-/* l = label shown always;  no l = label only appears while a node is traced */
+/* l = always-on label;  everything else is revealed while a node is traced */
 const EDGES=[
   {a:"oil",b:"pipe",l:"crude · gas"},{a:"oil",b:"ref"},{a:"oil",b:"chem"},
   {a:"coal",b:"gen",l:"coal"},{a:"uran",b:"gen",l:"fuel"},
@@ -131,14 +243,14 @@ const EDGES=[
   {a:"ref",b:"trans",l:"fuels"},{a:"ref",b:"ind"},
   {a:"chem",b:"ind",l:"plastics"},
   {a:"gen",b:"util"},{a:"gen",b:"dc",l:"PPA"},
-  {a:"util",b:"homes"},{a:"util",b:"ind"},
+  {a:"util",b:"homes"},{a:"util",b:"ind"},{a:"util",b:"dc"},
   {a:"gasut",b:"homes",l:"heat"},{a:"gasut",b:"ind"}
 ];
 
 const ENABLERS=[
-  {label:"Oilfield Services",cos:["SLB","HAL","BKR","NOV"]},
-  {label:"Power & Grid Equipment",cos:["GEV","ETN","PWR","EMR","HUBB"]},
-  {label:"Materials & Mining",cos:["ALB","SQM","MP","FCX"]}
+  {id:"e-svc", g:"svc", label:"Oilfield Services",cos:["SLB","HAL","BKR","NOV"]},
+  {id:"e-eq",  g:"svc", label:"Power & Grid Equipment",cos:["GEV","ETN","PWR","EMR","HUBB"]},
+  {id:"e-mat", g:"svc", label:"Materials & Mining",cos:["SQM","MP","FCX"]}
 ];
 
 /* ---------- measurement ---------- */
@@ -168,7 +280,6 @@ const byId={}; NODES.forEach(n=>byId[n.id]=n);
   col.forEach(n=>{n.y=y;y+=n.h+RGAP;});
 });
 
-/* anchors */
 const outs={},ins={};
 EDGES.forEach((e,i)=>{ (outs[e.a]=outs[e.a]||[]).push(i); (ins[e.b]=ins[e.b]||[]).push(i); });
 const spread=(node,i,arr)=>node.y+16+(arr.indexOf(i)+1)*(node.h-32)/(arr.length+1);
@@ -226,11 +337,12 @@ ENABLERS.forEach((g,i)=>{
   let cx=x+14, cy=bandTop+34;
   g.cos.forEach(t=>{
     const w=chipW(t);
-    const cg=el("g",{class:"chip"},gBand);
+    const cg=el("g",{class:"chip",tabindex:"0",role:"button"},gBand);
+    cg.setAttribute("aria-label",t+" — "+CO[t][0]);
     el("rect",{x:cx,y:cy,width:w,height:CH,rx:5,class:"chip-box"},cg);
     const tx=el("text",{x:cx+w/2,y:cy+CH/2+3.7,class:"chip-text","text-anchor":"middle"},cg);
     tx.textContent=t;
-    bindTip(cg,t,g.label);
+    bindChip(cg,t,g.id,g.label);
     cx+=w+CGAP;
   });
 });
@@ -270,11 +382,12 @@ NODES.forEach(n=>{
     n.rows.forEach(row=>{
       let cx=n.x-row.w/2;
       row.items.forEach(it=>{
-        const cg=el("g",{class:"chip"},g);
+        const cg=el("g",{class:"chip",tabindex:"0",role:"button"},g);
+        cg.setAttribute("aria-label",it.t+" — "+CO[it.t][0]);
         el("rect",{x:cx,y:yy,width:it.w,height:CH,rx:5,class:"chip-box"},cg);
         const tx=el("text",{x:cx+it.w/2,y:yy+CH/2+3.7,class:"chip-text","text-anchor":"middle"},cg);
         tx.textContent=it.t;
-        bindTip(cg,it.t,n.label);
+        bindChip(cg,it.t,n.id,n.label);
         cx+=it.w+CGAP;
       });
       yy+=CH+CGAP;
@@ -284,7 +397,10 @@ NODES.forEach(n=>{
   if(n.tag){ yy+=7; const tg=el("text",{x:n.x,y:yy+12,class:"node-tag","text-anchor":"middle"},g);
     tg.textContent=n.tag; }
   g.addEventListener("mouseenter",()=>focus(n.id));
-  g.addEventListener("mouseleave",blur);
+  g.addEventListener("mouseleave",()=>{
+    /* keep a clicked company's own trace pinned while the user moves around */
+    if(picked&&picked.nodeId&&byId[picked.nodeId]) focus(picked.nodeId); else blur();
+  });
 });
 
 /* ---------- trace on hover ---------- */
@@ -294,31 +410,108 @@ function focus(id){
   EDGES.forEach(e=>{
     const on=(e.a===id||e.b===id);
     e.el.classList.toggle("hl",on); e.el.classList.toggle("dim",!on);
-    e.lbl.classList.toggle("on",on);
+    e.lbl.classList.toggle("on",on); e.lbl.classList.toggle("fade",!on);
   });
   NODES.forEach(n=>n.gEl.classList.toggle("dim",!near[n.id]));
 }
 function blur(){
-  EDGES.forEach(e=>{e.el.classList.remove("hl","dim");e.lbl.classList.remove("on");});
+  EDGES.forEach(e=>{e.el.classList.remove("hl","dim");
+    e.lbl.classList.remove("on","fade");});
   NODES.forEach(n=>n.gEl.classList.remove("dim"));
 }
 
-/* ---------- tooltip ---------- */
-const tip=document.getElementById("tip");
-function bindTip(nodeEl,tk,sector){
+/* ---------- hover tooltip ---------- */
+const tip=document.createElement("div");
+tip.id="tip";
+tip.style.cssText="position:fixed;pointer-events:none;background:#0F172A;color:#fff;font-size:11.5px;"+
+  "font-weight:500;line-height:1.25;padding:6px 9px;border-radius:6px;opacity:0;transition:opacity .12s;"+
+  "white-space:nowrap;z-index:40;transform:translate(12px,12px)";
+document.body.appendChild(tip);
+
+/* ---------- chips: hover tip + click → panel ---------- */
+let picked=null;
+function bindChip(nodeEl,tk,nodeId,sectorLabel){
+  const g=byId[nodeId]?byId[nodeId].g:(ENABLERS.find(e=>e.id===nodeId)||{}).g||"svc";
+  nodeEl.style.setProperty("--c",G[g]);
+  nodeEl.style.setProperty("--t",TINT[g]);
   nodeEl.addEventListener("mouseenter",()=>{
-    tip.innerHTML=`<span class="tk">${tk}</span>&nbsp;&nbsp;${CO[tk]||tk}<small>${sector}</small>`;
+    tip.innerHTML=`<span style="font-family:var(--mono);font-weight:700;color:#BFD3EA">${tk}</span>`+
+      `&nbsp;&nbsp;${CO[tk][0]}<small style="display:block;color:#94A3B8;font-weight:500;font-size:10.5px">`+
+      `${sectorLabel} · click for details</small>`;
     tip.style.opacity="1";
   });
   nodeEl.addEventListener("mousemove",ev=>{tip.style.left=ev.clientX+"px";tip.style.top=ev.clientY+"px";});
   nodeEl.addEventListener("mouseleave",()=>{tip.style.opacity="0";});
+  nodeEl.addEventListener("click",ev=>{ev.stopPropagation();pick(tk,nodeId,nodeEl);});
+  nodeEl.addEventListener("keydown",ev=>{
+    if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();pick(tk,nodeId,nodeEl);}
+  });
+}
+
+/* ---------- company panel ---------- */
+const panel=document.getElementById("panel");
+const $=id=>document.getElementById(id);
+document.getElementById("pClose").onclick=()=>closePanel();
+document.addEventListener("keydown",ev=>{ if(ev.key==="Escape") closePanel(); });
+svg.addEventListener("click",()=>closePanel());   // a click on empty canvas clears it
+
+function pick(tk,nodeId,chipEl){
+  const [name,kind,about]=CO[tk];
+  const node=byId[nodeId]||null;
+  const gcol=node?G[node.g]:G.svc;
+  picked={tk:tk,nodeId:nodeId};
+
+  $("pTar").innerHTML=`<span class="dot" style="background:${gcol}"></span>${tk}`;
+  $("pName").textContent=name;
+  $("pKind").textContent=kind;
+  $("pLoc").textContent=node
+    ? `0${node.c+1} ${COL_TITLES[node.c]} · ${node.label}`
+    : `ENABLERS · ${(ENABLERS.find(e=>e.id===nodeId)||{}).label||""}`;
+  $("pAbout").textContent=about;
+
+  const flow=$("pFlows"); flow.innerHTML="";
+  if(node){
+    const out=EDGES.filter(e=>e.a===node.id), inn=EDGES.filter(e=>e.b===node.id);
+    if(out.length){
+      flow.appendChild(sect("SUPPLIES TO"));
+      out.forEach(e=>flow.appendChild(row("→",byId[e.b].label,e.l)));
+    }
+    if(inn.length){
+      flow.appendChild(sect("RECEIVES FROM"));
+      inn.forEach(e=>flow.appendChild(row("←",byId[e.a].label,e.l)));
+    }
+    if(!out.length&&!inn.length) flow.appendChild(muted("A terminal stage — no outgoing flows."));
+  }else{
+    flow.appendChild(sect("SUPPLIES"));
+    flow.appendChild(row("→","Every stage of the chain","services · equipment · materials"));
+  }
+
+  document.querySelectorAll(".chip.sel").forEach(c=>c.classList.remove("sel"));
+  chipEl.classList.add("sel");
+  if(node) focus(node.id); else blur();
+  panel.classList.add("open");
+}
+function sect(t){const d=document.createElement("div");d.className="sec";d.textContent=t;return d;}
+function row(ar,label,note){
+  const d=document.createElement("div");d.className="frow";
+  const a=document.createElement("span");a.className="ar";a.textContent=ar;
+  const s=document.createElement("span");
+  s.textContent=label+(note?" ":"");
+  if(note){const n=document.createElement("span");n.className="lb";n.textContent=" · "+note;s.appendChild(n);}
+  d.append(a,s);return d;
+}
+function muted(t){const d=document.createElement("div");d.className="muted";d.textContent=t;return d;}
+function closePanel(){
+  picked=null;
+  panel.classList.remove("open");
+  document.querySelectorAll(".chip.sel").forEach(c=>c.classList.remove("sel"));
+  blur();
 }
 
 /* ---------- column headers ---------- */
 [0,1,2,3,4].forEach(c=>{
   const first=NODES.filter(n=>n.c===c)[0];
-  const x=CX[c]-NW[c]/2;
-  const y=first.y-13;
+  const x=CX[c]-NW[c]/2, y=first.y-13;
   const num=el("text",{x:x,y:y,class:"col-title",style:"fill:#C3CCD6"},svg);
   num.textContent="0"+(c+1);
   const t=el("text",{x:x+22,y:y,class:"col-title"},svg);
@@ -329,7 +522,7 @@ function bindTip(nodeEl,tk,sector){
 const h1=el("text",{x:60,y:92,style:"font-size:25px;font-weight:700;letter-spacing:-.3px;fill:#0F172A"},svg);
 h1.textContent="The Energy Value Chain";
 const h2=el("text",{x:60,y:118,style:"font-size:12.5px;font-weight:500;fill:#5B6B7C"},svg);
-h2.textContent="Public companies by sector. Hover any node to trace its connections.";
+h2.textContent="Public companies by sector. Hover to trace a node; click any ticker for the company.";
 
 const legend=[["Hydrocarbons",G.fossil],["Low-carbon",G.lowc],["Infrastructure",G.infra],["Services",G.svc],["End use",G.use]];
 let lx=1620;
