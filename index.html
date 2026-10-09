@@ -116,7 +116,13 @@
   #rail{flex:0 0 auto;width:320px;background:#fff;border-left:1px solid var(--line);
     display:flex;flex-direction:column;min-height:0;overflow:hidden;
     transition:width .22s ease,border-color .22s}
-  body.railoff #rail{width:0;border-left-color:transparent}
+  /* collapsed: the rail stays put as a slim strip with its toggle pinned at the
+     top, so the way back is always in the same place */
+  body.railoff #rail{width:44px}
+  body.railoff .tabs,body.railoff .railbody{display:none}
+  body.railoff .railhead{width:44px;justify-content:center;padding:13px 0 11px;
+    border-bottom-color:transparent}
+  body.railoff #railToggle{color:#7B8A9B}
   .railhead{display:flex;align-items:center;gap:8px;flex:0 0 auto;
     padding:13px 12px 11px;border-bottom:1px solid var(--line)}
   .tabs{display:flex;gap:2px;flex:1;background:#F1F4F8;border-radius:7px;padding:2px}
@@ -167,22 +173,6 @@
     color:#42526A;cursor:pointer;text-align:center}
   .nmore:hover{background:#F5F8FB}
   .nempty{border:0;color:#A3AFBC;font-weight:500;cursor:default}
-  #railOpen{display:none;position:fixed;top:14px;right:14px;z-index:25;
-    border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 11px;
-    font:inherit;font-size:11.5px;font-weight:600;color:#42526A;cursor:pointer;
-    box-shadow:0 1px 3px rgba(15,23,42,.08)}
-  #railOpen:hover{background:#F5F8FB}
-  body.panelopen #railOpen{display:none!important}
-
-  @media (min-width:1181px){
-    /* wide: the rail collapses to zero width, taking its own toggle with it —
-       leave a handle on the right edge so it can be brought back. Hidden while
-       the company panel is open (it owns the right edge then). */
-    body.railoff #railOpen{display:flex;align-items:center;gap:5px;
-      top:50%;right:0;transform:translateY(-50%);
-      border-radius:8px 0 0 8px;border-right:0;padding:10px 9px;
-      box-shadow:-1px 1px 4px rgba(15,23,42,.09)}
-  }
 
   @media (max-width:1180px){
     /* narrow: the panel and the rail overlay rather than crushing the diagram */
@@ -193,11 +183,10 @@
     .pin{width:340px}
 
     #rail{position:fixed;top:0;right:0;height:100%;z-index:30;width:330px;
-      box-shadow:-14px 0 30px rgba(15,23,42,.10);transform:translateX(100%);
+      box-shadow:-14px 0 30px rgba(15,23,42,.10);transform:translateX(0);
       transition:transform .22s ease}
-    body.railoff #rail{width:330px;border-left-color:var(--line)}
-    body.railshow #rail{transform:translateX(0)}
-    #railOpen{display:block}
+    body.railoff #rail{width:330px;transform:translateX(calc(100% - 44px));
+      box-shadow:-6px 0 16px rgba(15,23,42,.08)}
   }
 </style>
 </head>
@@ -269,7 +258,6 @@
     </div>
   </aside>
 </div>
-<button id="railOpen" type="button" title="Show the feed" aria-label="Show the market feed">&lsaquo; Feed</button>
 <script>
 (function(){
 "use strict";
@@ -4139,7 +4127,7 @@ function openCompany(tk){
   });
   /* on a narrow screen the rail is an overlay: step it aside so the panel
      (which is wider and sits above it) is the only thing on show */
-  if(MQ.matches){ BODY.classList.remove("railshow"); railGlyph(); }
+  if(MQ.matches){ setRail(true); }
 }
 
 /* ---------- pane 1: most volume right now ---------- */
@@ -4258,20 +4246,26 @@ TABBTNS.forEach(b=>b.addEventListener("click",()=>{
   PANES.news.hidden=(b.dataset.tab!=="news");
 }));
 const TGL=$("railToggle"), BODY=document.body, MQ=window.matchMedia("(max-width:1180px)");
-function railGlyph(){
-  const open=MQ.matches?BODY.classList.contains("railshow"):!BODY.classList.contains("railoff");
-  TGL.textContent=open?"›":"‹";
-  TGL.title=open?"Hide the feed":"Show the feed";
-}
-function toggleRail(){
-  if(MQ.matches) BODY.classList.toggle("railshow"); else BODY.classList.toggle("railoff");
+/* one collapsed state for both widths: body.railoff narrows the rail to a strip
+   with the toggle still at its top (wide) or slides it off leaving that strip
+   (narrow). railOpen stays in charge of the chevron either way. */
+function railCollapsed(){ return BODY.classList.contains("railoff"); }
+function setRail(collapsed){
+  BODY.classList.toggle("railoff",collapsed);
   railGlyph();
 }
+function railGlyph(){
+  const open=!railCollapsed();
+  TGL.textContent=open?"\u203a":"\u2039";
+  TGL.title=open?"Hide the feed":"Show the feed";
+  TGL.setAttribute("aria-expanded",open?"true":"false");
+}
+function toggleRail(){ setRail(!railCollapsed()); }
 TGL.addEventListener("click",toggleRail);
-$("railOpen").addEventListener("click",toggleRail);
-MQ.addEventListener("change",()=>{ BODY.classList.remove("railshow","railoff"); railGlyph(); });
+/* keep the default sane per width: narrow opens as a strip, wide stays open */
+MQ.addEventListener("change",()=>setRail(MQ.matches));
 document.addEventListener("keydown",ev=>{
-  if(ev.key==="Escape"&&MQ.matches){ BODY.classList.remove("railshow"); railGlyph(); }
+  if(ev.key==="Escape"&&MQ.matches) setRail(true);
 });
 $("newsQ").addEventListener("input",ev=>{ NST.q=ev.target.value; NST.limit=40; renderNews(); });
 Array.prototype.slice.call(document.querySelectorAll(".sort")).forEach(b=>
@@ -4282,7 +4276,7 @@ Array.prototype.slice.call(document.querySelectorAll(".sort")).forEach(b=>
   }));
 
 RAIL.asof.textContent=fmtAsof();
-renderVol(); renderNews(); railGlyph();
+renderVol(); renderNews(); setRail(MQ.matches);
 })();
 </script>
 </body>
