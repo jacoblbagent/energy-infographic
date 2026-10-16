@@ -1,357 +1,2466 @@
 {
-  "_comment": "Direct competitors per charted company, grouped by the line of business that actually overlaps. 't' is the ticker (clickable when it is on the chart), 'n' is the display name (needed only for off-chart peers), 'w' is the shared business. Source: hand-curated from each company's disclosed business segments; off-chart peers are public listings named for context only.",
-  "peers": {
-    "XOM": {"basis": "Integrated oil majors", "peers": [
-      {"t": "CVX", "w": "integrated major"},
-      {"t": "SHEL", "n": "Shell", "w": "integrated major"},
-      {"t": "BP", "n": "BP", "w": "integrated major"},
-      {"t": "TTE", "n": "TotalEnergies", "w": "integrated major"}]},
-    "CVX": {"basis": "Integrated oil majors", "peers": [
-      {"t": "XOM", "w": "integrated major"},
-      {"t": "SHEL", "n": "Shell", "w": "integrated major"},
-      {"t": "BP", "n": "BP", "w": "integrated major"},
-      {"t": "TTE", "n": "TotalEnergies", "w": "integrated major"}]},
-    "COP": {"basis": "Large-cap oil & gas producers", "peers": [
-      {"t": "OXY", "w": "upstream + chemicals"},
-      {"t": "EOG", "w": "shale E&P"},
-      {"t": "FANG", "w": "Permian E&P"},
-      {"t": "DVN", "n": "Devon Energy", "w": "US E&P"}]},
-    "OXY": {"basis": "Oil & gas producers", "peers": [
-      {"t": "COP", "w": "upstream heavyweight"},
-      {"t": "EOG", "w": "shale E&P"},
-      {"t": "FANG", "w": "Permian E&P"},
-      {"t": "DVN", "n": "Devon Energy", "w": "US E&P"}]},
-    "EOG": {"basis": "Shale oil & gas producers", "peers": [
-      {"t": "FANG", "w": "Permian E&P"},
-      {"t": "COP", "w": "upstream heavyweight"},
-      {"t": "OXY", "w": "upstream + chemicals"},
-      {"t": "DVN", "n": "Devon Energy", "w": "US E&P"}]},
-    "FANG": {"basis": "Permian pure-plays", "peers": [
-      {"t": "EOG", "w": "shale E&P"},
-      {"t": "COP", "w": "upstream heavyweight"},
-      {"t": "OXY", "w": "upstream + chemicals"},
-      {"t": "PR", "n": "Permian Resources", "w": "Permian pure-play"},
-      {"t": "MTDR", "n": "Matador Resources", "w": "Permian pure-play"}]},
-    "EQT": {"basis": "US natural gas producers", "peers": [
-      {"t": "EXE", "n": "Expand Energy", "w": "largest US gas producer"},
-      {"t": "CNX", "n": "CNX Resources", "w": "Appalachian gas"},
-      {"t": "AR", "n": "Antero Resources", "w": "Appalachian gas"}]},
-    "BTU": {"basis": "US coal producers", "peers": [
-      {"t": "CEIX", "w": "coal producer"},
-      {"t": "ARLP", "w": "coal producer"},
-      {"t": "AMR", "n": "Alpha Metallurgical", "w": "met coal"},
-      {"t": "HCC", "n": "Warrior Met Coal", "w": "met coal"}]},
-    "CEIX": {"basis": "US coal producers", "peers": [
-      {"t": "BTU", "w": "coal producer"},
-      {"t": "ARLP", "w": "coal producer"},
-      {"t": "AMR", "n": "Alpha Metallurgical", "w": "met coal"}]},
-    "ARLP": {"basis": "US coal producers", "peers": [
-      {"t": "BTU", "w": "coal producer"},
-      {"t": "CEIX", "w": "coal producer"}]},
-    "CCJ": {"basis": "Uranium miners", "peers": [
-      {"t": "UEC", "n": "Uranium Energy", "w": "US uranium production"},
-      {"t": "UUUU", "n": "Energy Fuels", "w": "US uranium production"},
-      {"t": "NXE", "n": "NexGen Energy", "w": "development-stage uranium"},
-      {"t": "DNN", "n": "Denison Mines", "w": "development-stage uranium"}]},
-    "LEU": {"basis": "Nuclear fuel", "peers": [
-      {"t": "CCJ", "w": "fuel services & conversion"},
-      {"n": "Urenco", "w": "enrichment (private)"},
-      {"n": "Orano", "w": "enrichment (state-owned)"}],
-      "note": "Centrus is the only US-listed enricher — its main rivals are unlisted."},
-    "BWXT": {"basis": "Nuclear components & fuel", "peers": [
-      {"t": "LEU", "w": "nuclear fuel & services"},
-      {"t": "CW", "n": "Curtiss-Wright", "w": "naval nuclear components"},
-      {"n": "Framatome", "w": "reactor components (private)"}]},
-    "FSLR": {"basis": "Solar module manufacturing", "peers": [
-      {"t": "JKS", "n": "JinkoSolar", "w": "module maker"},
-      {"t": "CSIQ", "n": "Canadian Solar", "w": "module maker"},
-      {"n": "LONGi", "w": "module maker (Shanghai-listed)"}]},
-    "ENPH": {"basis": "Residential solar power electronics", "peers": [
-      {"t": "SEDG", "w": "inverters & optimizers"},
-      {"t": "TSLA", "w": "home solar + storage"}]},
-    "SEDG": {"basis": "Solar inverters & power optimizers", "peers": [
-      {"t": "ENPH", "w": "microinverters"},
-      {"t": "TSLA", "w": "home solar + storage"},
-      {"t": "S92.DE", "n": "SMA Solar", "w": "inverters"}]},
-    "RUN": {"basis": "Residential solar ownership & leasing", "peers": [
-      {"t": "TSLA", "w": "home solar"},
-      {"t": "ENPH", "w": "home solar systems"}],
-      "note": "Most lease-model residential rivals are private."},
-    "DAR": {"basis": "Byproduct rendering & biofuel feedstock", "peers": [
-      {"t": "TSN", "n": "Tyson Foods", "w": "animal byproducts"},
-      {"n": "Cargill", "w": "rendering & feedstocks (private)"},
-      {"n": "JBS", "w": "byproduct processing (private US arm)"}]},
-    "GPRE": {"basis": "Ethanol production", "peers": [
-      {"t": "ADM", "n": "Archer-Daniels-Midland", "w": "ethanol & ag processing"},
-      {"t": "VLO", "w": "ethanol & renewable diesel"}]},
-    "BEP": {"basis": "Renewable power ownership", "peers": [
-      {"t": "NEE", "w": "renewables developer"},
-      {"t": "AES", "w": "renewables & utilities"},
-      {"t": "ORSTED", "n": "Orsted", "w": "offshore wind"}]},
-    "ENB": {"basis": "North American midstream", "peers": [
-      {"t": "ET", "w": "midstream"},
-      {"t": "EPD", "w": "midstream"},
-      {"t": "KMI", "w": "gas pipelines"},
-      {"t": "WMB", "w": "gas infrastructure"}]},
-    "KMI": {"basis": "Natural gas pipelines", "peers": [
-      {"t": "WMB", "w": "gas infrastructure"},
-      {"t": "ET", "w": "midstream"},
-      {"t": "EPD", "w": "midstream"},
-      {"t": "ENB", "w": "pipelines"}]},
-    "WMB": {"basis": "Gas gathering & transmission", "peers": [
-      {"t": "KMI", "w": "gas pipelines"},
-      {"t": "ET", "w": "midstream"},
-      {"t": "EPD", "w": "midstream"},
-      {"t": "TRGP", "w": "gathering & processing"}]},
-    "OKE": {"basis": "NGL pipelines & fractionation", "peers": [
-      {"t": "EPD", "w": "NGL infrastructure"},
-      {"t": "TRGP", "w": "NGL processing"},
-      {"t": "ET", "w": "midstream"}]},
-    "ET": {"basis": "US midstream", "peers": [
-      {"t": "EPD", "w": "midstream"},
-      {"t": "ENB", "w": "pipelines"},
-      {"t": "KMI", "w": "gas pipelines"},
-      {"t": "WMB", "w": "gas infrastructure"}]},
-    "EPD": {"basis": "Midstream & NGL", "peers": [
-      {"t": "ET", "w": "midstream"},
-      {"t": "OKE", "w": "NGL infrastructure"},
-      {"t": "TRGP", "w": "NGL processing"},
-      {"t": "ENB", "w": "pipelines"}]},
-    "TRGP": {"basis": "NGL gathering, processing & export", "peers": [
-      {"t": "OKE", "w": "NGL infrastructure"},
-      {"t": "EPD", "w": "midstream"},
-      {"t": "ET", "w": "midstream"}]},
-    "LNG": {"basis": "US LNG export", "peers": [
-      {"t": "VG", "w": "LNG export"},
-      {"t": "NFE", "w": "LNG terminals"},
-      {"t": "SRE", "w": "LNG export projects"},
-      {"t": "NEXT", "n": "NextDecade", "w": "LNG export"}]},
-    "NFE": {"basis": "LNG terminals & gas-to-power", "peers": [
-      {"t": "EE", "n": "Excelerate Energy", "w": "LNG terminals"},
-      {"t": "LNG", "w": "LNG export"}]},
-    "VG": {"basis": "US LNG export", "peers": [
-      {"t": "LNG", "w": "LNG export"},
-      {"t": "NEXT", "n": "NextDecade", "w": "LNG export"}]},
-    "FRO": {"basis": "Crude tanker owners", "peers": [
-      {"t": "INSW", "w": "tankers"},
-      {"t": "DHT", "n": "DHT Holdings", "w": "crude tankers"},
-      {"t": "STNG", "n": "Scorpio Tankers", "w": "product tankers"}]},
-    "INSW": {"basis": "Tanker owners", "peers": [
-      {"t": "FRO", "w": "crude tankers"},
-      {"t": "STNG", "n": "Scorpio Tankers", "w": "product tankers"},
-      {"t": "HAFN", "n": "Hafnia", "w": "product tankers"},
-      {"t": "DHT", "n": "DHT Holdings", "w": "crude tankers"}]},
-    "GLNG": {"basis": "Floating LNG", "peers": [
-      {"t": "FLNG", "w": "LNG carriers"},
-      {"t": "NFE", "w": "floating LNG terminals"}]},
-    "FLNG": {"basis": "LNG carrier owners", "peers": [
-      {"t": "GLNG", "w": "LNG shipping"},
-      {"t": "CLCO", "n": "Cool Company", "w": "LNG carriers"},
-      {"t": "DLNG", "n": "Dynagas LNG Partners", "w": "LNG carriers"}]},
-    "VLO": {"basis": "Independent refiners", "peers": [
-      {"t": "MPC", "w": "refining + retail"},
-      {"t": "PSX", "w": "refining + chemicals"},
-      {"t": "PBF", "w": "refining"}]},
-    "MPC": {"basis": "Independent refiners", "peers": [
-      {"t": "VLO", "w": "refining"},
-      {"t": "PSX", "w": "refining + chemicals"},
-      {"t": "PBF", "w": "refining"}]},
-    "PSX": {"basis": "Independent refiners", "peers": [
-      {"t": "VLO", "w": "refining"},
-      {"t": "MPC", "w": "refining + retail"},
-      {"t": "PBF", "w": "refining"}]},
-    "PBF": {"basis": "Independent refiners", "peers": [
-      {"t": "VLO", "w": "refining"},
-      {"t": "MPC", "w": "refining + retail"},
-      {"t": "PSX", "w": "refining + chemicals"}]},
-    "DOW": {"basis": "Petrochemicals", "peers": [
-      {"t": "LYB", "w": "polyolefins"},
-      {"t": "WLK", "n": "Westlake", "w": "petrochemicals"},
-      {"t": "CE", "n": "Celanese", "w": "acetyl & engineered materials"}]},
-    "LYB": {"basis": "Polyolefins", "peers": [
-      {"t": "DOW", "w": "petrochemicals"},
-      {"t": "WLK", "n": "Westlake", "w": "polyolefins & vinyls"}]},
-    "NEE": {"basis": "Renewables developers & utilities", "peers": [
-      {"t": "BEP", "w": "renewable power"},
-      {"t": "AES", "w": "renewables & utilities"},
-      {"t": "ORSTED", "n": "Orsted", "w": "offshore wind"}]},
-    "CEG": {"basis": "Nuclear merchant power", "peers": [
-      {"t": "TLN", "w": "nuclear IPP"},
-      {"t": "VST", "w": "competitive power + nuclear"}]},
-    "VST": {"basis": "Competitive power producers", "peers": [
-      {"t": "NRG", "w": "generation + retail"},
-      {"t": "CEG", "w": "nuclear power"},
-      {"t": "TLN", "w": "nuclear IPP"}]},
-    "NRG": {"basis": "Competitive retail power", "peers": [
-      {"t": "VST", "w": "generation + retail"},
-      {"t": "CEG", "w": "power + retail supply"}]},
-    "AES": {"basis": "Global power & renewables", "peers": [
-      {"t": "NEE", "w": "renewables developer"},
-      {"t": "BEP", "w": "renewable power"}]},
-    "TLN": {"basis": "Nuclear merchant power", "peers": [
-      {"t": "CEG", "w": "nuclear power"},
-      {"t": "VST", "w": "competitive power"}]},
-    "FLNC": {"basis": "Grid-scale battery storage", "peers": [
-      {"t": "TSLA", "w": "Megapack utility storage"},
-      {"t": "300274.SZ", "n": "Sungrow Power", "w": "storage & inverters"}]},
-    "TSLA": {"basis": "Battery storage & home solar", "peers": [
-      {"t": "FLNC", "w": "grid-scale storage"},
-      {"t": "RUN", "w": "home solar"},
-      {"t": "BYD", "n": "BYD", "w": "storage & EVs"}]},
-    "ALB": {"basis": "Lithium producers", "peers": [
-      {"t": "SQM", "w": "lithium from brine"},
-      {"t": "PLS.AX", "n": "Pilbara Minerals", "w": "hard-rock lithium"}]},
-    "PLUG": {"basis": "Hydrogen equipment & fuel cells", "peers": [
-      {"t": "BE", "w": "stationary fuel cells"},
-      {"t": "BLDP", "n": "Ballard Power", "w": "fuel cells"},
-      {"t": "NEL.OL", "n": "Nel ASA", "w": "electrolyzers"}]},
-    "APD": {"basis": "Industrial gases & hydrogen", "peers": [
-      {"t": "LIN", "w": "industrial gases"},
-      {"t": "AI.PA", "n": "Air Liquide", "w": "industrial gases"}]},
-    "LIN": {"basis": "Industrial gases", "peers": [
-      {"t": "APD", "w": "industrial gases"},
-      {"t": "AI.PA", "n": "Air Liquide", "w": "industrial gases"}]},
-    "BE": {"basis": "Stationary fuel cells", "peers": [
-      {"t": "PLUG", "w": "fuel cells & electrolyzers"},
-      {"t": "FCEL", "n": "FuelCell Energy", "w": "stationary fuel cells"}]},
-    "DUK": {"basis": "Regulated electric utilities", "peers": [
-      {"t": "SO", "w": "regulated utility"},
-      {"t": "D", "w": "regulated utility"},
-      {"t": "AEP", "w": "regulated utility"},
-      {"t": "NEE", "w": "regulated utility"}]},
-    "SO": {"basis": "Regulated electric utilities", "peers": [
-      {"t": "DUK", "w": "regulated utility"},
-      {"t": "D", "w": "regulated utility"},
-      {"t": "AEP", "w": "regulated utility"},
-      {"t": "NEE", "w": "regulated utility"}]},
-    "D": {"basis": "Regulated electric utilities", "peers": [
-      {"t": "DUK", "w": "regulated utility"},
-      {"t": "SO", "w": "regulated utility"},
-      {"t": "AEP", "w": "regulated utility"},
-      {"t": "NEE", "w": "regulated utility"}]},
-    "AEP": {"basis": "Regulated electric utilities", "peers": [
-      {"t": "DUK", "w": "regulated utility"},
-      {"t": "SO", "w": "regulated utility"},
-      {"t": "D", "w": "regulated utility"},
-      {"t": "NEE", "w": "regulated utility"}]},
-    "EXC": {"basis": "Transmission & distribution utilities", "peers": [
-      {"t": "AEP", "w": "large transmission owner"},
-      {"t": "D", "w": "T&D utility"}],
-      "note": "Wires-only peers are scarce — most listed utilities also own generation."},
-    "SRE": {"basis": "Gas utilities & LNG", "peers": [
-      {"t": "ATO", "w": "gas distribution"},
-      {"t": "NI", "w": "gas distribution"},
-      {"t": "CNP", "n": "CenterPoint Energy", "w": "gas & electric utility"},
-      {"t": "LNG", "w": "LNG export"}]},
-    "NI": {"basis": "Gas distribution utilities", "peers": [
-      {"t": "ATO", "w": "gas distribution"},
-      {"t": "SRE", "w": "gas & electric utility"},
-      {"t": "SR", "n": "Spire", "w": "gas distribution"}]},
-    "ATO": {"basis": "Pure-play gas distribution", "peers": [
-      {"t": "NI", "w": "gas distribution"},
-      {"t": "SRE", "w": "gas utility"},
-      {"t": "SR", "n": "Spire", "w": "gas distribution"}]},
-    "GNRC": {"basis": "Home backup power & storage", "peers": [
-      {"t": "TSLA", "w": "home battery"},
-      {"t": "ENPH", "w": "home battery systems"},
-      {"n": "Kohler Energy", "w": "home generators (private)"}]},
-    "JCI": {"basis": "Building efficiency & controls", "peers": [
-      {"t": "TT", "w": "HVAC equipment"},
-      {"t": "CARR", "n": "Carrier Global", "w": "HVAC & controls"},
-      {"t": "HON", "n": "Honeywell", "w": "building automation"}]},
-    "TT": {"basis": "HVAC & heat pumps", "peers": [
-      {"t": "JCI", "w": "building HVAC"},
-      {"t": "CARR", "n": "Carrier Global", "w": "HVAC & refrigeration"}]},
-    "CHPT": {"basis": "EV charging networks", "peers": [
-      {"t": "EVGO", "w": "fast-charging network"},
-      {"t": "BLNK", "n": "Blink Charging", "w": "charging hardware & network"},
-      {"t": "TSLA", "w": "Supercharger network"}]},
-    "EVGO": {"basis": "EV fast charging", "peers": [
-      {"t": "CHPT", "w": "charging network"},
-      {"t": "BLNK", "n": "Blink Charging", "w": "charging network"},
-      {"t": "TSLA", "w": "Supercharger network"}]},
-    "CLNE": {"basis": "RNG fuelling for fleets", "peers": [
-      {"t": "OPAL", "n": "OPAL Fuels", "w": "RNG production & stations"}]},
-    "NUE": {"basis": "Electric-arc steelmakers", "peers": [
-      {"t": "STLD", "n": "Steel Dynamics", "w": "EAF steel"},
-      {"t": "CMC", "n": "Commercial Metals", "w": "EAF steel"}]},
-    "AA": {"basis": "Aluminium smelters", "peers": [
-      {"t": "CENX", "n": "Century Aluminum", "w": "aluminium smelting"},
-      {"t": "RIO", "n": "Rio Tinto", "w": "aluminium"}]},
-    "MSFT": {"basis": "Hyperscale cloud & data centers", "peers": [
-      {"t": "AMZN", "w": "cloud & data centers"},
-      {"t": "GOOGL", "w": "cloud & data centers"},
-      {"t": "META", "w": "AI data centers"}]},
-    "AMZN": {"basis": "Hyperscale cloud & data centers", "peers": [
-      {"t": "MSFT", "w": "cloud & data centers"},
-      {"t": "GOOGL", "w": "cloud & data centers"},
-      {"t": "META", "w": "AI data centers"}]},
-    "GOOGL": {"basis": "Hyperscale cloud & data centers", "peers": [
-      {"t": "MSFT", "w": "cloud & data centers"},
-      {"t": "AMZN", "w": "cloud & data centers"},
-      {"t": "META", "w": "AI data centers"}]},
-    "META": {"basis": "Hyperscale data centers", "peers": [
-      {"t": "MSFT", "w": "cloud & data centers"},
-      {"t": "AMZN", "w": "cloud & data centers"},
-      {"t": "GOOGL", "w": "cloud & data centers"}]},
-    "SLB": {"basis": "Oilfield services", "peers": [
-      {"t": "HAL", "w": "oilfield services"},
-      {"t": "BKR", "w": "oilfield equipment & services"},
-      {"t": "WFRD", "n": "Weatherford", "w": "oilfield services"}]},
-    "HAL": {"basis": "Oilfield services", "peers": [
-      {"t": "SLB", "w": "oilfield services"},
-      {"t": "BKR", "w": "oilfield equipment & services"},
-      {"t": "LBRT", "n": "Liberty Energy", "w": "frac services"}]},
-    "BKR": {"basis": "Oilfield equipment & gas turbines", "peers": [
-      {"t": "SLB", "w": "oilfield services"},
-      {"t": "HAL", "w": "oilfield services"},
-      {"t": "GEV", "w": "gas turbines"}]},
-    "NOV": {"basis": "Drilling & well equipment", "peers": [
-      {"t": "FTI", "n": "TechnipFMC", "w": "well equipment & subsea"},
-      {"t": "TS", "n": "Tenaris", "w": "oilfield tubulars"}]},
-    "RIG": {"basis": "Offshore drilling contractors", "peers": [
-      {"t": "VAL", "w": "offshore drilling"},
-      {"t": "NE", "w": "offshore drilling"},
-      {"t": "SDRL", "n": "Seadrill", "w": "offshore drilling"}]},
-    "VAL": {"basis": "Offshore drilling contractors", "peers": [
-      {"t": "RIG", "w": "offshore drilling"},
-      {"t": "NE", "w": "offshore drilling"},
-      {"t": "SDRL", "n": "Seadrill", "w": "offshore drilling"}]},
-    "NE": {"basis": "Offshore drilling contractors", "peers": [
-      {"t": "RIG", "w": "offshore drilling"},
-      {"t": "VAL", "w": "offshore drilling"},
-      {"t": "SDRL", "n": "Seadrill", "w": "offshore drilling"}]},
-    "GEV": {"basis": "Power generation equipment", "peers": [
-      {"t": "BKR", "w": "gas turbines"},
-      {"t": "ENR.DE", "n": "Siemens Energy", "w": "turbines & grid"},
-      {"t": "7011.T", "n": "Mitsubishi Heavy", "w": "gas turbines"}]},
-    "ETN": {"basis": "Electrical equipment", "peers": [
-      {"t": "VRT", "w": "data-center power"},
-      {"t": "SU.PA", "n": "Schneider Electric", "w": "electrical equipment"},
-      {"t": "ABBN.SW", "n": "ABB", "w": "electrification"}]},
-    "PWR": {"basis": "Grid & utility construction", "peers": [
-      {"t": "MTZ", "n": "MasTec", "w": "utility & grid construction"},
-      {"t": "MYRG", "n": "MYR Group", "w": "electrical infrastructure"}]},
-    "EMR": {"basis": "Industrial automation", "peers": [
-      {"t": "HON", "n": "Honeywell", "w": "process automation"},
-      {"t": "ROK", "n": "Rockwell Automation", "w": "factory automation"}]},
-    "HUBB": {"basis": "Utility grid hardware", "peers": [
-      {"t": "ETN", "w": "electrical equipment"},
-      {"t": "NVT", "n": "nVent Electric", "w": "electrical enclosures"},
-      {"t": "AZZ", "n": "AZZ Inc.", "w": "grid components"}]},
-    "VRT": {"basis": "Data-center power & cooling", "peers": [
-      {"t": "ETN", "w": "power management"},
-      {"t": "SU.PA", "n": "Schneider Electric", "w": "data-center power"},
-      {"n": "Munters", "w": "data-center cooling (Stockholm-listed)"}]},
-    "SQM": {"basis": "Lithium producers", "peers": [
-      {"t": "ALB", "w": "lithium from brine"},
-      {"t": "PLS.AX", "n": "Pilbara Minerals", "w": "hard-rock lithium"}]},
-    "MP": {"basis": "Rare earths", "peers": [
-      {"t": "LYC.AX", "n": "Lynas Rare Earths", "w": "rare earths"},
-      {"t": "UUUU", "n": "Energy Fuels", "w": "US rare earths"}]},
-    "FCX": {"basis": "Copper miners", "peers": [
-      {"t": "SCCO", "n": "Southern Copper", "w": "copper mining"},
-      {"t": "TECK", "n": "Teck Resources", "w": "copper mining"},
-      {"t": "RIO", "n": "Rio Tinto", "w": "copper mining"}]}
+ "_comment": "Direct competitors per charted company, grouped by the line of business that actually overlaps. 't' is the ticker (clickable when it is on the chart), 'n' is the display name (needed only for off-chart peers), 'w' is the shared business. Source: hand-curated from each company's disclosed business segments; off-chart peers are public listings named for context only.",
+ "peers": {
+  "XOM": {
+   "basis": "Integrated oil majors",
+   "peers": [
+    {
+     "t": "CVX",
+     "w": "integrated major"
+    },
+    {
+     "t": "SHEL",
+     "n": "Shell",
+     "w": "integrated major"
+    },
+    {
+     "t": "BP",
+     "n": "BP",
+     "w": "integrated major"
+    },
+    {
+     "t": "TTE",
+     "n": "TotalEnergies",
+     "w": "integrated major"
+    }
+   ]
+  },
+  "CVX": {
+   "basis": "Integrated oil majors",
+   "peers": [
+    {
+     "t": "XOM",
+     "w": "integrated major"
+    },
+    {
+     "t": "SHEL",
+     "n": "Shell",
+     "w": "integrated major"
+    },
+    {
+     "t": "BP",
+     "n": "BP",
+     "w": "integrated major"
+    },
+    {
+     "t": "TTE",
+     "n": "TotalEnergies",
+     "w": "integrated major"
+    }
+   ]
+  },
+  "COP": {
+   "basis": "Large-cap oil & gas producers",
+   "peers": [
+    {
+     "t": "OXY",
+     "w": "upstream + chemicals"
+    },
+    {
+     "t": "EOG",
+     "w": "shale E&P"
+    },
+    {
+     "t": "FANG",
+     "w": "Permian E&P"
+    },
+    {
+     "t": "DVN",
+     "n": "Devon Energy",
+     "w": "US E&P"
+    }
+   ]
+  },
+  "OXY": {
+   "basis": "Oil & gas producers",
+   "peers": [
+    {
+     "t": "COP",
+     "w": "upstream heavyweight"
+    },
+    {
+     "t": "EOG",
+     "w": "shale E&P"
+    },
+    {
+     "t": "FANG",
+     "w": "Permian E&P"
+    },
+    {
+     "t": "DVN",
+     "n": "Devon Energy",
+     "w": "US E&P"
+    }
+   ]
+  },
+  "EOG": {
+   "basis": "Shale oil & gas producers",
+   "peers": [
+    {
+     "t": "FANG",
+     "w": "Permian E&P"
+    },
+    {
+     "t": "COP",
+     "w": "upstream heavyweight"
+    },
+    {
+     "t": "OXY",
+     "w": "upstream + chemicals"
+    },
+    {
+     "t": "DVN",
+     "n": "Devon Energy",
+     "w": "US E&P"
+    }
+   ]
+  },
+  "FANG": {
+   "basis": "Permian pure-plays",
+   "peers": [
+    {
+     "t": "EOG",
+     "w": "shale E&P"
+    },
+    {
+     "t": "COP",
+     "w": "upstream heavyweight"
+    },
+    {
+     "t": "OXY",
+     "w": "upstream + chemicals"
+    },
+    {
+     "t": "PR",
+     "n": "Permian Resources",
+     "w": "Permian pure-play"
+    },
+    {
+     "t": "MTDR",
+     "n": "Matador Resources",
+     "w": "Permian pure-play"
+    }
+   ]
+  },
+  "EQT": {
+   "basis": "US natural gas producers",
+   "peers": [
+    {
+     "t": "EXE",
+     "n": "Expand Energy",
+     "w": "largest US gas producer"
+    },
+    {
+     "t": "CNX",
+     "n": "CNX Resources",
+     "w": "Appalachian gas"
+    },
+    {
+     "t": "AR",
+     "n": "Antero Resources",
+     "w": "Appalachian gas"
+    }
+   ]
+  },
+  "BTU": {
+   "basis": "US coal producers",
+   "peers": [
+    {
+     "t": "CEIX",
+     "w": "coal producer"
+    },
+    {
+     "t": "ARLP",
+     "w": "coal producer"
+    },
+    {
+     "t": "AMR",
+     "n": "Alpha Metallurgical",
+     "w": "met coal"
+    },
+    {
+     "t": "HCC",
+     "n": "Warrior Met Coal",
+     "w": "met coal"
+    }
+   ]
+  },
+  "CEIX": {
+   "basis": "US coal producers",
+   "peers": [
+    {
+     "t": "BTU",
+     "w": "coal producer"
+    },
+    {
+     "t": "ARLP",
+     "w": "coal producer"
+    },
+    {
+     "t": "AMR",
+     "n": "Alpha Metallurgical",
+     "w": "met coal"
+    }
+   ]
+  },
+  "ARLP": {
+   "basis": "US coal producers",
+   "peers": [
+    {
+     "t": "BTU",
+     "w": "coal producer"
+    },
+    {
+     "t": "CEIX",
+     "w": "coal producer"
+    }
+   ]
+  },
+  "CCJ": {
+   "basis": "Uranium miners",
+   "peers": [
+    {
+     "t": "UEC",
+     "n": "Uranium Energy",
+     "w": "US uranium production"
+    },
+    {
+     "t": "UUUU",
+     "n": "Energy Fuels",
+     "w": "US uranium production"
+    },
+    {
+     "t": "NXE",
+     "n": "NexGen Energy",
+     "w": "development-stage uranium"
+    },
+    {
+     "t": "DNN",
+     "n": "Denison Mines",
+     "w": "development-stage uranium"
+    }
+   ]
+  },
+  "LEU": {
+   "basis": "Nuclear fuel",
+   "peers": [
+    {
+     "t": "CCJ",
+     "w": "fuel services & conversion"
+    },
+    {
+     "n": "Urenco",
+     "w": "enrichment (private)"
+    },
+    {
+     "n": "Orano",
+     "w": "enrichment (state-owned)"
+    }
+   ],
+   "note": "Centrus is the only US-listed enricher — its main rivals are unlisted."
+  },
+  "BWXT": {
+   "basis": "Nuclear components & fuel",
+   "peers": [
+    {
+     "t": "LEU",
+     "w": "nuclear fuel & services"
+    },
+    {
+     "t": "CW",
+     "n": "Curtiss-Wright",
+     "w": "naval nuclear components"
+    },
+    {
+     "n": "Framatome",
+     "w": "reactor components (private)"
+    }
+   ]
+  },
+  "FSLR": {
+   "basis": "Solar module manufacturing",
+   "peers": [
+    {
+     "t": "JKS",
+     "n": "JinkoSolar",
+     "w": "module maker"
+    },
+    {
+     "t": "CSIQ",
+     "n": "Canadian Solar",
+     "w": "module maker"
+    },
+    {
+     "n": "LONGi",
+     "w": "module maker (Shanghai-listed)"
+    }
+   ]
+  },
+  "ENPH": {
+   "basis": "Residential solar power electronics",
+   "peers": [
+    {
+     "t": "SEDG",
+     "w": "inverters & optimizers"
+    },
+    {
+     "t": "TSLA",
+     "w": "home solar + storage"
+    }
+   ]
+  },
+  "SEDG": {
+   "basis": "Solar inverters & power optimizers",
+   "peers": [
+    {
+     "t": "ENPH",
+     "w": "microinverters"
+    },
+    {
+     "t": "TSLA",
+     "w": "home solar + storage"
+    },
+    {
+     "t": "S92.DE",
+     "n": "SMA Solar",
+     "w": "inverters"
+    }
+   ]
+  },
+  "RUN": {
+   "basis": "Residential solar ownership & leasing",
+   "peers": [
+    {
+     "t": "TSLA",
+     "w": "home solar"
+    },
+    {
+     "t": "ENPH",
+     "w": "home solar systems"
+    }
+   ],
+   "note": "Most lease-model residential rivals are private."
+  },
+  "DAR": {
+   "basis": "Byproduct rendering & biofuel feedstock",
+   "peers": [
+    {
+     "t": "TSN",
+     "n": "Tyson Foods",
+     "w": "animal byproducts"
+    },
+    {
+     "n": "Cargill",
+     "w": "rendering & feedstocks (private)"
+    },
+    {
+     "n": "JBS",
+     "w": "byproduct processing (private US arm)"
+    }
+   ]
+  },
+  "GPRE": {
+   "basis": "Ethanol production",
+   "peers": [
+    {
+     "t": "ADM",
+     "n": "Archer-Daniels-Midland",
+     "w": "ethanol & ag processing"
+    },
+    {
+     "t": "VLO",
+     "w": "ethanol & renewable diesel"
+    }
+   ]
+  },
+  "BEP": {
+   "basis": "Renewable power ownership",
+   "peers": [
+    {
+     "t": "NEE",
+     "w": "renewables developer"
+    },
+    {
+     "t": "AES",
+     "w": "renewables & utilities"
+    },
+    {
+     "t": "ORSTED",
+     "n": "Orsted",
+     "w": "offshore wind"
+    }
+   ]
+  },
+  "ENB": {
+   "basis": "North American midstream",
+   "peers": [
+    {
+     "t": "ET",
+     "w": "midstream"
+    },
+    {
+     "t": "EPD",
+     "w": "midstream"
+    },
+    {
+     "t": "KMI",
+     "w": "gas pipelines"
+    },
+    {
+     "t": "WMB",
+     "w": "gas infrastructure"
+    }
+   ]
+  },
+  "KMI": {
+   "basis": "Natural gas pipelines",
+   "peers": [
+    {
+     "t": "WMB",
+     "w": "gas infrastructure"
+    },
+    {
+     "t": "ET",
+     "w": "midstream"
+    },
+    {
+     "t": "EPD",
+     "w": "midstream"
+    },
+    {
+     "t": "ENB",
+     "w": "pipelines"
+    }
+   ]
+  },
+  "WMB": {
+   "basis": "Gas gathering & transmission",
+   "peers": [
+    {
+     "t": "KMI",
+     "w": "gas pipelines"
+    },
+    {
+     "t": "ET",
+     "w": "midstream"
+    },
+    {
+     "t": "EPD",
+     "w": "midstream"
+    },
+    {
+     "t": "TRGP",
+     "w": "gathering & processing"
+    }
+   ]
+  },
+  "OKE": {
+   "basis": "NGL pipelines & fractionation",
+   "peers": [
+    {
+     "t": "EPD",
+     "w": "NGL infrastructure"
+    },
+    {
+     "t": "TRGP",
+     "w": "NGL processing"
+    },
+    {
+     "t": "ET",
+     "w": "midstream"
+    }
+   ]
+  },
+  "ET": {
+   "basis": "US midstream",
+   "peers": [
+    {
+     "t": "EPD",
+     "w": "midstream"
+    },
+    {
+     "t": "ENB",
+     "w": "pipelines"
+    },
+    {
+     "t": "KMI",
+     "w": "gas pipelines"
+    },
+    {
+     "t": "WMB",
+     "w": "gas infrastructure"
+    }
+   ]
+  },
+  "EPD": {
+   "basis": "Midstream & NGL",
+   "peers": [
+    {
+     "t": "ET",
+     "w": "midstream"
+    },
+    {
+     "t": "OKE",
+     "w": "NGL infrastructure"
+    },
+    {
+     "t": "TRGP",
+     "w": "NGL processing"
+    },
+    {
+     "t": "ENB",
+     "w": "pipelines"
+    }
+   ]
+  },
+  "TRGP": {
+   "basis": "NGL gathering, processing & export",
+   "peers": [
+    {
+     "t": "OKE",
+     "w": "NGL infrastructure"
+    },
+    {
+     "t": "EPD",
+     "w": "midstream"
+    },
+    {
+     "t": "ET",
+     "w": "midstream"
+    }
+   ]
+  },
+  "LNG": {
+   "basis": "US LNG export",
+   "peers": [
+    {
+     "t": "VG",
+     "w": "LNG export"
+    },
+    {
+     "t": "NFE",
+     "w": "LNG terminals"
+    },
+    {
+     "t": "SRE",
+     "w": "LNG export projects"
+    },
+    {
+     "t": "NEXT",
+     "n": "NextDecade",
+     "w": "LNG export"
+    }
+   ]
+  },
+  "NFE": {
+   "basis": "LNG terminals & gas-to-power",
+   "peers": [
+    {
+     "t": "EE",
+     "n": "Excelerate Energy",
+     "w": "LNG terminals"
+    },
+    {
+     "t": "LNG",
+     "w": "LNG export"
+    }
+   ]
+  },
+  "VG": {
+   "basis": "US LNG export",
+   "peers": [
+    {
+     "t": "LNG",
+     "w": "LNG export"
+    },
+    {
+     "t": "NEXT",
+     "n": "NextDecade",
+     "w": "LNG export"
+    }
+   ]
+  },
+  "FRO": {
+   "basis": "Crude tanker owners",
+   "peers": [
+    {
+     "t": "INSW",
+     "w": "tankers"
+    },
+    {
+     "t": "DHT",
+     "n": "DHT Holdings",
+     "w": "crude tankers"
+    },
+    {
+     "t": "STNG",
+     "n": "Scorpio Tankers",
+     "w": "product tankers"
+    }
+   ]
+  },
+  "INSW": {
+   "basis": "Tanker owners",
+   "peers": [
+    {
+     "t": "FRO",
+     "w": "crude tankers"
+    },
+    {
+     "t": "STNG",
+     "n": "Scorpio Tankers",
+     "w": "product tankers"
+    },
+    {
+     "t": "HAFN",
+     "n": "Hafnia",
+     "w": "product tankers"
+    },
+    {
+     "t": "DHT",
+     "n": "DHT Holdings",
+     "w": "crude tankers"
+    }
+   ]
+  },
+  "GLNG": {
+   "basis": "Floating LNG",
+   "peers": [
+    {
+     "t": "FLNG",
+     "w": "LNG carriers"
+    },
+    {
+     "t": "NFE",
+     "w": "floating LNG terminals"
+    }
+   ]
+  },
+  "FLNG": {
+   "basis": "LNG carrier owners",
+   "peers": [
+    {
+     "t": "GLNG",
+     "w": "LNG shipping"
+    },
+    {
+     "t": "CLCO",
+     "n": "Cool Company",
+     "w": "LNG carriers"
+    },
+    {
+     "t": "DLNG",
+     "n": "Dynagas LNG Partners",
+     "w": "LNG carriers"
+    }
+   ]
+  },
+  "VLO": {
+   "basis": "Independent refiners",
+   "peers": [
+    {
+     "t": "MPC",
+     "w": "refining + retail"
+    },
+    {
+     "t": "PSX",
+     "w": "refining + chemicals"
+    },
+    {
+     "t": "PBF",
+     "w": "refining"
+    }
+   ]
+  },
+  "MPC": {
+   "basis": "Independent refiners",
+   "peers": [
+    {
+     "t": "VLO",
+     "w": "refining"
+    },
+    {
+     "t": "PSX",
+     "w": "refining + chemicals"
+    },
+    {
+     "t": "PBF",
+     "w": "refining"
+    }
+   ]
+  },
+  "PSX": {
+   "basis": "Independent refiners",
+   "peers": [
+    {
+     "t": "VLO",
+     "w": "refining"
+    },
+    {
+     "t": "MPC",
+     "w": "refining + retail"
+    },
+    {
+     "t": "PBF",
+     "w": "refining"
+    }
+   ]
+  },
+  "PBF": {
+   "basis": "Independent refiners",
+   "peers": [
+    {
+     "t": "VLO",
+     "w": "refining"
+    },
+    {
+     "t": "MPC",
+     "w": "refining + retail"
+    },
+    {
+     "t": "PSX",
+     "w": "refining + chemicals"
+    }
+   ]
+  },
+  "DOW": {
+   "basis": "Petrochemicals",
+   "peers": [
+    {
+     "t": "LYB",
+     "w": "polyolefins"
+    },
+    {
+     "t": "WLK",
+     "n": "Westlake",
+     "w": "petrochemicals"
+    },
+    {
+     "t": "CE",
+     "n": "Celanese",
+     "w": "acetyl & engineered materials"
+    }
+   ]
+  },
+  "LYB": {
+   "basis": "Polyolefins",
+   "peers": [
+    {
+     "t": "DOW",
+     "w": "petrochemicals"
+    },
+    {
+     "t": "WLK",
+     "n": "Westlake",
+     "w": "polyolefins & vinyls"
+    }
+   ]
+  },
+  "NEE": {
+   "basis": "Renewables developers & utilities",
+   "peers": [
+    {
+     "t": "BEP",
+     "w": "renewable power"
+    },
+    {
+     "t": "AES",
+     "w": "renewables & utilities"
+    },
+    {
+     "t": "ORSTED",
+     "n": "Orsted",
+     "w": "offshore wind"
+    }
+   ]
+  },
+  "CEG": {
+   "basis": "Nuclear merchant power",
+   "peers": [
+    {
+     "t": "TLN",
+     "w": "nuclear IPP"
+    },
+    {
+     "t": "VST",
+     "w": "competitive power + nuclear"
+    }
+   ]
+  },
+  "VST": {
+   "basis": "Competitive power producers",
+   "peers": [
+    {
+     "t": "NRG",
+     "w": "generation + retail"
+    },
+    {
+     "t": "CEG",
+     "w": "nuclear power"
+    },
+    {
+     "t": "TLN",
+     "w": "nuclear IPP"
+    }
+   ]
+  },
+  "NRG": {
+   "basis": "Competitive retail power",
+   "peers": [
+    {
+     "t": "VST",
+     "w": "generation + retail"
+    },
+    {
+     "t": "CEG",
+     "w": "power + retail supply"
+    }
+   ]
+  },
+  "AES": {
+   "basis": "Global power & renewables",
+   "peers": [
+    {
+     "t": "NEE",
+     "w": "renewables developer"
+    },
+    {
+     "t": "BEP",
+     "w": "renewable power"
+    }
+   ]
+  },
+  "TLN": {
+   "basis": "Nuclear merchant power",
+   "peers": [
+    {
+     "t": "CEG",
+     "w": "nuclear power"
+    },
+    {
+     "t": "VST",
+     "w": "competitive power"
+    }
+   ]
+  },
+  "FLNC": {
+   "basis": "Grid-scale battery storage",
+   "peers": [
+    {
+     "t": "TSLA",
+     "w": "Megapack utility storage"
+    },
+    {
+     "t": "300274.SZ",
+     "n": "Sungrow Power",
+     "w": "storage & inverters"
+    }
+   ]
+  },
+  "TSLA": {
+   "basis": "Battery storage & home solar",
+   "peers": [
+    {
+     "t": "FLNC",
+     "w": "grid-scale storage"
+    },
+    {
+     "t": "RUN",
+     "w": "home solar"
+    },
+    {
+     "t": "BYD",
+     "n": "BYD",
+     "w": "storage & EVs"
+    }
+   ]
+  },
+  "ALB": {
+   "basis": "Lithium producers",
+   "peers": [
+    {
+     "t": "SQM",
+     "w": "lithium from brine"
+    },
+    {
+     "t": "PLS.AX",
+     "n": "Pilbara Minerals",
+     "w": "hard-rock lithium"
+    }
+   ]
+  },
+  "PLUG": {
+   "basis": "Hydrogen equipment & fuel cells",
+   "peers": [
+    {
+     "t": "BE",
+     "w": "stationary fuel cells"
+    },
+    {
+     "t": "BLDP",
+     "n": "Ballard Power",
+     "w": "fuel cells"
+    },
+    {
+     "t": "NEL.OL",
+     "n": "Nel ASA",
+     "w": "electrolyzers"
+    }
+   ]
+  },
+  "APD": {
+   "basis": "Industrial gases & hydrogen",
+   "peers": [
+    {
+     "t": "LIN",
+     "w": "industrial gases"
+    },
+    {
+     "t": "AI.PA",
+     "n": "Air Liquide",
+     "w": "industrial gases"
+    }
+   ]
+  },
+  "LIN": {
+   "basis": "Industrial gases",
+   "peers": [
+    {
+     "t": "APD",
+     "w": "industrial gases"
+    },
+    {
+     "t": "AI.PA",
+     "n": "Air Liquide",
+     "w": "industrial gases"
+    }
+   ]
+  },
+  "BE": {
+   "basis": "Stationary fuel cells",
+   "peers": [
+    {
+     "t": "PLUG",
+     "w": "fuel cells & electrolyzers"
+    },
+    {
+     "t": "FCEL",
+     "n": "FuelCell Energy",
+     "w": "stationary fuel cells"
+    }
+   ]
+  },
+  "DUK": {
+   "basis": "Regulated electric utilities",
+   "peers": [
+    {
+     "t": "SO",
+     "w": "regulated utility"
+    },
+    {
+     "t": "D",
+     "w": "regulated utility"
+    },
+    {
+     "t": "AEP",
+     "w": "regulated utility"
+    },
+    {
+     "t": "NEE",
+     "w": "regulated utility"
+    }
+   ]
+  },
+  "SO": {
+   "basis": "Regulated electric utilities",
+   "peers": [
+    {
+     "t": "DUK",
+     "w": "regulated utility"
+    },
+    {
+     "t": "D",
+     "w": "regulated utility"
+    },
+    {
+     "t": "AEP",
+     "w": "regulated utility"
+    },
+    {
+     "t": "NEE",
+     "w": "regulated utility"
+    }
+   ]
+  },
+  "D": {
+   "basis": "Regulated electric utilities",
+   "peers": [
+    {
+     "t": "DUK",
+     "w": "regulated utility"
+    },
+    {
+     "t": "SO",
+     "w": "regulated utility"
+    },
+    {
+     "t": "AEP",
+     "w": "regulated utility"
+    },
+    {
+     "t": "NEE",
+     "w": "regulated utility"
+    }
+   ]
+  },
+  "AEP": {
+   "basis": "Regulated electric utilities",
+   "peers": [
+    {
+     "t": "DUK",
+     "w": "regulated utility"
+    },
+    {
+     "t": "SO",
+     "w": "regulated utility"
+    },
+    {
+     "t": "D",
+     "w": "regulated utility"
+    },
+    {
+     "t": "NEE",
+     "w": "regulated utility"
+    }
+   ]
+  },
+  "EXC": {
+   "basis": "Transmission & distribution utilities",
+   "peers": [
+    {
+     "t": "AEP",
+     "w": "large transmission owner"
+    },
+    {
+     "t": "D",
+     "w": "T&D utility"
+    }
+   ],
+   "note": "Wires-only peers are scarce — most listed utilities also own generation."
+  },
+  "SRE": {
+   "basis": "Gas utilities & LNG",
+   "peers": [
+    {
+     "t": "ATO",
+     "w": "gas distribution"
+    },
+    {
+     "t": "NI",
+     "w": "gas distribution"
+    },
+    {
+     "t": "CNP",
+     "n": "CenterPoint Energy",
+     "w": "gas & electric utility"
+    },
+    {
+     "t": "LNG",
+     "w": "LNG export"
+    }
+   ]
+  },
+  "NI": {
+   "basis": "Gas distribution utilities",
+   "peers": [
+    {
+     "t": "ATO",
+     "w": "gas distribution"
+    },
+    {
+     "t": "SRE",
+     "w": "gas & electric utility"
+    },
+    {
+     "t": "SR",
+     "n": "Spire",
+     "w": "gas distribution"
+    }
+   ]
+  },
+  "ATO": {
+   "basis": "Pure-play gas distribution",
+   "peers": [
+    {
+     "t": "NI",
+     "w": "gas distribution"
+    },
+    {
+     "t": "SRE",
+     "w": "gas utility"
+    },
+    {
+     "t": "SR",
+     "n": "Spire",
+     "w": "gas distribution"
+    }
+   ]
+  },
+  "GNRC": {
+   "basis": "Home backup power & storage",
+   "peers": [
+    {
+     "t": "TSLA",
+     "w": "home battery"
+    },
+    {
+     "t": "ENPH",
+     "w": "home battery systems"
+    },
+    {
+     "n": "Kohler Energy",
+     "w": "home generators (private)"
+    }
+   ]
+  },
+  "JCI": {
+   "basis": "Building efficiency & controls",
+   "peers": [
+    {
+     "t": "TT",
+     "w": "HVAC equipment"
+    },
+    {
+     "t": "CARR",
+     "n": "Carrier Global",
+     "w": "HVAC & controls"
+    },
+    {
+     "t": "HON",
+     "n": "Honeywell",
+     "w": "building automation"
+    }
+   ]
+  },
+  "TT": {
+   "basis": "HVAC & heat pumps",
+   "peers": [
+    {
+     "t": "JCI",
+     "w": "building HVAC"
+    },
+    {
+     "t": "CARR",
+     "n": "Carrier Global",
+     "w": "HVAC & refrigeration"
+    }
+   ]
+  },
+  "CHPT": {
+   "basis": "EV charging networks",
+   "peers": [
+    {
+     "t": "EVGO",
+     "w": "fast-charging network"
+    },
+    {
+     "t": "BLNK",
+     "n": "Blink Charging",
+     "w": "charging hardware & network"
+    },
+    {
+     "t": "TSLA",
+     "w": "Supercharger network"
+    }
+   ]
+  },
+  "EVGO": {
+   "basis": "EV fast charging",
+   "peers": [
+    {
+     "t": "CHPT",
+     "w": "charging network"
+    },
+    {
+     "t": "BLNK",
+     "n": "Blink Charging",
+     "w": "charging network"
+    },
+    {
+     "t": "TSLA",
+     "w": "Supercharger network"
+    }
+   ]
+  },
+  "CLNE": {
+   "basis": "RNG fuelling for fleets",
+   "peers": [
+    {
+     "t": "OPAL",
+     "n": "OPAL Fuels",
+     "w": "RNG production & stations"
+    }
+   ]
+  },
+  "NUE": {
+   "basis": "Electric-arc steelmakers",
+   "peers": [
+    {
+     "t": "STLD",
+     "n": "Steel Dynamics",
+     "w": "EAF steel"
+    },
+    {
+     "t": "CMC",
+     "n": "Commercial Metals",
+     "w": "EAF steel"
+    }
+   ]
+  },
+  "AA": {
+   "basis": "Aluminium smelters",
+   "peers": [
+    {
+     "t": "CENX",
+     "n": "Century Aluminum",
+     "w": "aluminium smelting"
+    },
+    {
+     "t": "RIO",
+     "n": "Rio Tinto",
+     "w": "aluminium"
+    }
+   ]
+  },
+  "MSFT": {
+   "basis": "Hyperscale cloud & data centers",
+   "peers": [
+    {
+     "t": "AMZN",
+     "w": "cloud & data centers"
+    },
+    {
+     "t": "GOOGL",
+     "w": "cloud & data centers"
+    },
+    {
+     "t": "META",
+     "w": "AI data centers"
+    }
+   ]
+  },
+  "AMZN": {
+   "basis": "Hyperscale cloud & data centers",
+   "peers": [
+    {
+     "t": "MSFT",
+     "w": "cloud & data centers"
+    },
+    {
+     "t": "GOOGL",
+     "w": "cloud & data centers"
+    },
+    {
+     "t": "META",
+     "w": "AI data centers"
+    }
+   ]
+  },
+  "GOOGL": {
+   "basis": "Hyperscale cloud & data centers",
+   "peers": [
+    {
+     "t": "MSFT",
+     "w": "cloud & data centers"
+    },
+    {
+     "t": "AMZN",
+     "w": "cloud & data centers"
+    },
+    {
+     "t": "META",
+     "w": "AI data centers"
+    }
+   ]
+  },
+  "META": {
+   "basis": "Hyperscale data centers",
+   "peers": [
+    {
+     "t": "MSFT",
+     "w": "cloud & data centers"
+    },
+    {
+     "t": "AMZN",
+     "w": "cloud & data centers"
+    },
+    {
+     "t": "GOOGL",
+     "w": "cloud & data centers"
+    }
+   ]
+  },
+  "SLB": {
+   "basis": "Oilfield services",
+   "peers": [
+    {
+     "t": "HAL",
+     "w": "oilfield services"
+    },
+    {
+     "t": "BKR",
+     "w": "oilfield equipment & services"
+    },
+    {
+     "t": "WFRD",
+     "n": "Weatherford",
+     "w": "oilfield services"
+    }
+   ]
+  },
+  "HAL": {
+   "basis": "Oilfield services",
+   "peers": [
+    {
+     "t": "SLB",
+     "w": "oilfield services"
+    },
+    {
+     "t": "BKR",
+     "w": "oilfield equipment & services"
+    },
+    {
+     "t": "LBRT",
+     "n": "Liberty Energy",
+     "w": "frac services"
+    }
+   ]
+  },
+  "BKR": {
+   "basis": "Oilfield equipment & gas turbines",
+   "peers": [
+    {
+     "t": "SLB",
+     "w": "oilfield services"
+    },
+    {
+     "t": "HAL",
+     "w": "oilfield services"
+    },
+    {
+     "t": "GEV",
+     "w": "gas turbines"
+    }
+   ]
+  },
+  "NOV": {
+   "basis": "Drilling & well equipment",
+   "peers": [
+    {
+     "t": "FTI",
+     "n": "TechnipFMC",
+     "w": "well equipment & subsea"
+    },
+    {
+     "t": "TS",
+     "n": "Tenaris",
+     "w": "oilfield tubulars"
+    }
+   ]
+  },
+  "RIG": {
+   "basis": "Offshore drilling contractors",
+   "peers": [
+    {
+     "t": "VAL",
+     "w": "offshore drilling"
+    },
+    {
+     "t": "NE",
+     "w": "offshore drilling"
+    },
+    {
+     "t": "SDRL",
+     "n": "Seadrill",
+     "w": "offshore drilling"
+    }
+   ]
+  },
+  "VAL": {
+   "basis": "Offshore drilling contractors",
+   "peers": [
+    {
+     "t": "RIG",
+     "w": "offshore drilling"
+    },
+    {
+     "t": "NE",
+     "w": "offshore drilling"
+    },
+    {
+     "t": "SDRL",
+     "n": "Seadrill",
+     "w": "offshore drilling"
+    }
+   ]
+  },
+  "NE": {
+   "basis": "Offshore drilling contractors",
+   "peers": [
+    {
+     "t": "RIG",
+     "w": "offshore drilling"
+    },
+    {
+     "t": "VAL",
+     "w": "offshore drilling"
+    },
+    {
+     "t": "SDRL",
+     "n": "Seadrill",
+     "w": "offshore drilling"
+    }
+   ]
+  },
+  "GEV": {
+   "basis": "Power generation equipment",
+   "peers": [
+    {
+     "t": "BKR",
+     "w": "gas turbines"
+    },
+    {
+     "t": "ENR.DE",
+     "n": "Siemens Energy",
+     "w": "turbines & grid"
+    },
+    {
+     "t": "7011.T",
+     "n": "Mitsubishi Heavy",
+     "w": "gas turbines"
+    }
+   ]
+  },
+  "ETN": {
+   "basis": "Electrical equipment",
+   "peers": [
+    {
+     "t": "VRT",
+     "w": "data-center power"
+    },
+    {
+     "t": "SU.PA",
+     "n": "Schneider Electric",
+     "w": "electrical equipment"
+    },
+    {
+     "t": "ABBN.SW",
+     "n": "ABB",
+     "w": "electrification"
+    }
+   ]
+  },
+  "PWR": {
+   "basis": "Grid & utility construction",
+   "peers": [
+    {
+     "t": "MTZ",
+     "n": "MasTec",
+     "w": "utility & grid construction"
+    },
+    {
+     "t": "MYRG",
+     "n": "MYR Group",
+     "w": "electrical infrastructure"
+    }
+   ]
+  },
+  "EMR": {
+   "basis": "Industrial automation",
+   "peers": [
+    {
+     "t": "HON",
+     "n": "Honeywell",
+     "w": "process automation"
+    },
+    {
+     "t": "ROK",
+     "n": "Rockwell Automation",
+     "w": "factory automation"
+    }
+   ]
+  },
+  "HUBB": {
+   "basis": "Utility grid hardware",
+   "peers": [
+    {
+     "t": "ETN",
+     "w": "electrical equipment"
+    },
+    {
+     "t": "NVT",
+     "n": "nVent Electric",
+     "w": "electrical enclosures"
+    },
+    {
+     "t": "AZZ",
+     "n": "AZZ Inc.",
+     "w": "grid components"
+    }
+   ]
+  },
+  "VRT": {
+   "basis": "Data-center power & cooling",
+   "peers": [
+    {
+     "t": "ETN",
+     "w": "power management"
+    },
+    {
+     "t": "SU.PA",
+     "n": "Schneider Electric",
+     "w": "data-center power"
+    },
+    {
+     "n": "Munters",
+     "w": "data-center cooling (Stockholm-listed)"
+    }
+   ]
+  },
+  "SQM": {
+   "basis": "Lithium producers",
+   "peers": [
+    {
+     "t": "ALB",
+     "w": "lithium from brine"
+    },
+    {
+     "t": "PLS.AX",
+     "n": "Pilbara Minerals",
+     "w": "hard-rock lithium"
+    }
+   ]
+  },
+  "MP": {
+   "basis": "Rare earths",
+   "peers": [
+    {
+     "t": "LYC.AX",
+     "n": "Lynas Rare Earths",
+     "w": "rare earths"
+    },
+    {
+     "t": "UUUU",
+     "n": "Energy Fuels",
+     "w": "US rare earths"
+    }
+   ]
+  },
+  "FCX": {
+   "basis": "Copper miners",
+   "peers": [
+    {
+     "t": "SCCO",
+     "n": "Southern Copper",
+     "w": "copper mining"
+    },
+    {
+     "t": "TECK",
+     "n": "Teck Resources",
+     "w": "copper mining"
+    },
+    {
+     "t": "RIO",
+     "n": "Rio Tinto",
+     "w": "copper mining"
+    }
+   ]
+  },
+  "NVDA": {
+   "basis": "AI accelerator designers",
+   "peers": [
+    {
+     "t": "AMD",
+     "w": "Instinct accelerators"
+    },
+    {
+     "t": "AVGO",
+     "w": "custom accelerators"
+    }
+   ]
+  },
+  "AMD": {
+   "basis": "AI accelerator designers",
+   "peers": [
+    {
+     "t": "NVDA",
+     "w": "merchant GPU leader"
+    },
+    {
+     "t": "AVGO",
+     "w": "custom accelerators"
+    }
+   ]
+  },
+  "AVGO": {
+   "basis": "Custom AI silicon and networking chips",
+   "peers": [
+    {
+     "t": "MRVL",
+     "w": "custom silicon"
+    },
+    {
+     "t": "NVDA",
+     "w": "merchant accelerators"
+    },
+    {
+     "t": "CRDO",
+     "w": "connectivity silicon"
+    }
+   ]
+  },
+  "MRVL": {
+   "basis": "Custom AI silicon and connectivity",
+   "peers": [
+    {
+     "t": "AVGO",
+     "w": "custom silicon"
+    },
+    {
+     "t": "CRDO",
+     "w": "SerDes & cabling"
+    },
+    {
+     "t": "NVDA",
+     "w": "merchant accelerators"
+    }
+   ]
+  },
+  "CRDO": {
+   "basis": "High-speed connectivity silicon",
+   "peers": [
+    {
+     "t": "MRVL",
+     "w": "SerDes"
+    },
+    {
+     "t": "AVGO",
+     "w": "connectivity chips"
+    },
+    {
+     "t": "ALAB",
+     "n": "Astera Labs",
+     "w": "connectivity silicon"
+    }
+   ]
+  },
+  "MU": {
+   "basis": "Memory makers",
+   "peers": [
+    {
+     "t": "HYNX",
+     "n": "SK Hynix",
+     "w": "HBM & DRAM"
+    },
+    {
+     "t": "005930",
+     "n": "Samsung Electronics",
+     "w": "HBM & DRAM"
+    },
+    {
+     "t": "KIOX",
+     "n": "Kioxia",
+     "w": "NAND flash"
+    }
+   ]
+  },
+  "WDC": {
+   "basis": "Storage device makers",
+   "peers": [
+    {
+     "t": "STX",
+     "w": "hard drives & nearline"
+    },
+    {
+     "t": "SNDK",
+     "n": "SanDisk",
+     "w": "NAND flash"
+    }
+   ]
+  },
+  "STX": {
+   "basis": "Storage device makers",
+   "peers": [
+    {
+     "t": "WDC",
+     "w": "hard drives"
+    },
+    {
+     "t": "SNDK",
+     "n": "SanDisk",
+     "w": "NAND flash"
+    }
+   ]
+  },
+  "TSM": {
+   "basis": "Contract chipmakers",
+   "peers": [
+    {
+     "t": "GFS",
+     "w": "specialty foundry"
+    },
+    {
+     "t": "INTC",
+     "w": "rebuilding foundry"
+    },
+    {
+     "t": "SSNLF",
+     "n": "Samsung Foundry",
+     "w": "leading-edge foundry"
+    }
+   ]
+  },
+  "GFS": {
+   "basis": "Contract chipmakers",
+   "peers": [
+    {
+     "t": "TSM",
+     "w": "leading-edge foundry"
+    },
+    {
+     "t": "INTC",
+     "w": "rebuilding foundry"
+    },
+    {
+     "t": "UMC",
+     "n": "UMC",
+     "w": "mature-node foundry"
+    }
+   ]
+  },
+  "INTC": {
+   "basis": "Chipmakers with in-house fabs",
+   "peers": [
+    {
+     "t": "AMD",
+     "w": "CPU rival"
+    },
+    {
+     "t": "TSM",
+     "w": "foundry rival"
+    },
+    {
+     "t": "GFS",
+     "w": "specialty foundry"
+    }
+   ]
+  },
+  "AMKR": {
+   "basis": "Outsourced packaging & test",
+   "peers": [
+    {
+     "t": "TSM",
+     "w": "in-house packaging"
+    },
+    {
+     "t": "ASX",
+     "n": "ASE Technology",
+     "w": "packaging & test"
+    },
+    {
+     "t": "JCET",
+     "n": "JCET",
+     "w": "packaging & test"
+    }
+   ]
+  },
+  "ARM": {
+   "basis": "Processor IP licensors",
+   "peers": [
+    {
+     "t": "SNPS",
+     "w": "IP library"
+    },
+    {
+     "t": "CDNS",
+     "w": "IP library"
+    },
+    {
+     "t": "SIFIVE",
+     "n": "SiFive",
+     "w": "RISC-V IP"
+    }
+   ]
+  },
+  "QCOM": {
+   "basis": "Edge & mobile silicon",
+   "peers": [
+    {
+     "t": "AAPL",
+     "w": "in-house silicon"
+    },
+    {
+     "t": "MTK",
+     "n": "MediaTek",
+     "w": "mobile silicon"
+    }
+   ]
+  },
+  "SMCI": {
+   "basis": "AI server builders",
+   "peers": [
+    {
+     "t": "DELL",
+     "w": "AI servers"
+    },
+    {
+     "t": "HPE",
+     "w": "AI systems"
+    },
+    {
+     "t": "LNVGY",
+     "n": "Lenovo",
+     "w": "AI servers"
+    }
+   ]
+  },
+  "DELL": {
+   "basis": "AI server builders",
+   "peers": [
+    {
+     "t": "HPE",
+     "w": "AI systems"
+    },
+    {
+     "t": "SMCI",
+     "w": "AI servers"
+    },
+    {
+     "t": "LNVGY",
+     "n": "Lenovo",
+     "w": "AI servers"
+    }
+   ]
+  },
+  "HPE": {
+   "basis": "AI servers and systems",
+   "peers": [
+    {
+     "t": "DELL",
+     "w": "AI servers"
+    },
+    {
+     "t": "SMCI",
+     "w": "AI servers"
+    },
+    {
+     "t": "CSCO",
+     "w": "switching + servers"
+    }
+   ]
+  },
+  "ANET": {
+   "basis": "Datacenter Ethernet switching",
+   "peers": [
+    {
+     "t": "CSCO",
+     "w": "incumbent switching"
+    },
+    {
+     "t": "HPE",
+     "w": "Juniper switching"
+    }
+   ]
+  },
+  "CSCO": {
+   "basis": "Networking equipment",
+   "peers": [
+    {
+     "t": "ANET",
+     "w": "datacenter switching"
+    },
+    {
+     "t": "HPE",
+     "w": "switching + servers"
+    },
+    {
+     "t": "HUAWEI",
+     "n": "Huawei",
+     "w": "networking & systems"
+    }
+   ]
+  },
+  "COHR": {
+   "basis": "Optical components & transceivers",
+   "peers": [
+    {
+     "t": "LITE",
+     "w": "transceivers & lasers"
+    },
+    {
+     "t": "CIEN",
+     "w": "optical systems"
+    },
+    {
+     "t": "FN",
+     "n": "Fabrinet",
+     "w": "optical manufacturing"
+    }
+   ]
+  },
+  "LITE": {
+   "basis": "Optical components & transceivers",
+   "peers": [
+    {
+     "t": "COHR",
+     "w": "transceivers & lasers"
+    },
+    {
+     "t": "CIEN",
+     "w": "optical systems"
+    },
+    {
+     "t": "FN",
+     "n": "Fabrinet",
+     "w": "optical manufacturing"
+    }
+   ]
+  },
+  "CIEN": {
+   "basis": "Optical transport systems",
+   "peers": [
+    {
+     "t": "COHR",
+     "w": "optical components"
+    },
+    {
+     "t": "LITE",
+     "w": "optical components"
+    },
+    {
+     "t": "NOK",
+     "n": "Nokia",
+     "w": "optical networks"
+    }
+   ]
+  },
+  "EME": {
+   "basis": "Electrical & mechanical contractors",
+   "peers": [
+    {
+     "t": "FIX",
+     "w": "MEP contractor"
+    },
+    {
+     "t": "PWR",
+     "w": "grid construction"
+    },
+    {
+     "t": "DY",
+     "n": "Dycom",
+     "w": "network construction"
+    }
+   ]
+  },
+  "FIX": {
+   "basis": "Electrical & mechanical contractors",
+   "peers": [
+    {
+     "t": "EME",
+     "w": "MEP contractor"
+    },
+    {
+     "t": "PWR",
+     "w": "grid construction"
+    },
+    {
+     "t": "DY",
+     "n": "Dycom",
+     "w": "network construction"
+    }
+   ]
+  },
+  "EQIX": {
+   "basis": "Colocation and interconnection REITs",
+   "peers": [
+    {
+     "t": "DLR",
+     "w": "wholesale colocation"
+    },
+    {
+     "t": "IRM",
+     "n": "Iron Mountain",
+     "w": "datacenter leasing"
+    }
+   ]
+  },
+  "DLR": {
+   "basis": "Data center REITs",
+   "peers": [
+    {
+     "t": "EQIX",
+     "w": "colocation & interconnection"
+    },
+    {
+     "t": "IRM",
+     "n": "Iron Mountain",
+     "w": "datacenter leasing"
+    },
+    {
+     "t": "KDCREIT",
+     "n": "Keppel DC REIT",
+     "w": "datacenter leasing"
+    }
+   ]
+  },
+  "CRWV": {
+   "basis": "GPU cloud rental",
+   "peers": [
+    {
+     "t": "NBIS",
+     "w": "GPU cloud"
+    },
+    {
+     "t": "APLD",
+     "w": "AI datacenter leasing"
+    },
+    {
+     "t": "IREN",
+     "w": "GPU cloud"
+    }
+   ]
+  },
+  "NBIS": {
+   "basis": "GPU cloud rental",
+   "peers": [
+    {
+     "t": "CRWV",
+     "w": "GPU cloud"
+    },
+    {
+     "t": "IREN",
+     "w": "GPU cloud"
+    },
+    {
+     "t": "APLD",
+     "w": "AI datacenter leasing"
+    }
+   ]
+  },
+  "APLD": {
+   "basis": "AI datacenter capacity",
+   "peers": [
+    {
+     "t": "CRWV",
+     "w": "GPU cloud"
+    },
+    {
+     "t": "NBIS",
+     "w": "GPU cloud"
+    },
+    {
+     "t": "IREN",
+     "w": "GPU cloud on owned power"
+    }
+   ]
+  },
+  "IREN": {
+   "basis": "GPU cloud on owned power",
+   "peers": [
+    {
+     "t": "CRWV",
+     "w": "GPU cloud"
+    },
+    {
+     "t": "NBIS",
+     "w": "GPU cloud"
+    },
+    {
+     "t": "APLD",
+     "w": "AI datacenter leasing"
+    }
+   ]
+  },
+  "IBM": {
+   "basis": "Enterprise AI platforms",
+   "peers": [
+    {
+     "t": "MSFT",
+     "w": "Azure AI"
+    },
+    {
+     "t": "GOOGL",
+     "w": "Vertex AI"
+    },
+    {
+     "t": "ORCL",
+     "w": "OCI AI"
+    }
+   ]
+  },
+  "AAPL": {
+   "basis": "Device silicon and on-device models",
+   "peers": [
+    {
+     "t": "QCOM",
+     "w": "mobile silicon"
+    },
+    {
+     "t": "GOOGL",
+     "w": "Android + Gemini"
+    },
+    {
+     "t": "005930",
+     "n": "Samsung Electronics",
+     "w": "devices & silicon"
+    }
+   ]
+  },
+  "ORCL": {
+   "basis": "Cloud infrastructure for AI",
+   "peers": [
+    {
+     "t": "MSFT",
+     "w": "Azure"
+    },
+    {
+     "t": "AMZN",
+     "w": "AWS"
+    },
+    {
+     "t": "GOOGL",
+     "w": "Google Cloud"
+    }
+   ]
+  },
+  "SNOW": {
+   "basis": "Cloud data platforms",
+   "peers": [
+    {
+     "t": "MDB",
+     "w": "document & vector store"
+    },
+    {
+     "t": "DBX",
+     "n": "Databricks",
+     "w": "lakehouse platform"
+    },
+    {
+     "t": "TDC",
+     "n": "Teradata",
+     "w": "analytics warehouse"
+    }
+   ]
+  },
+  "MDB": {
+   "basis": "Operational & vector databases",
+   "peers": [
+    {
+     "t": "SNOW",
+     "w": "cloud data warehouse"
+    },
+    {
+     "t": "ESTC",
+     "n": "Elastic",
+     "w": "search & vector store"
+    },
+    {
+     "t": "BASE",
+     "n": "Couchbase",
+     "w": "document database"
+    }
+   ]
+  },
+  "CRM": {
+   "basis": "Enterprise application vendors",
+   "peers": [
+    {
+     "t": "NOW",
+     "w": "workflow & agents"
+    },
+    {
+     "t": "MSFT",
+     "w": "Dynamics + Copilot"
+    },
+    {
+     "t": "SAP",
+     "n": "SAP",
+     "w": "enterprise applications"
+    }
+   ]
+  },
+  "NOW": {
+   "basis": "Enterprise workflow software",
+   "peers": [
+    {
+     "t": "CRM",
+     "w": "CRM & agents"
+    },
+    {
+     "t": "MSFT",
+     "w": "Power Platform"
+    },
+    {
+     "t": "TEAM",
+     "n": "Atlassian",
+     "w": "workflow tools"
+    }
+   ]
+  },
+  "ADBE": {
+   "basis": "Creative and document software",
+   "peers": [
+    {
+     "t": "CANVA",
+     "n": "Canva",
+     "w": "design tools"
+    },
+    {
+     "t": "FIGMA",
+     "n": "Figma",
+     "w": "interface design"
+    },
+    {
+     "t": "MJ",
+     "n": "Midjourney",
+     "w": "generative imagery"
+    }
+   ]
+  },
+  "PANW": {
+   "basis": "Cybersecurity platforms",
+   "peers": [
+    {
+     "t": "CRWD",
+     "w": "endpoint & cloud security"
+    },
+    {
+     "t": "CSCO",
+     "w": "security portfolio"
+    },
+    {
+     "t": "FTNT",
+     "n": "Fortinet",
+     "w": "network security"
+    }
+   ]
+  },
+  "CRWD": {
+   "basis": "Endpoint and cloud security",
+   "peers": [
+    {
+     "t": "PANW",
+     "w": "security platform"
+    },
+    {
+     "t": "MSFT",
+     "w": "Defender"
+    },
+    {
+     "t": "S",
+     "n": "SentinelOne",
+     "w": "endpoint security"
+    }
+   ]
+  },
+  "PLTR": {
+   "basis": "Operational AI platforms",
+   "peers": [
+    {
+     "t": "AI",
+     "n": "C3.ai",
+     "w": "enterprise AI apps"
+    },
+    {
+     "t": "BAH",
+     "n": "Booz Allen Hamilton",
+     "w": "government AI"
+    },
+    {
+     "t": "DBX",
+     "n": "Databricks",
+     "w": "data & AI platform"
+    }
+   ]
+  },
+  "ISRG": {
+   "basis": "Surgical robotics",
+   "peers": [
+    {
+     "t": "MDT",
+     "n": "Medtronic",
+     "w": "surgical robotics"
+    },
+    {
+     "t": "SYK",
+     "n": "Stryker",
+     "w": "surgical systems"
+    },
+    {
+     "t": "JNJ",
+     "n": "Johnson & Johnson",
+     "w": "surgical platforms"
+    }
+   ]
+  },
+  "ASML": {
+   "basis": "Lithography suppliers",
+   "peers": [
+    {
+     "t": "CAJ",
+     "n": "Canon",
+     "w": "lithography"
+    },
+    {
+     "t": "NINOY",
+     "n": "Nikon",
+     "w": "lithography"
+    }
+   ]
+  },
+  "AMAT": {
+   "basis": "Wafer fabrication equipment",
+   "peers": [
+    {
+     "t": "LRCX",
+     "w": "etch & deposition"
+    },
+    {
+     "t": "KLAC",
+     "w": "process control"
+    },
+    {
+     "t": "TOELY",
+     "n": "Tokyo Electron",
+     "w": "wafer equipment"
+    }
+   ]
+  },
+  "LRCX": {
+   "basis": "Wafer fabrication equipment",
+   "peers": [
+    {
+     "t": "AMAT",
+     "w": "deposition & inspection"
+    },
+    {
+     "t": "KLAC",
+     "w": "process control"
+    },
+    {
+     "t": "TOELY",
+     "n": "Tokyo Electron",
+     "w": "wafer equipment"
+    }
+   ]
+  },
+  "KLAC": {
+   "basis": "Wafer fabrication equipment",
+   "peers": [
+    {
+     "t": "AMAT",
+     "w": "deposition & inspection"
+    },
+    {
+     "t": "LRCX",
+     "w": "etch & deposition"
+    },
+    {
+     "t": "ONTO",
+     "n": "Onto Innovation",
+     "w": "inspection"
+    }
+   ]
+  },
+  "TER": {
+   "basis": "Semiconductor test equipment",
+   "peers": [
+    {
+     "t": "ATEYY",
+     "n": "Advantest",
+     "w": "test systems"
+    },
+    {
+     "t": "COHU",
+     "n": "Cohu",
+     "w": "test handlers"
+    }
+   ]
+  },
+  "ENTG": {
+   "basis": "Fab materials & filtration",
+   "peers": [
+    {
+     "t": "MKSI",
+     "w": "fab subsystems"
+    },
+    {
+     "t": "LIN",
+     "w": "industrial gases"
+    },
+    {
+     "t": "SHECY",
+     "n": "Shin-Etsu Chemical",
+     "w": "fab materials"
+    }
+   ]
+  },
+  "MKSI": {
+   "basis": "Fab equipment subsystems",
+   "peers": [
+    {
+     "t": "ENTG",
+     "w": "materials & filtration"
+    },
+    {
+     "t": "AEIS",
+     "n": "Advanced Energy",
+     "w": "power subsystems"
+    },
+    {
+     "t": "COTN",
+     "n": "Comet Holding",
+     "w": "vacuum & RF"
+    }
+   ]
+  },
+  "SNPS": {
+   "basis": "EDA software",
+   "peers": [
+    {
+     "t": "CDNS",
+     "w": "EDA suite"
+    },
+    {
+     "t": "SIEM",
+     "n": "Siemens EDA",
+     "w": "EDA suite"
+    },
+    {
+     "t": "ANSYS",
+     "n": "Ansys",
+     "w": "simulation"
+    }
+   ]
+  },
+  "CDNS": {
+   "basis": "EDA software",
+   "peers": [
+    {
+     "t": "SNPS",
+     "w": "EDA suite"
+    },
+    {
+     "t": "SIEM",
+     "n": "Siemens EDA",
+     "w": "EDA suite"
+    },
+    {
+     "t": "ANSYS",
+     "n": "Ansys",
+     "w": "simulation"
+    }
+   ]
   }
+ }
 }

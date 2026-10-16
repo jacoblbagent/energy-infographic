@@ -1,3 +1,5 @@
 preview.jpg
 preview.png
 .cache/
+__pycache__/
+*.pyc

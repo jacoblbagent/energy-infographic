@@ -29,17 +29,22 @@ ENABLER_RE = re.compile(
 
 
 def charted(html: str) -> dict[str, str]:
-    """ticker -> node id, for every chip the diagram draws."""
+    """ticker -> node id, for every chip every view draws.
+
+    The chart's node/enabler lists are per-view (`ENERGY_NODES`, `AI_NODES`, …),
+    so scan them all rather than one hard-coded pair.
+    """
     out: dict[str, str] = {}
-    for name in ("NODES", "ENABLERS"):
-        block = re.search(r"const " + name + r"=\[(.*?)\n\];", html, re.S)
-        if not block:
-            raise SystemExit(f"!! could not find {name} in index.html")
-        rx = PEER_RE if name == "NODES" else ENABLER_RE
-        for m in rx.finditer(block.group(1)):
-            node, cos = m.group(1), re.findall(r'"([^"]+)"', m.group(3))
-            for t in cos:
-                out[t] = node
+    for blocks_rx, rx in ((r"const [A-Z_]*NODES=\[(.*?)\n\];", PEER_RE),
+                          (r"const [A-Z_]*ENABLERS=\[(.*?)\n\];", ENABLER_RE)):
+        blocks = re.findall(blocks_rx, html, re.S)
+        if not blocks:
+            raise SystemExit(f"!! could not find a node/enabler list matching {blocks_rx!r}")
+        for body in blocks:
+            for m in rx.finditer(body):
+                node, cos = m.group(1), re.findall(r'"([^"]+)"', m.group(3))
+                for t in cos:
+                    out[t] = node
     return out
 
 

@@ -5,8 +5,10 @@
 **Local:** http://localhost:5184/  ·  **Tailnet:** http://jlb-hermes.tail1caa84.ts.net:5184/
 
 A single-file, dependency-free web infographic showing the public companies in
-each sector of the energy industry and how the sectors interact. Data-driven
-SVG built at load time from a few JS structures, no build step, no framework.
+each sector of an industry and how the sectors interact. Two value chains are
+drawn from the same data model, one per tab: **All** (the energy chain) and
+**AI** (the compute/AI chain). Data-driven SVG built at load time from a few JS
+structures, no build step, no framework.
 
 **Purpose:** one screen that answers "who is in this sector, and how does what
 they make reach the next sector" — minimal chrome, minimal text.
@@ -16,6 +18,36 @@ they make reach the next sector" — minimal chrome, minimal text.
 
 **Servers:** `python3 -m http.server 5184 --bind 127.0.0.1`, started by the
 Hermes web UI Projects tab via `~/Code/hermes-web-ui/scripts/start-energy-infographic.sh`.
+
+## Views (tabs)
+
+The page opens on **All** — the energy chain described below, unchanged. **AI**
+is a second chain over the same five-column shape, from the physical substrate to
+adoption, with the tooling that supplies every stage underneath:
+
+1. **Silicon** — Accelerators & GPUs (NVDA AMD), Custom ASIC & Connectivity
+   (AVGO MRVL CRDO), Memory & HBM (MU WDC STX), Foundry & Packaging
+   (TSM GFS INTC AMKR), Processor IP & Edge Silicon (ARM QCOM)
+2. **Systems & Interconnect** — AI Servers & Systems (SMCI DELL HPE), Networking
+   & Switching (ANET CSCO), Optics & Photonics (COHR LITE CIEN)
+3. **Datacenter Capacity** — Datacenter Build-Out (EME FIX), Datacenter
+   Operators (EQIX DLR), GPU Cloud & Neoclouds (CRWV NBIS APLD IREN)
+4. **Models & Inference** — Model Builders (META IBM AAPL), Cloud & Inference
+   Platforms (MSFT AMZN GOOGL ORCL), Data & Vector Platforms (SNOW MDB)
+5. **Applications & Adoption** — Enterprise Copilots & Agents (CRM NOW ADBE),
+   AI Security & Governance (PANW CRWD), Autonomy & Decision Systems
+   (TSLA PLTR ISRG)
+
+with an **ENABLERS** band — Semiconductor Equipment & Materials
+(ASML AMAT LRCX KLAC TER ENTG), EDA, IP & Fab Subsystems (SNPS CDNS MKSI) and
+Datacenter Power & Cooling (VRT ETN GEV PWR) — and the same dashed capital-returns
+loop back to the first column.
+
+Both views are the same data model: a `VIEWS` entry names its node list, edge
+list, enabler list, column titles, x-centres/widths, legend, header text and the
+`loop` endpoints. `buildView(key)` clears the canvas and redraws from whichever
+view is active, and re-points the company panel's Flows block and the market rail
+at that view's ticker list, so adding a view means adding data, not drawing code.
 
 ## What it shows
 
@@ -52,6 +84,11 @@ supplies/services, dashed orange = capital returns.
 
 ## Interaction
 
+- **The row of tabs above the diagram switches chains.** *All* is the energy chain,
+  *AI* the compute chain; the diagram, header, legend, the company panel's Flows
+  block and both market-rail panes re-point at the active view, and the tabs are a
+  real `tablist` (clickable, focus-visible, `aria-selected` kept in sync). The
+  summary beside them ("17 stages · 60 companies") and the page title follow too.
 - Hovering any node dims everything unrelated, thickens the traced edges, and
   reveals the flow labels for those edges (only a curated subset is labelled in
   the static view — the rest appear on trace; unrelated labels fade back).
@@ -90,14 +127,19 @@ supplies/services, dashed orange = capital returns.
 Two layers, both data-driven:
 
 - `CO` in `index.html` — the hand-written layer: `TK: ["Name", "Type tag",
-  "One-liner"]`. The stage, sector colour and flow lists are derived from the graph
-  (`NODES`/`EDGES`) at click time.
+  "One-liner"]`. It covers both views (one shared map, 140 tickers). The stage,
+  sector colour and flow lists are derived from the graph
+  (`ENERGY_NODES`/`ENERGY_EDGES` or `AI_NODES`/`AI_EDGES` — whichever tab is
+  active) at click time. A ticker with no `CO` row degrades to its own symbol
+  rather than breaking the build.
 - `DATA` in `index.html`, between the `/* <<<DATA>>> */` and `/* <<<END DATA>>> */`
   markers — the fetched layer: descriptor, HQ, founded, employees (+year), exchange,
   industry, official site, Wikipedia title and up to four dated news items. **Never
   hand-edit inside those markers**; they are rewritten wholesale by the fetcher.
 
-`tools/fetch-company-data.py` builds `DATA` from live sources, with no API keys:
+`tools/fetch-company-data.py` builds `DATA` from live sources, with no API keys.
+Its `COMPANIES` map lists every ticker either view draws (140), so one run covers
+both tabs:
 
 | Source | Gives |
 |---|---|
@@ -112,8 +154,9 @@ python3 tools/fetch-company-data.py --inject   # …and splice it into index.htm
 ```
 
 Nothing is invented. Every field that cannot be sourced comes back `null` and the
-panel omits that row, so six companies (ARLP, DAR, NFE, FLNC, INSW, FLNG) show a
-shorter Company block — none of them has a Wikipedia article to fall back on.
+panel omits that row, so a handful of companies show a shorter Company block
+(ARLP, NFE, FLNC, INSW, FLNG, TT and, from the AI view, APLD and EME — none of
+them has a Wikipedia infobox to fall back on).
 Headlines are
 filtered to the last 120 days, sorted newest-first, and the panel footers the list
 with the fetch date ("Headlines via Google News, as of 9 Oct 2026") so a stale
@@ -142,12 +185,15 @@ python3 tools/inject-competitors.py           # …and splice PEERS into index.h
 
 `--check` warns if a charted ticker has no entry, or if an entry names a ticker
 the chart does not draw, so the block cannot silently go missing for a company.
+It scans the node/enabler list of *every* view, so both tabs stay covered
+(140 entries / 404 peer links).
 
 ## The market rail
 
-The section on the right is two panes over the same universe the diagram draws —
-the `cos:` lists of `NODES` + `ENABLERS` — so a ticker added to the chart shows up
-there with no further work.
+The section on the right is two panes over the same universe the active view
+draws — the `cos:` lists of that view's nodes + enablers — so a ticker added to
+the chart shows up there with no further work, and switching tabs re-points both
+panes at the new ticker list.
 
 - **Volume** ranks the chart's tickers by shares traded in the current session
   (bar, volume, % change; price and venue on hover). It reads the `VOL` snapshot:
@@ -174,13 +220,18 @@ Both panes open the company panel, and the rail collapses with the `›` control
 
 ## Verified
 
-Rendered in Chromium at 1660×1000 (the SVG viewBox): 18 nodes, 34 edges (27
-flows — the two forward edges `pipe → chem` ("NGLs") and `util → trans`
-("charging") complete the petrochemical and EV-charging legs), 89
-ticker chips, no chip escaping its card, no label collisions (14 static labels,
-none within 11px vertically and 70px horizontally of another), content inside the
-viewBox, horizontal scroll below 900px (`min-width` on the SVG, scrollable
-`#stage`). Hover/trace behaviour checked by dispatching `mouseenter` and asserting
+Both views were rendered in Chromium at 1660×1000 (the SVG viewBox), 1280×900 and
+820×900 with the geometry probe: **no page errors, no chip escaping its card, no
+label collision** (the 11px-vertical / 70px-horizontal rule) and content inside the
+viewBox in every case. **All (energy):** 18 nodes, 34 edges (27 flows), 89 ticker
+chips, content bbox (60, 200)–(1575, 936), 15 standing labels, horizontal scroll
+below 900px (`min-width` on the SVG, scrollable `#stage`). **AI:** 17 nodes, 34
+edges (25 flows + 2 capital + the 7 dashed enabler guides, including 6 same-column
+hooks drawn out of the right side of a column), 60 ticker chips, 3 enabler bands,
+content bbox (60, 212)–(1585, 936), 15 standing labels — the AI-only branches that
+could not hold an 11px/70px gap from a neighbour (`ISA · IP licences`,
+`training compute`, `inference`) are trace-only rather than dropped, so the flows
+still read on hover. Hover/trace behaviour checked by dispatching `mouseenter` and asserting
 the edge and dim classes. Panel checked by dispatching `click` on chips: XOM →
 ExxonMobil with three SUPPLIES TO rows and its three edges highlighted; NEE → four
 RECEIVES FROM + two SUPPLIES TO; SLB (enabler) → "supplies every stage"; MSFT →
@@ -197,10 +248,11 @@ link with no Wikipedia article; CEG shows live Oct-2026 headlines about Google's
 3.6 GW nuclear PPA, which is the same `gen → dc` PPA edge the diagram traces. No
 document overflow at 1560px with the 400px panel open.
 
-The market rail was verified at 1600×1000 and 820×900: 87 volume rows sorted
-descending (TSLA 27.4M … ARLP 82.8K) from a live CNBC snapshot covering all 89
-chart tickers; the News tab merges 356 headlines into 346 after de-duplication
-and shows 40 with a "show more of 346"; *Priority* orders Reuters/CNBC first,
+The market rail was verified at 1600×1000 and 820×900 in both views: 88 volume rows
+in All sorted descending (TSLA 48.8M … NFE 128.0K) and 60 in AI (INTC 91.6M … EME
+154.6K), both from one live CNBC snapshot covering all 140 chart tickers; the News
+tab merges that view's headlines (350 in All, 238 in AI after de-duplication) and
+shows 40 with a "show more" for the rest; *Priority* orders Reuters/CNBC first,
 *Newest* puts the latest date first, and filtering to `XOM` returns only XOM rows.
 Clicking a volume row opens the panel on that company (AMZN → Data Centers, 400px,
 5 fact rows, 4 headlines), outlines its chip and dims the rest of the diagram; the
@@ -208,10 +260,22 @@ Clicking a volume row opens the panel on that company (AMZN → Data Centers, 40
 overlay reached from the **Feed** button with the panel stacked above it (z-index
 35 over 30). No document overflow at 1600px with the panel and the rail both open.
 
-Data coverage from the last fetch: HQ 83/89, founded 73/89, employees 78/89
-(headcounts older than 2018 are dropped rather than shown stale), exchange 80/89,
-industry 67/89, official site 87/89, descriptor 85/89, news 89/89
-(356 items, all within the last 120 days, none of them ticker/quote pages).
+Data coverage from the last fetch (140 tickers, both views): HQ 132/140, founded
+120/140, employees 124/140 (headcounts older than 2018 are dropped rather than
+shown stale), exchange 126/140, industry 101/140, official site 137/140,
+descriptor 134/140, news 140/140 (560 items, all within the last 120 days, none of
+them ticker/quote pages).
+
+The tab switch was verified by round trip: `All → AI → All` leaves the energy view
+byte-identical in every measured respect (18 nodes / 89 chips / 34 edges / 15
+standing labels / 88 volume rows / 40 news rows), the `aria-selected` state,
+`document.title` and the "18 stages · 89 companies" summary all follow the active
+tab, and the panel and pin state are cleared on the way. In the AI view, hovering
+`neo` highlights its 5 edges and reveals "GPU hours", clicking `fab` pins its 3, a
+click on the top volume row (INTC) opens the panel with `→ Accelerators & GPUs ·
+wafers / → Custom ASIC & Connectivity / → Memory & HBM`, 4 dated headlines and its
+Company facts, and CRWV's Direct competitors list resolves NBIS / APLD / IREN as
+on-chart buttons (the AI peer set is 51 entries, all charted peers clickable).
 
 ## Note
 
