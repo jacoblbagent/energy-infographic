@@ -120,6 +120,29 @@ with the fetch date ("Headlines via Google News, as of 9 Oct 2026") so a stale
 snapshot is always visible as one. HTTP responses are cached under `.cache/`
 (gitignored) so re-runs are cheap and the sources are hit once.
 
+## Direct competitors (per company)
+
+Every company panel carries a collapsed **Direct competitors** block: the listed
+peers that compete in the same line of business, each tagged with the overlap
+(`Permian E&P`, `crude tankers`, `industrial gases`…), under the sector basis they
+share. Peers that are on the chart are buttons — clicking one opens that
+company's panel; peers that are not are plain text marked `· off-chart`.
+
+The list is curated, not fetched: Wikidata has no machine-readable *competitor*
+property (only `P710 participant` / `P2882 relegated`, which are sports fields),
+so the hand-authored pairs live in `data/competitors.json` — each entry is
+`{"basis":…, "peers":[{"t":TK, "n":"name (off-chart only)", "w":"shared business"}], "note":…}`
+— and are spliced into the `/* <<<PEERS>>> */ … /* <<<END PEERS>>> */` region of
+its own:
+
+```bash
+python3 tools/inject-competitors.py --check   # validate coverage, no write
+python3 tools/inject-competitors.py           # …and splice PEERS into index.html
+```
+
+`--check` warns if a charted ticker has no entry, or if an entry names a ticker
+the chart does not draw, so the block cannot silently go missing for a company.
+
 ## The market rail
 
 The section on the right is two panes over the same universe the diagram draws —
