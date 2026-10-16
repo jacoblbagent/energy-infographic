@@ -8687,13 +8687,6 @@ h1.textContent=VIEW.title;
 const h2=el("text",{x:60,y:118,style:"font-size:12.5px;font-weight:500;fill:#5B6B7C"},svg);
 h2.textContent=VIEW.sub;
 
-let lx=1620;
-VIEW.legend.slice().reverse().forEach(([t,col])=>{
-  const tw=t.length*6.1;
-  const tx=el("text",{x:lx,y:92,"text-anchor":"end",class:"legend-t"},svg); tx.textContent=t;
-  el("circle",{cx:lx-tw-14,cy:88.5,r:3.6,fill:col},svg);
-  lx-=tw+52;
-});
 const lg1=el("text",{x:1620,y:118,"text-anchor":"end",
   style:"font-size:10px;font-weight:500;fill:#93A2B3"},svg);
 lg1.textContent=VIEW.key;
