@@ -8507,7 +8507,14 @@ document.getElementById("pClose").onclick=()=>clearSel();
 document.addEventListener("keydown",ev=>{ if(ev.key==="Escape") clearSel(); });
 svg.addEventListener("click",()=>clearSel());   // a click on empty canvas clears it
 
+/* Sidebar sections keep their open state when you switch company: the state is
+   read off the DOM before the re-render and written back after it, so an open
+   Financials stays open for the next company (and for a re-opened panel). */
+const PANEL_SECS=["secFacts","secFlows","secFin","secPeers"];
+
 function pick(tk,nodeId,chipEl){
+  const wasOpen={};
+  PANEL_SECS.forEach(id=>{ wasOpen[id]=$(id).open; });
   const name=coName(tk), about=coAbout(tk);
   const node=byId[nodeId]||null;
   const gcol=node?G[node.g]:G.svc;
@@ -8532,12 +8539,11 @@ function pick(tk,nodeId,chipEl){
   rows.forEach(f=>fx.appendChild(fact(f[0],f[1])));
   $("secFacts").hidden=!rows.length;
 
-  /* financials — collapsed by default, omitted when nothing could be sourced */
-  $("secFin").open=false;
+  /* financials — open state carries over from the previous company; omitted
+     when nothing could be sourced */
   renderFin(tk);
 
-  /* flows — collapsed by default each time a company opens */
-  $("secFlows").open=false;
+  /* flows — open state carries over too */
   const flow=$("pFlows"); flow.innerHTML="";
   if(node){
     const out=EDGES.filter(e=>e.a===node.id), inn=EDGES.filter(e=>e.b===node.id);
@@ -8550,8 +8556,7 @@ function pick(tk,nodeId,chipEl){
 
   /* direct competitors — same line of business, from data/competitors.json.
      A peer that is on the chart opens its own panel; one that is not is listed
-     as plain text (the diagram has no chip to select). */
-  $("secPeers").open=false;
+     as plain text (the diagram has no chip to select). Open state carries over. */
   const pw=$("pPeers"); pw.innerHTML="";
   const P=(typeof PEERS!=="undefined"&&PEERS[tk])||null;
   const nPeer=(P&&P.peers)?P.peers.length:0;
@@ -8591,6 +8596,9 @@ function pick(tk,nodeId,chipEl){
   document.querySelectorAll(".chip.sel").forEach(c=>c.classList.remove("sel"));
   chipEl.classList.add("sel");
   if(node) focus(node.id); else blur();
+  /* re-apply the section state captured at the top of pick() — hidden sections
+     keep it silently so the next company that has data reopens them */
+  PANEL_SECS.forEach(id=>{ const s=$(id); if(!s.hidden) s.open=wasOpen[id]; });
   panel.classList.add("open");
   document.body.classList.add("panelopen");
 }
