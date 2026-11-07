@@ -9,6 +9,21 @@
     --bg:#FBFBFA;--ink:#0F172A;--muted:#5B6B7C;--faint:#93A2B3;
     --line:#DFE5EC;--node:#FFFFFF;--chip:#F7F9FB;--chipb:#E6EBF1;
     --fossil:#C2410C;--lowc:#0E9F6E;--infra:#2563EB;--svc:#64748B;--use:#334155;
+    /* surface/text tokens — every rule below reads one of these, so a theme is
+       a token swap and not a second stylesheet. Values are light; the dark
+       block at the foot of this <style> overrides the whole set. */
+    --body:#42526A;--strong:#334155;--sub:#8A99AA;--faint2:#A3AFBC;--faint3:#B6C1CC;
+    --faint4:#C3CCD6;--dim:#7B8A9B;--dim2:#6B7A8C;
+    --panel:#FFFFFF;--raised:#FFFFFF;--soft:#F1F4F8;--hover:#F5F8FB;--sel:#E8F0FA;
+    --selink:#D9E6F6;--chipHov:#EDF2F7;--chipHovB:#B9C6D4;--band:#FCFDFE;--input:#FBFCFD;
+    --inputb:#C3CEDB;--track:#EDF1F6;--bar:#A7B9CB;--hair:#F0F3F7;--rule:#D8E0E8;
+    --link:#1F3A5F;--edge:#A9B6C4;--edgeSvc:#B7C1CD;--edgeCap:#DDBBA4;--capLbl:#B57A4E;
+    --pin:#AEBBC8;--up:#0E9F6E;--dn:#C2410C;
+    --shadow:0 1px 2px rgba(15,23,42,.09);
+    --shadow-lg:-14px 0 30px rgba(15,23,42,.10);
+    --shadow-sm:-6px 0 16px rgba(15,23,42,.08);
+    color-scheme:light;
+
     --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
   }
   *{box-sizing:border-box}
@@ -23,12 +38,12 @@
   /* value-chain switcher: one tab per chain the diagram can draw ("All" is the
      full energy chain, "AI" is the compute/AI chain). */
   #topbar{flex:0 0 auto;display:flex;align-items:center;gap:11px;
-    padding:10px 15px;border-bottom:1px solid var(--line);background:#fff}
-  .vtabs{display:flex;gap:2px;background:#F1F4F8;border-radius:7px;padding:2px}
+    padding:10px 15px;border-bottom:1px solid var(--line);background:var(--panel)}
+  .vtabs{display:flex;gap:2px;background:var(--soft);border-radius:7px;padding:2px}
   .vtab{border:0;background:transparent;font:inherit;font-size:12px;font-weight:600;
-    color:#5B6B7C;padding:6px 16px;border-radius:5px;cursor:pointer;letter-spacing:.2px}
+    color:var(--muted);padding:6px 16px;border-radius:5px;cursor:pointer;letter-spacing:.2px}
   .vtab:hover{color:var(--ink)}
-  .vtab.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(15,23,42,.09)}
+  .vtab.on{background:var(--raised);color:var(--ink);box-shadow:var(--shadow)}
   .vtab:focus{outline:none}
   .vtab:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
   .vwho{font-size:11px;font-weight:500;color:var(--faint)}
@@ -44,10 +59,10 @@
   .node-label{font-size:12.5px;font-weight:600;fill:var(--ink)}
 
   .chip-box{fill:var(--chip);stroke:var(--chipb);stroke-width:1;transition:fill .16s,stroke .16s}
-  .chip-text{font-family:var(--mono);font-size:10.5px;font-weight:600;fill:#42526A;
+  .chip-text{font-family:var(--mono);font-size:10.5px;font-weight:600;fill:var(--body);
     letter-spacing:.2px;pointer-events:none}
   .chip{cursor:pointer}
-  .chip:hover .chip-box{fill:#EDF2F7;stroke:#B9C6D4}
+  .chip:hover .chip-box{fill:var(--chipHov);stroke:var(--chipHovB)}
   .chip:hover .chip-text{fill:var(--ink)}
   .chip.sel .chip-box{fill:var(--t);stroke:var(--c);stroke-width:1.4}
   .chip.sel .chip-text{fill:var(--c)}
@@ -56,105 +71,105 @@
 
   .g-node{transition:opacity .18s,stroke .18s}
   .g-node.dim{opacity:.2}
-  .g-node.pin .node-box{stroke:#AEBBC8;stroke-width:1.4}
+  .g-node.pin .node-box{stroke:var(--pin);stroke-width:1.4}
 
-  .edge{fill:none;stroke:#A9B6C4;stroke-width:1;transition:opacity .18s,stroke .18s,stroke-width .18s}
+  .edge{fill:none;stroke:var(--edge);stroke-width:1;transition:opacity .18s,stroke .18s,stroke-width .18s}
   .edge.dim{opacity:.07}
-  .edge.hl{opacity:1;stroke-width:1.7;stroke:#334155}
-  .edge-lbl{font-size:9px;font-weight:600;fill:#7B8A9B;letter-spacing:.1px;opacity:0;
+  .edge.hl{opacity:1;stroke-width:1.7;stroke:var(--strong)}
+  .edge-lbl{font-size:9px;font-weight:600;fill:var(--dim);letter-spacing:.1px;opacity:0;
     transition:opacity .18s;paint-order:stroke;stroke:var(--bg);stroke-width:3;stroke-linejoin:round}
   .edge-lbl.on{opacity:1}
   .edge-lbl.static{opacity:1}
   .edge-lbl.fade{opacity:.13}
 
-  .svc{stroke:#B7C1CD;stroke-dasharray:3 4}
-  .cap{stroke:#DDBBA4;stroke-dasharray:4 5}
-  .cap-lbl{font-size:9px;font-weight:700;fill:#B57A4E;letter-spacing:.6px}
+  .svc{stroke:var(--edgeSvc);stroke-dasharray:3 4}
+  .cap{stroke:var(--edgeCap);stroke-dasharray:4 5}
+  .cap-lbl{font-size:9px;font-weight:700;fill:var(--capLbl);letter-spacing:.6px}
 
-  .band-box{fill:#FCFDFE;stroke:#E6EBF1;stroke-width:1;stroke-dasharray:3 4}
-  .band-lbl{font-size:10.5px;font-weight:700;fill:#5B6B7C;letter-spacing:.6px}
-  .foot{font-size:9.5px;fill:#A3AFBC}
+  .band-box{fill:var(--band);stroke:var(--chipb);stroke-width:1;stroke-dasharray:3 4}
+  .band-lbl{font-size:10.5px;font-weight:700;fill:var(--muted);letter-spacing:.6px}
+  .foot{font-size:9.5px;fill:var(--faint2)}
   .legend-t{font-size:10px;font-weight:600;fill:var(--muted);letter-spacing:.2px}
 
   /* ---- company panel ---- */
-  #panel{flex:0 0 auto;width:0;overflow:hidden;background:#fff;
+  #panel{flex:0 0 auto;width:0;overflow:hidden;background:var(--panel);
     border-left:1px solid transparent;transition:width .22s ease,border-color .22s}
   #panel.open{width:400px;border-left-color:var(--line)}
   .pin{width:400px;height:100%;overflow-y:auto;padding:26px 26px 40px;position:relative}
   #pClose{position:absolute;top:20px;right:20px;width:26px;height:26px;padding:0;
-    border:0;border-radius:6px;background:transparent;color:#A3AFBC;font-size:18px;
+    border:0;border-radius:6px;background:transparent;color:var(--faint2);font-size:18px;
     line-height:1;cursor:pointer}
-  #pClose:hover{background:#F1F5F9;color:var(--ink)}
+  #pClose:hover{background:var(--hover);color:var(--ink)}
   .tkr{font-family:var(--mono);font-size:21px;font-weight:700;letter-spacing:.4px;
     display:flex;align-items:center;gap:9px}
   .tkr .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
   .cname{font-size:16.5px;font-weight:600;margin:3px 0 5px;letter-spacing:-.1px}
   .sect{margin-top:19px;padding-top:15px;border-top:1px solid var(--line)}
   .sect[hidden]{display:none}
-  .sl{font-size:9.5px;font-weight:700;letter-spacing:1.3px;color:#A3AFBC;
+  .sl{font-size:9.5px;font-weight:700;letter-spacing:1.3px;color:var(--faint2);
     text-transform:uppercase;margin:0 0 10px}
   .disc>summary{cursor:pointer;list-style:none;display:flex;align-items:center;
     margin:0;user-select:none}
   .disc>summary::-webkit-details-marker{display:none}
-  .disc>summary:hover{color:#6B7A8C}
+  .disc>summary:hover{color:var(--dim2)}
   .disc>summary::after{content:"+";margin-left:auto;font-size:13px;font-weight:700;
-    letter-spacing:0;color:#B6C1CC}
+    letter-spacing:0;color:var(--faint3)}
   .disc[open]>summary::after{content:"\2013"}
   .disc>div{margin-top:10px}
-  .about{font-size:12.5px;line-height:1.55;color:#42526A;margin:0}
-  .frow{display:flex;gap:7px;align-items:baseline;font-size:12.5px;color:#42526A;
+  .about{font-size:12.5px;line-height:1.55;color:var(--body);margin:0}
+  .frow{display:flex;gap:7px;align-items:baseline;font-size:12.5px;color:var(--body);
     margin-bottom:7px;line-height:1.35}
-  .frow .ar{color:#A9B6C4;flex:0 0 auto}
-  .frow .lb{color:#8A99AA;font-size:11px}
-  .muted{font-size:12px;color:#A3AFBC;font-style:italic}
+  .frow .ar{color:var(--edge);flex:0 0 auto}
+  .frow .lb{color:var(--sub);font-size:11px}
+  .muted{font-size:12px;color:var(--faint2);font-style:italic}
   /* ---- direct competitors ---- */
-  .sc{font-family:var(--mono);font-size:9.5px;font-weight:700;color:#C3CCD6;
+  .sc{font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--faint4);
     letter-spacing:0;margin-left:5px}
-  .pbasis{font-size:10.5px;color:#8A99AA;margin:0 0 8px}
+  .pbasis{font-size:10.5px;color:var(--sub);margin:0 0 8px}
   .prow{display:grid;grid-template-columns:44px 1fr;column-gap:8px;row-gap:2px;
     align-items:baseline;width:100%;padding:5px 6px;border:0;border-radius:6px;
     background:none;font:inherit;text-align:left;cursor:pointer}
-  .prow:hover{background:#F5F8FB}
-  .prow .ptk{font-family:var(--mono);font-size:10.5px;font-weight:700;color:#334155;
+  .prow:hover{background:var(--hover)}
+  .prow .ptk{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--strong);
     letter-spacing:.2px}
-  .prow .pn{font-size:12px;color:#42526A;white-space:nowrap;overflow:hidden;
+  .prow .pn{font-size:12px;color:var(--body);white-space:nowrap;overflow:hidden;
     text-overflow:ellipsis}
-  .prow .pw{grid-column:2;font-size:10.5px;color:#A3AFBC}
+  .prow .pw{grid-column:2;font-size:10.5px;color:var(--faint2)}
   .prow.off{cursor:default}
   .prow.off:hover{background:none}
-  .prow.off .ptk,.prow.off .pn{color:#8A99AA}
-  .prow .ptk.dim{color:#C8D1DA}
-  .pfoot{font-size:10px;color:#B6C1CC;line-height:1.5;margin-top:9px}
+  .prow.off .ptk,.prow.off .pn{color:var(--sub)}
+  .prow .ptk.dim{color:var(--faint4)}
+  .pfoot{font-size:10px;color:var(--faint3);line-height:1.5;margin-top:9px}
   .fact{display:grid;grid-template-columns:82px 1fr;gap:8px;margin-bottom:7px;
     font-size:12.5px;line-height:1.35}
-  .fact .k{font-size:9.5px;font-weight:700;letter-spacing:.6px;color:#A3AFBC;
+  .fact .k{font-size:9.5px;font-weight:700;letter-spacing:.6px;color:var(--faint2);
     text-transform:uppercase;padding-top:2px}
-  .fact .v{color:#334155}
-  .fact .yr{color:#A3AFBC;font-size:11px}
+  .fact .v{color:var(--strong)}
+  .fact .yr{color:var(--faint2);font-size:11px}
   /* ---- financials: grouped metric rows, label left, mono value right ---- */
   .fg+.fg{margin-top:13px}
-  .fgh{font-size:9px;font-weight:700;letter-spacing:1px;color:#A9B6C4;
+  .fgh{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--edge);
     text-transform:uppercase;margin:0 0 7px}
   .frow2{display:grid;grid-template-columns:126px 1fr;gap:9px;
     font-size:11.5px;line-height:1.4;margin-bottom:6px}
-  .frow2 .k{color:#8A99AA}
-  .frow2 .v{font-family:var(--mono);font-size:11px;color:#334155;letter-spacing:-.1px}
-  .frow2 .v .n{font-family:inherit;color:#A3AFBC;margin-left:5px}
-  .fnote{font-size:9.5px;color:#B6C1CC;line-height:1.55;margin-top:12px}
+  .frow2 .k{color:var(--sub)}
+  .frow2 .v{font-family:var(--mono);font-size:11px;color:var(--strong);letter-spacing:-.1px}
+  .frow2 .v .n{font-family:inherit;color:var(--faint2);margin-left:5px}
+  .fnote{font-size:9.5px;color:var(--faint3);line-height:1.55;margin-top:12px}
   .nit{margin-bottom:13px}
   .nit:last-child{margin-bottom:4px}
-  .nit a{font-size:12.5px;line-height:1.4;color:#1F3A5F;text-decoration:underline;
-    text-decoration-color:#C7D2DE;text-underline-offset:2px;font-weight:500}
-  .nit a:hover{color:#0F172A;text-decoration-color:#0F172A}
-  .meta{font-size:10.5px;color:#A3AFBC;margin-top:3px}
+  .nit a{font-size:12.5px;line-height:1.4;color:var(--link);text-decoration:underline;
+    text-decoration-color:var(--rule);text-underline-offset:2px;font-weight:500}
+  .nit a:hover{color:var(--ink);text-decoration-color:var(--ink)}
+  .meta{font-size:10.5px;color:var(--faint2);margin-top:3px}
   .lnks{display:flex;flex-wrap:wrap;gap:6px 14px}
-  .lnk{font-size:12px;color:#42526A;text-decoration:none;border-bottom:1px solid #D8E0E8;
+  .lnk{font-size:12px;color:var(--body);text-decoration:none;border-bottom:1px solid var(--rule);
     padding-bottom:1px}
-  .lnk:hover{color:#0F172A;border-bottom-color:#0F172A}
-  .asof{font-size:9.5px;color:#B6C1CC;margin-top:20px;line-height:1.5}
+  .lnk:hover{color:var(--ink);border-bottom-color:var(--ink)}
+  .asof{font-size:9.5px;color:var(--faint3);margin-top:20px;line-height:1.5}
 
   /* ---- market rail: top-volume feed + merged ticker news ---- */
-  #rail{flex:0 0 auto;width:320px;background:#fff;border-left:1px solid var(--line);
+  #rail{flex:0 0 auto;width:320px;background:var(--panel);border-left:1px solid var(--line);
     display:flex;flex-direction:column;min-height:0;overflow:hidden;
     transition:width .22s ease,border-color .22s}
   /* collapsed: the rail stays put as a slim strip with its toggle pinned at the
@@ -163,79 +178,119 @@
   body.railoff .tabs,body.railoff .railbody{display:none}
   body.railoff .railhead{width:44px;justify-content:center;padding:13px 0 11px;
     border-bottom-color:transparent}
-  body.railoff #railToggle{color:#7B8A9B}
+  body.railoff #railToggle{color:var(--dim)}
   .railhead{display:flex;align-items:center;gap:8px;flex:0 0 auto;
     padding:13px 12px 11px;border-bottom:1px solid var(--line)}
-  .tabs{display:flex;gap:2px;flex:1;background:#F1F4F8;border-radius:7px;padding:2px}
+  .tabs{display:flex;gap:2px;flex:1;background:var(--soft);border-radius:7px;padding:2px}
   .tab{flex:1;border:0;background:transparent;font:inherit;font-size:11.5px;font-weight:600;
-    color:#5B6B7C;padding:5px 8px;border-radius:5px;cursor:pointer;letter-spacing:.1px}
-  .tab.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(15,23,42,.09)}
+    color:var(--muted);padding:5px 8px;border-radius:5px;cursor:pointer;letter-spacing:.1px}
+  .tab.on{background:var(--raised);color:var(--ink);box-shadow:var(--shadow)}
   #railToggle{flex:0 0 auto;width:24px;height:24px;padding:0;border:0;border-radius:6px;
-    background:transparent;color:#A3AFBC;font-size:16px;line-height:1;cursor:pointer}
-  #railToggle:hover{background:#F1F5F9;color:var(--ink)}
+    background:transparent;color:var(--faint2);font-size:16px;line-height:1;cursor:pointer}
+  #railToggle:hover{background:var(--hover);color:var(--ink)}
   .railbody{flex:1;min-height:0;overflow-y:auto;padding:11px 12px 34px}
   .railnote{font-size:9.5px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;
-    color:#B6C1CC;margin:1px 2px 8px}
+    color:var(--faint3);margin:1px 2px 8px}
 
   .vrow{display:grid;grid-template-columns:18px 46px 1fr;column-gap:8px;row-gap:3px;
     align-items:center;width:100%;padding:6px;border:0;border-radius:6px;background:none;
     font:inherit;text-align:left;cursor:pointer}
-  .vrow:hover{background:#F5F8FB}
-  .vrow.sel,.vrow.sel:hover{background:#E8F0FA}
-  .vrk{font-family:var(--mono);font-size:10px;color:#B6C1CC;text-align:right}
-  .vtk{font-family:var(--mono);font-size:11.5px;font-weight:700;color:#334155;letter-spacing:.2px}
-  .vnm{font-size:11.5px;color:#8A99AA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .vrow:hover{background:var(--hover)}
+  .vrow.sel,.vrow.sel:hover{background:var(--sel)}
+  .vrk{font-family:var(--mono);font-size:10px;color:var(--faint3);text-align:right}
+  .vtk{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--strong);letter-spacing:.2px}
+  .vnm{font-size:11.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .vfoot{grid-column:2 / 4;display:flex;align-items:center;gap:8px}
-  .vbar{flex:1;min-width:24px;height:4px;border-radius:2px;background:#EDF1F6;overflow:hidden}
-  .vbar i{display:block;height:100%;background:#A7B9CB;border-radius:2px}
-  .vvol{font-family:var(--mono);font-size:10px;color:#7B8A9B}
+  .vbar{flex:1;min-width:24px;height:4px;border-radius:2px;background:var(--track);overflow:hidden}
+  .vbar i{display:block;height:100%;background:var(--bar);border-radius:2px}
+  .vvol{font-family:var(--mono);font-size:10px;color:var(--dim)}
   .vchg{font-family:var(--mono);font-size:10px;font-weight:600}
-  .up{color:#0E9F6E}.dn{color:#C2410C}.flat{color:#93A2B3}
+  .up{color:var(--up)}.dn{color:var(--dn)}.flat{color:var(--faint)}
 
   .newsbar{display:flex;gap:6px;margin-bottom:6px}
   #newsQ{flex:1;min-width:0;border:1px solid var(--line);border-radius:6px;padding:5px 8px;
-    font:inherit;font-size:11.5px;color:var(--ink);background:#FBFCFD}
-  #newsQ:focus{outline:none;border-color:#C3CEDB;background:#fff}
-  .sorts{display:flex;background:#F1F4F8;border-radius:6px;padding:2px}
-  .sort{border:0;background:none;font:inherit;font-size:10.5px;font-weight:600;color:#5B6B7C;
+    font:inherit;font-size:11.5px;color:var(--ink);background:var(--input)}
+  #newsQ:focus{outline:none;border-color:var(--inputb);background:var(--panel)}
+  .sorts{display:flex;background:var(--soft);border-radius:6px;padding:2px}
+  .sort{border:0;background:none;font:inherit;font-size:10.5px;font-weight:600;color:var(--muted);
     padding:4px 7px;border-radius:4px;cursor:pointer}
-  .sort.on{background:#fff;color:var(--ink)}
-  .nrow{padding:9px 4px;border-bottom:1px solid #F0F3F7}
+  .sort.on{background:var(--raised);color:var(--ink)}
+  .nrow{padding:9px 4px;border-bottom:1px solid var(--hair)}
   .nrow:last-child{border-bottom:0}
-  .nt{display:block;font-size:12px;line-height:1.4;font-weight:500;color:#1F3A5F;
+  .nt{display:block;font-size:12px;line-height:1.4;font-weight:500;color:var(--link);
     text-decoration:none}
-  .nt:hover{color:#0F172A;text-decoration:underline;text-decoration-color:#C7D2DE;
+  .nt:hover{color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule);
     text-underline-offset:2px}
-  .nmeta{display:flex;align-items:center;gap:7px;margin-top:4px;font-size:10px;color:#A3AFBC}
+  .nmeta{display:flex;align-items:center;gap:7px;margin-top:4px;font-size:10px;color:var(--faint2)}
   .ntk{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.2px;
-    padding:1px 5px;border:0;border-radius:4px;background:#F1F4F8;color:#42526A;cursor:pointer}
-  .ntk:hover{background:#E6EBF1;color:var(--ink)}
-  .ntk.sel,.ntk.sel:hover{background:#D9E6F6;color:#0F172A}
+    padding:1px 5px;border:0;border-radius:4px;background:var(--soft);color:var(--body);cursor:pointer}
+  .ntk:hover{background:var(--chipb);color:var(--ink)}
+  .ntk.sel,.ntk.sel:hover{background:var(--selink);color:var(--ink)}
   .nmore,.nempty{display:block;width:100%;margin-top:10px;padding:7px;border:1px solid var(--line);
-    background:#fff;border-radius:6px;font:inherit;font-size:11px;font-weight:600;
-    color:#42526A;cursor:pointer;text-align:center}
-  .nmore:hover{background:#F5F8FB}
-  .nempty{border:0;color:#A3AFBC;font-weight:500;cursor:default}
+    background:var(--panel);border-radius:6px;font:inherit;font-size:11px;font-weight:600;
+    color:var(--body);cursor:pointer;text-align:center}
+  .nmore:hover{background:var(--hover)}
+  .nempty{border:0;color:var(--faint2);font-weight:500;cursor:default}
 
   @media (max-width:1180px){
     /* narrow: a tighter label column keeps each metric on one line */
     .frow2{grid-template-columns:112px 1fr}
     /* narrow: the panel and the rail overlay rather than crushing the diagram */
     #panel{position:fixed;top:0;right:0;height:100%;z-index:35;
-      box-shadow:-14px 0 30px rgba(15,23,42,.10);transition:transform .22s ease,width 0s}
+      box-shadow:var(--shadow-lg);transition:transform .22s ease,width 0s}
     #panel{width:340px;transform:translateX(100%)}
     #panel.open{width:340px;transform:translateX(0)}
     .pin{width:340px}
 
     #rail{position:fixed;top:0;right:0;height:100%;z-index:30;width:330px;
-      box-shadow:-14px 0 30px rgba(15,23,42,.10);transform:translateX(0);
+      box-shadow:var(--shadow-lg);transform:translateX(0);
       transition:transform .22s ease}
     body.railoff #rail{width:330px;transform:translateX(calc(100% - 44px));
-      box-shadow:-6px 0 16px rgba(15,23,42,.08)}
+      box-shadow:var(--shadow-sm)}
+  }
+
+  /* ---- dark theme -------------------------------------------------------
+     Only tokens change. The diagram's group palettes and its marker/arrowhead
+     colors are generated in JS, so setTheme() swaps PAL and redraws the view
+     at the same time this runs. */
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --bg:#0B1017;--ink:#E7EDF5;--muted:#97A6B6;--faint:#74838F;
+    --line:#232F3C;--node:#121A24;--chip:#18222F;--chipb:#2A3644;
+    --body:#B6C3D2;--strong:#CBD6E2;--sub:#8B9AAB;--faint2:#6F7E8E;--faint3:#5F6E7E;
+    --faint4:#4E5C6B;--dim:#8394A4;--dim2:#9AAAB9;
+    --panel:#101822;--raised:#24313F;--soft:#1A2430;--hover:#17212D;--sel:#1B2B3C;
+    --selink:#22384F;--chipHov:#1E2A38;--chipHovB:#3A4A5C;--band:#0F1620;
+    --input:#131C27;--inputb:#3A4A5C;--track:#1E2A38;--bar:#4C6376;--hair:#1A2430;
+    --rule:#2C3A48;--link:#8FB8E8;--edge:#4A5A6B;--edgeSvc:#47576A;--edgeCap:#8A6A4E;
+    --capLbl:#C9905F;--pin:#5C6E80;--up:#34D399;--dn:#F97316;
+    --shadow:0 1px 2px rgba(0,0,0,.45);
+    --shadow-lg:-14px 0 30px rgba(0,0,0,.55);
+    --shadow-sm:-6px 0 16px rgba(0,0,0,.45);
+  }
+  /* theme switch: a glyph button at the far right of the view tabs */
+  .ttog{margin-left:auto;width:26px;height:26px;padding:0;border:0;border-radius:6px;
+    background:transparent;color:var(--muted);font-size:13px;line-height:1;cursor:pointer}
+  .ttog:hover{background:var(--hover);color:var(--ink)}
+  .ttog:focus{outline:none}
+  .ttog:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+  @media (max-width:1180px){
+    /* the rail is fixed over the right edge, topbar included, so the theme
+       switch joins the left cluster instead of sitting under the rail head */
+    .ttog{margin-left:0}
   }
 </style>
-</head>
-<body>
+<script>
+/* theme before first paint: the stored choice, else the OS preference */
+(function(){
+  var t=null;
+  try{ t=localStorage.getItem("evc-theme"); }catch(e){}
+  if(t!=="light"&&t!=="dark")
+    t=window.matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";
+  document.documentElement.dataset.theme=t;
+})();
+</script>
+</head><body>
 <div id="topbar">
   <div class="vtabs" role="tablist" aria-label="Value chain">
     <button class="vtab on" type="button" role="tab" aria-selected="true"
@@ -244,6 +299,10 @@
       data-view="ai">AI</button>
   </div>
   <div class="vwho" id="vWho"></div>
+  <!-- theme switch: dark is a token swap on <html data-theme>, set before paint
+       by the inline head script so a reload never flashes the light palette -->
+  <button class="ttog" id="themeToggle" type="button" aria-pressed="false"
+    aria-label="Switch to dark theme" title="Switch to dark theme">&#9790;</button>
 </div>
 <div id="app">
   <div id="stage"><svg id="svg" viewBox="0 0 1660 1000" xmlns="http://www.w3.org/2000/svg"></svg></div>
@@ -327,6 +386,8 @@
 "use strict";
 const NS="http://www.w3.org/2000/svg";
 const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;};
+/* read a CSS custom property — generated SVG follows the active theme */
+const cssVar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
 /* ---------- company facts + news ----------
    Rewritten wholesale by `python3 tools/fetch-company-data.py --inject`; do not
@@ -8124,10 +8185,21 @@ const CO={
 /* group palettes — f=stroke/accent, t=chip tint. The energy view uses the top
    five; the AI view uses sil/sys/dci/mdl/app. `svc` is shared by both enabler
    bands. */
-const G={fossil:"#C2410C",lowc:"#0E9F6E",infra:"#2563EB",svc:"#64748B",use:"#334155",
-         sil:"#7C3AED",sys:"#2563EB",dci:"#0E7490",mdl:"#0E9F6E",app:"#B45309"};
-const TINT={fossil:"#FAF0E9",lowc:"#EAF7F1",infra:"#ECF1FD",svc:"#F0F3F6",use:"#EDF0F3",
-            sil:"#F3EEFE",sys:"#ECF1FD",dci:"#E6F4F7",mdl:"#EAF7F1",app:"#FBF1E7"};
+const PAL={
+  light:{
+    G:{fossil:"#C2410C",lowc:"#0E9F6E",infra:"#2563EB",svc:"#64748B",use:"#334155",
+       sil:"#7C3AED",sys:"#2563EB",dci:"#0E7490",mdl:"#0E9F6E",app:"#B45309"},
+    TINT:{fossil:"#FAF0E9",lowc:"#EAF7F1",infra:"#ECF1FD",svc:"#F0F3F6",use:"#EDF0F3",
+          sil:"#F3EEFE",sys:"#ECF1FD",dci:"#E6F4F7",mdl:"#EAF7F1",app:"#FBF1E7"}},
+  dark:{
+    /* dark lifts every hue so it holds on a near-black canvas, and drops the
+       chip tints to a low-chroma wash instead of a pale one */
+    G:{fossil:"#FB923C",lowc:"#34D399",infra:"#60A5FA",svc:"#94A3B8",use:"#CBD5E1",
+       sil:"#A78BFA",sys:"#60A5FA",dci:"#22D3EE",mdl:"#34D399",app:"#FBBF24"},
+    TINT:{fossil:"#352115",lowc:"#122A22",infra:"#15243A",svc:"#1B2634",use:"#232F3D",
+          sil:"#241C3D",sys:"#15243A",dci:"#0E2A33",mdl:"#122A22",app:"#38290F"}}
+};
+let G=PAL.light.G, TINT=PAL.light.TINT;
 
 const ENERGY_NODES=[
   {id:"oil",   c:0,label:"Oil & Gas",           g:"fossil",cos:["XOM","CVX","COP","OXY","EOG","FANG","EQT"]},
@@ -8301,7 +8373,8 @@ function marker(id,color){
     markerHeight:"8",orient:"auto",markerUnits:"strokeWidth"},defs);
   el("path",{d:"M0.5,1 L7,4 L0.5,7 z",fill:color},m);
 }
-marker("m-flow","#A9B6C4"); marker("m-svc","#B7C1CD"); marker("m-cap","#DDBBA4");
+marker("m-flow",cssVar("--edge")); marker("m-svc",cssVar("--edgeSvc"));
+marker("m-cap",cssVar("--edgeCap"));
 
 const gEdge=el("g",{},svg);
 const gBand=el("g",{},svg);
@@ -8804,20 +8877,20 @@ const COL_TITLES=VIEW.colTitles, CX=VIEW.cx, NW=VIEW.nw;
 CX.map((_,c)=>c).forEach(c=>{
   const first=NODES.filter(n=>n.c===c)[0];
   const x=CX[c]-NW[c]/2, y=first.y-13;
-  const num=el("text",{x:x,y:y,class:"col-title",style:"fill:#C3CCD6"},svg);
+  const num=el("text",{x:x,y:y,class:"col-title",style:"fill:var(--faint4)"},svg);
   num.textContent="0"+(c+1);
   const t=el("text",{x:x+22,y:y,class:"col-title"},svg);
   t.textContent=COL_TITLES[c];
 });
 
 /* ---------- header / footer / legend ---------- */
-const h1=el("text",{x:60,y:92,style:"font-size:25px;font-weight:700;letter-spacing:-.3px;fill:#0F172A"},svg);
+const h1=el("text",{x:60,y:92,style:"font-size:25px;font-weight:700;letter-spacing:-.3px;fill:var(--ink)"},svg);
 h1.textContent=VIEW.title;
-const h2=el("text",{x:60,y:118,style:"font-size:12.5px;font-weight:500;fill:#5B6B7C"},svg);
+const h2=el("text",{x:60,y:118,style:"font-size:12.5px;font-weight:500;fill:var(--muted)"},svg);
 h2.textContent=VIEW.sub;
 
 const lg1=el("text",{x:1620,y:118,"text-anchor":"end",
-  style:"font-size:10px;font-weight:500;fill:#93A2B3"},svg);
+  style:"font-size:10px;font-weight:500;fill:var(--faint)"},svg);
 lg1.textContent=VIEW.key;
 
 const f=el("text",{x:60,y:986,class:"foot"},svg);
@@ -9046,8 +9119,41 @@ Array.prototype.slice.call(document.querySelectorAll(".sort")).forEach(b=>
     renderNews();
   }));
 
+/* ---------- theme ----------
+   data-theme is already on <html> (head script). applyTheme() only re-points
+   the JS palettes and the button glyph; setTheme() also redraws, because the
+   generated SVG bakes group colors into fills and arrowhead markers. */
+const THEME_KEY="evc-theme", TBTN=$("themeToggle");
+const PALETTE=window.matchMedia("(prefers-color-scheme:dark)");
+function applyTheme(t){
+  const dark=t==="dark";
+  document.documentElement.dataset.theme=dark?"dark":"light";
+  G=PAL[dark?"dark":"light"].G; TINT=PAL[dark?"dark":"light"].TINT;
+  TBTN.textContent=dark?"\u2600":"\u263e";
+  const label=dark?"Switch to light theme":"Switch to dark theme";
+  TBTN.title=label; TBTN.setAttribute("aria-label",label);
+  TBTN.setAttribute("aria-pressed",dark?"true":"false");
+}
+function setTheme(t){
+  applyTheme(t);
+  try{localStorage.setItem(THEME_KEY,t)}catch(e){}
+  const pin=picked?Object.assign({},picked):null;
+  buildView(VIEW.tab);
+  /* a redraw clears the selection: put the open company back */
+  if(pin&&pin.tk) openCompany(pin.tk);
+  else if(pin&&pin.nodeId) pinNode(pin.nodeId);
+}
+TBTN.addEventListener("click",()=>
+  setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
+/* no stored choice yet: follow the OS while the page is open */
+PALETTE.addEventListener("change",ev=>{
+  let stored=null; try{stored=localStorage.getItem(THEME_KEY)}catch(e){}
+  if(!stored) setTheme(ev.matches?"dark":"light");
+});
+
 RAIL.asof.textContent=fmtAsof();
 setRail(MQ.matches);
+applyTheme(document.documentElement.dataset.theme||"light");
 buildView("energy");
 })();
 </script>

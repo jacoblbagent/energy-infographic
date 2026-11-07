@@ -121,6 +121,14 @@ supplies/services, dashed orange = capital returns.
   opens the same company panel a chip click does. The `›` control collapses the
   rail; below 1180px it becomes an overlay toggled by the floating **Feed**
   button, and opening a company from it steps the rail aside.
+- **Light and dark themes.** The glyph at the end of the tab row switches the
+  palette. Surfaces, text, rules, the diagram's group colours and its arrowheads
+  all read theme tokens, so one switch covers the diagram, the panel and the
+  market rail. The choice is stored in `localStorage` under `evc-theme` and
+  applied by an inline head script before first paint, so a reload never flashes
+  the other palette. With nothing stored the page follows `prefers-color-scheme`
+  and keeps following it while open. Generated SVG colours live in JS
+  (`PAL`), so the switch redraws the active view and restores the open company.
 
 ## Company data and news
 
