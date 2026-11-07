@@ -163,6 +163,56 @@ with the fetch date ("Headlines via Google News, as of 9 Oct 2026") so a stale
 snapshot is always visible as one. HTTP responses are cached under `.cache/`
 (gitignored) so re-runs are cheap and the sources are hit once.
 
+## Financials (per company)
+
+Every energy-view company panel carries a collapsed **Financials** block, split
+into the five groups a valuation read needs: price relative to earnings power,
+growth, profitability and quality, balance sheet risk, and context.
+
+| Row | Definition |
+|---|---|
+| P/E trailing / forward | price over diluted TTM EPS, and over next-12-month estimated EPS |
+| EV/EBITDA | (market cap + total debt − cash) / trailing EBITDA |
+| P/FCF, FCF yield | market cap over trailing free cash flow, and its inverse |
+| P/S | market cap over trailing revenue |
+| Revenue growth, 3y CAGR | TTM year on year, and the 3-year compound rate from the FY series |
+| EPS growth, FCF growth | TTM year on year |
+| PEG | the ratio as published, or trailing P/E over the EPS growth rate |
+| Gross / operating margin | gross profit and operating income over revenue |
+| ROIC | EBIT after a 21% tax over invested capital |
+| FCF vs net income | trailing FCF over trailing net income |
+| Net debt / EBITDA | (total debt − cash) over trailing EBITDA |
+| Interest coverage | EBIT over interest expense |
+| Share count | compound annual change in shares outstanding over the five fiscal years, so a negative number is a buyback |
+| Peer P/E, peer EV/EBITDA | median across the companies drawn in the same stage of the chain, plus the company's rank |
+| 5y median P/E, 5y median EV/EBITDA | median of the five published fiscal years, next to today's multiple |
+| Moat | median ROIC over those five years minus the discount rate |
+| DCF value | two-stage FCF model: five explicit years, terminal growth 2.5%, discount rate = 10y Treasury + 5.0 points |
+| Reverse DCF | the near-term FCF growth rate at which the same model equals today's price |
+
+`tools/fetch-financials.py` builds the `FIN` region from live sources, no API keys:
+
+```bash
+python3 tools/fetch-financials.py            # write data/financials.json
+python3 tools/fetch-financials.py --inject   # …and splice it into index.html
+```
+
+| Source | Gives |
+|---|---|
+| `stockanalysis.com/stocks/<t>/statistics/` | current ratios: P/E, forward P/E, EV/EBITDA, P/FCF, P/S, PEG, margins, ROIC, interest coverage, net debt, FCF, revenue, net income, shares |
+| `…/financials/` | TTM and five fiscal years of the income statement, plus revenue, EPS and FCF growth |
+| `…/financials/ratios/` | five fiscal years of P/E, EV/EBITDA and ROIC for the historical comparison |
+| `…/financials/balance-sheet/` | five fiscal years of shares outstanding |
+| FRED `DGS10` (curl), else Yahoo `^TNX` | 10y Treasury yield, the risk-free leg of the discount rate |
+
+Nothing is invented. A metric whose inputs are missing comes back `null` and the
+row is omitted, so a loss-making company shows no P/E row instead of a fabricated
+one and a company with negative free cash flow shows no P/FCF or DCF. CEIX, which
+no longer trades on its own after the CONSOL/Arch combination, has no page at the
+source and so no Financials block. Peer medians only ever compare companies the
+diagram actually draws in that stage, and the footnote under the block states the
+as-of date, the discount rate and the model's assumptions.
+
 ## Direct competitors (per company)
 
 Every company panel carries a collapsed **Direct competitors** block: the listed
@@ -276,6 +326,17 @@ click on the top volume row (INTC) opens the panel with `→ Accelerators & GPUs
 wafers / → Custom ASIC & Connectivity / → Memory & HBM`, 4 dated headlines and its
 Company facts, and CRWV's Direct competitors list resolves NBIS / APLD / IREN as
 on-chart buttons (the AI peer set is 51 entries, all charted peers clickable).
+
+The Financials block was swept by clicking every one of the All view's 88 charted
+tickers at 1600×1000 and 1150×900: 88/88 open it, no page errors, 10 to 26 rows each
+(median 24), no row overflowing the 400px or 340px panel. Spot values against the
+source: XOM 17.1× trailing and 11.7× forward P/E, 9.0× EV/EBITDA, 15.8× P/FCF, 6.3%
+FCF yield, 13.0% ROIC, 0.28× net debt/EBITDA, 57.6× interest cover, 0.4% a year
+share shrinkage, 14.4× peer median, $127 DCF value against a $166 price and 6.1%
+growth implied; DUK 5.38× net debt/EBITDA and FCF at 0.47× earnings; PLUG keeps
+only the rows it has (no P/E, no coverage, +24.6% a year dilution). CEIX, which has
+no page at the source, hides the block and keeps its Company facts, and every AI
+tab company (NVDA checked) hides it the same way.
 
 ## Note
 
