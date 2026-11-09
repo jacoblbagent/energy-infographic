@@ -297,6 +297,8 @@
       data-view="energy">All</button>
     <button class="vtab" type="button" role="tab" aria-selected="false"
       data-view="ai">AI</button>
+    <button class="vtab" type="button" role="tab" aria-selected="false"
+      data-view="dc">Data center</button>
   </div>
   <div class="vwho" id="vWho"></div>
   <!-- theme switch: dark is a token swap on <html data-theme>, set before paint
@@ -6689,7 +6691,6 @@ const PEERS={
 },
 {
 "t":"CARR",
-"n":"Carrier Global",
 "w":"HVAC & controls"
 },
 {
@@ -6708,7 +6709,6 @@ const PEERS={
 },
 {
 "t":"CARR",
-"n":"Carrier Global",
 "w":"HVAC & refrigeration"
 }
 ]
@@ -7022,7 +7022,6 @@ const PEERS={
 "peers":[
 {
 "t":"MTZ",
-"n":"MasTec",
 "w":"utility & grid construction"
 },
 {
@@ -7056,7 +7055,6 @@ const PEERS={
 },
 {
 "t":"NVT",
-"n":"nVent Electric",
 "w":"electrical enclosures"
 },
 {
@@ -7514,7 +7512,6 @@ const PEERS={
 },
 {
 "t":"DY",
-"n":"Dycom",
 "w":"network construction"
 }
 ]
@@ -7532,7 +7529,6 @@ const PEERS={
 },
 {
 "t":"DY",
-"n":"Dycom",
 "w":"network construction"
 }
 ]
@@ -7546,7 +7542,6 @@ const PEERS={
 },
 {
 "t":"IRM",
-"n":"Iron Mountain",
 "w":"datacenter leasing"
 }
 ]
@@ -7560,7 +7555,6 @@ const PEERS={
 },
 {
 "t":"IRM",
-"n":"Iron Mountain",
 "w":"datacenter leasing"
 },
 {
@@ -8018,6 +8012,455 @@ const PEERS={
 "w":"simulation"
 }
 ]
+},
+"CAT":{
+"basis":"Engine and genset makers",
+"peers":[
+{
+"t":"CMI",
+"n":"Cummins",
+"w":"diesel and gas gensets"
+},
+{
+"t":"GNRC",
+"w":"standby generators"
+},
+{
+"n":"Kohler Energy",
+"w":"standby generators (private)"
+}
+]
+},
+"NXT":{
+"basis":"Solar tracker makers",
+"peers":[
+{
+"t":"ARRY",
+"n":"Array Technologies",
+"w":"single-axis trackers"
+},
+{
+"n":"GameChange Solar",
+"w":"trackers and fixed-tilt (private)"
+},
+{
+"n":"PVH",
+"w":"trackers (private)"
+}
+]
+},
+"ABBNY":{
+"basis":"Electrical equipment",
+"peers":[
+{
+"t":"SIEGY",
+"w":"switchgear and electrification"
+},
+{
+"t":"SBGSY",
+"w":"power distribution and UPS"
+},
+{
+"t":"ETN",
+"w":"power distribution"
+}
+]
+},
+"SBGSY":{
+"basis":"Data-center power and cooling",
+"peers":[
+{
+"t":"ABBNY",
+"w":"switchgear and busway"
+},
+{
+"t":"SIEGY",
+"w":"switchgear and electrification"
+},
+{
+"t":"VRT",
+"w":"UPS and thermal management"
+}
+]
+},
+"SIEGY":{
+"basis":"Electrical equipment",
+"peers":[
+{
+"t":"ABBNY",
+"w":"switchgear and electrification"
+},
+{
+"t":"SBGSY",
+"w":"power distribution and UPS"
+},
+{
+"t":"ETN",
+"w":"power distribution"
+}
+]
+},
+"NVT":{
+"basis":"Enclosures and liquid cooling",
+"peers":[
+{
+"t":"HUBB",
+"w":"electrical enclosures and grid hardware"
+},
+{
+"t":"LGRDY",
+"w":"racks, PDUs and containment"
+},
+{
+"t":"VRT",
+"w":"thermal management"
+},
+{
+"n":"Rittal",
+"w":"enclosures and cooling (private)"
+}
+]
+},
+"CARR":{
+"basis":"HVAC and chillers",
+"peers":[
+{
+"t":"TT",
+"w":"chillers and air handlers"
+},
+{
+"t":"JCI",
+"w":"building HVAC and controls"
+},
+{
+"t":"LII",
+"n":"Lennox International",
+"w":"packaged rooftop HVAC"
+}
+]
+},
+"AAON":{
+"basis":"Packaged HVAC",
+"peers":[
+{
+"t":"LII",
+"n":"Lennox International",
+"w":"packaged rooftop HVAC"
+},
+{
+"t":"CARR",
+"w":"air handlers and chillers"
+},
+{
+"t":"TT",
+"w":"air handlers"
+}
+]
+},
+"SPXC":{
+"basis":"Cooling towers",
+"peers":[
+{
+"n":"Baltimore Aircoil",
+"w":"cooling towers (private)"
+},
+{
+"n":"EVAPCO",
+"w":"evaporative cooling (private)"
+},
+{
+"n":"Brentwood Industries",
+"w":"cooling tower fill (private)"
+}
+]
+},
+"RRX":{
+"basis":"Motors and air movement",
+"peers":[
+{
+"t":"AME",
+"n":"AMETEK",
+"w":"motors and blowers"
+},
+{
+"t":"NJDCY",
+"w":"small motors and fans"
+},
+{
+"n":"ebm-papst",
+"w":"EC fans (private)"
+}
+]
+},
+"NJDCY":{
+"basis":"Motors and fans",
+"peers":[
+{
+"t":"RRX",
+"w":"motors and air movement"
+},
+{
+"t":"AME",
+"n":"AMETEK",
+"w":"motors and blowers"
+},
+{
+"n":"ebm-papst",
+"w":"EC fans (private)"
+}
+]
+},
+"MOD":{
+"basis":"Data-center liquid cooling",
+"peers":[
+{
+"t":"VRT",
+"w":"thermal management"
+},
+{
+"t":"NVT",
+"w":"liquid cooling and enclosures"
+},
+{
+"n":"Munters",
+"w":"data-center cooling (Stockholm-listed)"
+}
+]
+},
+"GLW":{
+"basis":"Optical fiber and cable",
+"peers":[
+{
+"t":"CIEN",
+"w":"optical transport"
+},
+{
+"t":"COMM",
+"w":"fiber and copper cabling"
+},
+{
+"t":"PRYMY",
+"n":"Prysmian",
+"w":"fiber and power cable"
+}
+]
+},
+"COMM":{
+"basis":"Cabling and rack infrastructure",
+"peers":[
+{
+"t":"GLW",
+"w":"optical fiber"
+},
+{
+"t":"BDC",
+"w":"data cable"
+},
+{
+"n":"Panduit",
+"w":"cabling and racks (private)"
+}
+]
+},
+"BDC":{
+"basis":"Data cable",
+"peers":[
+{
+"t":"COMM",
+"w":"cabling and racks"
+},
+{
+"t":"GLW",
+"w":"optical fiber"
+},
+{
+"n":"Panduit",
+"w":"cabling and racks (private)"
+}
+]
+},
+"TEL":{
+"basis":"Connectors",
+"peers":[
+{
+"t":"APH",
+"w":"connectors and cable assemblies"
+},
+{
+"n":"Molex",
+"w":"connectors (private)"
+},
+{
+"n":"Yazaki",
+"w":"connectors (private)"
+}
+]
+},
+"APH":{
+"basis":"Connectors",
+"peers":[
+{
+"t":"TEL",
+"w":"connectors and cable assemblies"
+},
+{
+"n":"Molex",
+"w":"connectors (private)"
+},
+{
+"n":"Rosenberger",
+"w":"connectors (private)"
+}
+]
+},
+"LGRDY":{
+"basis":"Racks, PDUs and containment",
+"peers":[
+{
+"t":"SBGSY",
+"w":"racks and power distribution"
+},
+{
+"t":"VRT",
+"w":"power and thermal"
+},
+{
+"t":"COMM",
+"w":"cabling and racks"
+}
+]
+},
+"NTAP":{
+"basis":"Enterprise storage",
+"peers":[
+{
+"t":"PSTG",
+"n":"Pure Storage",
+"w":"all-flash arrays"
+},
+{
+"t":"DELL",
+"w":"storage arrays"
+},
+{
+"t":"HPE",
+"w":"storage arrays"
+}
+]
+},
+"MTZ":{
+"basis":"Infrastructure contractors",
+"peers":[
+{
+"t":"PWR",
+"w":"grid and utility construction"
+},
+{
+"t":"EME",
+"w":"electrical and mechanical contracting"
+},
+{
+"t":"MYRG",
+"n":"MYR Group",
+"w":"transmission and substation work"
+},
+{
+"t":"DY",
+"w":"network construction"
+}
+]
+},
+"DY":{
+"basis":"Network contractors",
+"peers":[
+{
+"t":"MTZ",
+"w":"infrastructure construction"
+},
+{
+"t":"IESC",
+"w":"electrical and mechanical contracting"
+},
+{
+"t":"MYRG",
+"n":"MYR Group",
+"w":"transmission and substation work"
+}
+]
+},
+"IESC":{
+"basis":"Electrical and mechanical contractors",
+"peers":[
+{
+"t":"DY",
+"w":"network construction"
+},
+{
+"t":"MTZ",
+"w":"infrastructure construction"
+},
+{
+"t":"EME",
+"w":"electrical and mechanical contracting"
+},
+{
+"t":"FIX",
+"w":"mechanical and electrical contracting"
+}
+]
+},
+"IRM":{
+"basis":"Data center and colocation REITs",
+"peers":[
+{
+"t":"EQIX",
+"w":"colocation and interconnection"
+},
+{
+"t":"DLR",
+"w":"data center REIT"
+},
+{
+"t":"KDCREIT",
+"n":"Keppel DC REIT",
+"w":"data center REIT (Singapore-listed)"
+}
+]
+},
+"ECL":{
+"basis":"Water treatment",
+"peers":[
+{
+"t":"XYL",
+"w":"pumps and water treatment"
+},
+{
+"n":"Kurita Water Industries",
+"w":"water treatment (Tokyo-listed)"
+},
+{
+"n":"Veolia",
+"w":"water and waste (Paris-listed)"
+}
+]
+},
+"XYL":{
+"basis":"Pumps and water treatment",
+"peers":[
+{
+"t":"ECL",
+"w":"water treatment chemicals"
+},
+{
+"t":"PNR",
+"n":"Pentair",
+"w":"pumps and water treatment"
+},
+{
+"n":"Veolia",
+"w":"water and waste (Paris-listed)"
+}
+]
 }
 };
 const PEERS_NOTE="Curated from each company's disclosed business segments. Charted tickers open their own panel; off-chart peers are listed for context.";
@@ -8180,6 +8623,32 @@ const CO={
   SNPS:["Synopsys","EDA software","Synopsys sells the design and verification software used to create chips before they are made. Its IP library is licensed into most accelerator designs."],
   CDNS:["Cadence","EDA software","Cadence sells design and verification software plus chip IP, including interfaces for memory and high-speed links. Advanced chips pass through its tools."],
   ORCL:["Oracle","Cloud & databases","Oracle sells databases and enterprise applications and has built out OCI cloud regions with GPU capacity for AI. Its remaining-performance backlog has grown quickly on AI contracts."],
+  CAT:["Caterpillar","Engines & gensets","Caterpillar builds the diesel and gas generator sets that back up datacenter power, along with the engines behind them. It sells the switchgear, controls and enclosures packaged with those sets through its electric power business."],
+  GNRC:["Generac","Backup generators","Generac sells standby generators, transfer switches and the controls that start them when the grid drops. Its commercial and industrial line covers the larger diesel and gas units a datacenter uses as backup."],
+  NXT:["Nextracker","Solar trackers","Nextracker makes the single-axis trackers that turn solar panels toward the sun on utility-scale projects. It also supplies the software that steers the rows and reports on their output."],
+  ABBNY:["ABB","Electrification","ABB supplies the electrical kit a datacenter is wired with: switchgear, breakers, busway, modular substations and the drives and motors behind them. Its electrification segment sells to utilities, buildings and industrial sites."],
+  SBGSY:["Schneider Electric","Power & cooling","Schneider Electric sells the distribution and cooling a datacenter is built from: switchgear, PDUs, busway, racks and its APC-branded UPS and cooling lines. It also sells the software that monitors and manages them."],
+  SIEGY:["Siemens","Electrification","Siemens builds medium-voltage switchgear, transformers, protection relays and the automation that runs them, plus gas turbines for on-site generation. Its electrification business is a major supplier into datacenter power trains."],
+  NVT:["nVent","Enclosures & liquid cooling","nVent makes the enclosures, busway, electrical protection and liquid-cooling loops inside a datacenter. Its Hoffman enclosures and RackChiller coolant distribution units are common in server halls."],
+  CARR:["Carrier","HVAC & chillers","Carrier makes chillers, air handlers and rooftop units for commercial buildings, including the packaged cooling plants many datacenters run. It also sells the controls that tie them together."],
+  AAON:["AAON","Packaged HVAC","AAON builds custom rooftop and packaged HVAC units with the controls and EC fans built in. Its BASX line is built for datacenter, cleanroom and other high-load duty."],
+  SPXC:["SPX Technologies","Cooling towers","SPX Technologies owns SPX Cooling Tech, which builds the Marley cooling towers and evaporative condensers behind large cooling plants, including datacenter campuses."],
+  RRX:["Regal Rexnord","Motors & fans","Regal Rexnord makes the motors, blowers and air-moving components that sit inside HVAC and cooling equipment. It sells to the OEMs that build datacenter air handlers rather than to the datacenter directly."],
+  NJDCY:["Nidec","Fans & motors","Nidec is the largest maker of small motors and fans, including the EC fans and fan walls used in datacenter air handlers and cooling units. It also sells drives, generators and power supplies."],
+  MOD:["Modine","Liquid cooling","Modine makes heating and cooling equipment for buildings, vehicles and industrial sites. Its datacenter products cover coolant distribution units and rear-door heat exchangers for liquid-cooled racks."],
+  GLW:["Corning","Optical fiber","Corning makes the optical fiber and cable that carries traffic between datacenter buildings and across campuses, plus the connectors that terminate it. Its fiber business also supplies the access networks that feed the sites."],
+  COMM:["CommScope","Cabling & racks","CommScope sells the copper and fiber cabling, patch panels, racks and enclosures that wire a datacenter network. Its SYSTIMAX and NETCONNECT lines are standard in enterprise and colocation halls."],
+  BDC:["Belden","Cabling","Belden makes signal and data cable, connectors and industrial switches for enterprise and plant networks, including the fiber and copper backbone inside datacenter halls."],
+  TEL:["TE Connectivity","Connectors","TE Connectivity makes connectors, terminals and cable assemblies, including the high-speed copper and power connectors used inside servers, switches and power shelves."],
+  APH:["Amphenol","Connectors","Amphenol makes connectors and cable assemblies for datacenter power and high-speed signaling. Its products sit on server, switch and rack backplanes and on the cables that join them."],
+  LGRDY:["Legrand","Racks & PDUs","Legrand sells the white-space infrastructure of a datacenter: racks, PDUs, busway, cable management and containment, under brands including Starline and Minkels."],
+  NTAP:["NetApp","Storage systems","NetApp sells enterprise storage arrays, the ONTAP software that runs them and the hybrid cloud services that connect them. Its systems are a common on-premises storage tier in datacenters."],
+  MTZ:["MasTec","Contractor","MasTec is an infrastructure contractor that builds transmission lines, substations, pipelines and the civil and electrical work on large sites, including datacenter and power generation projects."],
+  DY:["Dycom","Contractor","Dycom is a specialty contractor that builds and maintains the fiber, copper and wireless networks outside the building, including the routes that connect datacenters to carrier networks."],
+  IESC:["IES Holdings","Contractor","IES Holdings does electrical and mechanical contracting, including the switchgear installation, power distribution and service work behind industrial and datacenter facilities."],
+  IRM:["Iron Mountain","Datacenter REIT","Iron Mountain runs colocation and wholesale datacenter capacity alongside its records storage and data management businesses, leasing space and power to enterprise and hyperscale tenants."],
+  ECL:["Ecolab","Water treatment","Ecolab sells water treatment, cleaning and hygiene chemicals and the service contracts that run them. Its cooling-water programs treat the loops that keep datacenter chillers and condensers efficient."],
+  XYL:["Xylem","Pumps & water","Xylem makes pumps, treatment systems and water monitoring equipment for utilities, buildings and industry, including the pumps and filtration used in cooling and process water."]
 };
 
 /* group palettes — f=stroke/accent, t=chip tint. The energy view uses the top
@@ -8188,16 +8657,20 @@ const CO={
 const PAL={
   light:{
     G:{fossil:"#C2410C",lowc:"#0E9F6E",infra:"#2563EB",svc:"#64748B",use:"#334155",
-       sil:"#7C3AED",sys:"#2563EB",dci:"#0E7490",mdl:"#0E9F6E",app:"#B45309"},
+       sil:"#7C3AED",sys:"#2563EB",dci:"#0E7490",mdl:"#0E9F6E",app:"#B45309",
+       dcp:"#B45309",dcd:"#2563EB",dcc:"#0E7490",dck:"#7C3AED",dcs:"#0E9F6E"},
     TINT:{fossil:"#FAF0E9",lowc:"#EAF7F1",infra:"#ECF1FD",svc:"#F0F3F6",use:"#EDF0F3",
-          sil:"#F3EEFE",sys:"#ECF1FD",dci:"#E6F4F7",mdl:"#EAF7F1",app:"#FBF1E7"}},
+          sil:"#F3EEFE",sys:"#ECF1FD",dci:"#E6F4F7",mdl:"#EAF7F1",app:"#FBF1E7",
+          dcp:"#FBF1E7",dcd:"#ECF1FD",dcc:"#E6F4F7",dck:"#F3EEFE",dcs:"#EAF7F1"}},
   dark:{
     /* dark lifts every hue so it holds on a near-black canvas, and drops the
        chip tints to a low-chroma wash instead of a pale one */
     G:{fossil:"#FB923C",lowc:"#34D399",infra:"#60A5FA",svc:"#94A3B8",use:"#CBD5E1",
-       sil:"#A78BFA",sys:"#60A5FA",dci:"#22D3EE",mdl:"#34D399",app:"#FBBF24"},
+       sil:"#A78BFA",sys:"#60A5FA",dci:"#22D3EE",mdl:"#34D399",app:"#FBBF24",
+       dcp:"#FBBF24",dcd:"#60A5FA",dcc:"#22D3EE",dck:"#A78BFA",dcs:"#34D399"},
     TINT:{fossil:"#352115",lowc:"#122A22",infra:"#15243A",svc:"#1B2634",use:"#232F3D",
-          sil:"#241C3D",sys:"#15243A",dci:"#0E2A33",mdl:"#122A22",app:"#38290F"}}
+          sil:"#241C3D",sys:"#15243A",dci:"#0E2A33",mdl:"#122A22",app:"#38290F",
+          dcp:"#38290F",dcd:"#15243A",dcc:"#0E2A33",dck:"#241C3D",dcs:"#122A22"}}
 };
 let G=PAL.light.G, TINT=PAL.light.TINT;
 
@@ -8308,6 +8781,48 @@ const AI_ENABLERS=[
   {id:"a-pow", g:"svc", label:"Datacenter Power & Cooling",cos:["VRT","ETN","GEV","PWR"]}
 ];
 
+/* ---------- the data center build ----------
+   The AI chain asks who makes the compute; this one asks who makes the building it
+   sits in. Same five-column shape, but the thing that flows is equipment: the
+   generator and the solar farm feed the switchgear and UPS, the UPS feeds the
+   cooling plant and the racks, and the cabling and servers are assembled and run
+   by the EPCs and operators. It is the supply side of the energy chain's own
+   "Data Centers" end-use node, drawn from the generator outward. */
+const DC_NODES=[
+  {id:"dgen", c:0,label:"On-Site Generation",       g:"dcp",cos:["CAT","GNRC","GEV","BE"]},
+  {id:"dren", c:0,label:"Solar, Wind & Storage",    g:"dcp",cos:["FSLR","NXT","ENPH","FLNC"]},
+
+  {id:"dswg", c:1,label:"Switchgear & Transformers",g:"dcd",cos:["PWR","HUBB","SIEGY"]},
+  {id:"dups", c:1,label:"UPS, PDUs & Busway",       g:"dcd",cos:["VRT","ETN","ABBNY","SBGSY"]},
+
+  {id:"dcool",c:2,label:"Chillers & Air Handlers",  g:"dcc",cos:["JCI","TT","CARR","AAON","SPXC"]},
+  {id:"dfan", c:2,label:"Fans & Liquid Cooling",    g:"dcc",cos:["RRX","NJDCY","MOD"]},
+
+  {id:"dcrk", c:3,label:"Racks & Enclosures",        g:"dck",cos:["NVT","LGRDY","BDC"]},
+  {id:"dcab", c:3,label:"Cabling & Fiber",           g:"dck",cos:["GLW","COMM","TEL","APH"]},
+
+  {id:"dsrv", c:4,label:"Servers & Storage",        g:"dcs",cos:["SMCI","DELL","HPE","NTAP"]},
+  {id:"dnet", c:4,label:"Switching & Optics",       g:"dcs",cos:["ANET","CSCO"]},
+  {id:"dops", c:4,label:"Build & Operate",          g:"dcs",cos:["EME","FIX","EQIX","DLR","IRM"]}
+];
+
+const DC_EDGES=[
+  {a:"dgen",b:"dswg",l:"MV power"},{a:"dren",b:"dswg"},
+  {a:"dswg",b:"dups"},
+  {a:"dups",b:"dcool",l:"power"},{a:"dups",b:"dfan"},{a:"dups",b:"dcrk"},{a:"dups",b:"dsrv"},
+  {a:"dfan",b:"dsrv",l:"liquid cooling"},
+  {a:"dcrk",b:"dcab",l:"fiber · copper"},
+  {a:"dcool",b:"dsrv",l:"cooling"},
+  {a:"dcab",b:"dsrv",l:"data"},{a:"dcab",b:"dnet"},
+  {a:"dsrv",b:"dops",l:"racks"},{a:"dnet",b:"dops"}
+];
+
+const DC_ENABLERS=[
+  {id:"d-epc",g:"svc", label:"Contractors & Commissioning",cos:["MTZ","DY","IESC"]},
+  {id:"d-sil",g:"svc", label:"Chips & Accelerators",     cos:["NVDA","AMD","AVGO","MRVL"]},
+  {id:"d-h2o",g:"svc", label:"Water & Cooling Treatment",cos:["ECL","XYL"]}
+];
+
 /* ---------- views ----------
    One entry per tab. `loop` is the capital-returns edge that closes the chain
    from the end-use column back to the first supply column. */
@@ -8335,6 +8850,18 @@ const VIEWS={
     key:"—— compute & value flow     ╌╌ supplies & capital",
     loop:{from:"aut", to:"acc", label:"REVENUE & CAPITAL RETURNS"},
     nodes:AI_NODES, edges:AI_EDGES, enablers:AI_ENABLERS
+  },
+  dc:{
+    tab:"dc", pageTitle:"The Data Center Supply Chain",
+    title:"The Data Center Supply Chain",
+    sub:"Public companies that make the equipment inside a data center, from the genset to the switch port. Hover to preview a node, click to hold that path, click a ticker for the company.",
+    colTitles:["POWER SUPPLY","POWER DISTRIBUTION","COOLING & AIR","RACKS & CABLING","IT & BUILD-OUT"],
+    cx:[230,530,830,1130,1460], nw:[240,240,240,250,250],
+    legend:[["Power supply",G.dcp],["Distribution",G.dcd],["Cooling",G.dcc],
+            ["Racks & cabling",G.dck],["IT & build",G.dcs],["Enablers",G.svc]],
+    key:"—— equipment flow     ╌╌ supplies & capital",
+    loop:{from:"dops", to:"dgen", label:"REVENUE & CAPITAL RETURNS"},
+    nodes:DC_NODES, edges:DC_EDGES, enablers:DC_ENABLERS
   }
 };
 

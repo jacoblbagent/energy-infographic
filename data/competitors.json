@@ -2461,6 +2461,455 @@
      "w": "simulation"
     }
    ]
+  },
+  "CAT": {
+   "basis": "Engine and genset makers",
+   "peers": [
+    {
+     "t": "CMI",
+     "n": "Cummins",
+     "w": "diesel and gas gensets"
+    },
+    {
+     "t": "GNRC",
+     "w": "standby generators"
+    },
+    {
+     "n": "Kohler Energy",
+     "w": "standby generators (private)"
+    }
+   ]
+  },
+  "NXT": {
+   "basis": "Solar tracker makers",
+   "peers": [
+    {
+     "t": "ARRY",
+     "n": "Array Technologies",
+     "w": "single-axis trackers"
+    },
+    {
+     "n": "GameChange Solar",
+     "w": "trackers and fixed-tilt (private)"
+    },
+    {
+     "n": "PVH",
+     "w": "trackers (private)"
+    }
+   ]
+  },
+  "ABBNY": {
+   "basis": "Electrical equipment",
+   "peers": [
+    {
+     "t": "SIEGY",
+     "w": "switchgear and electrification"
+    },
+    {
+     "t": "SBGSY",
+     "w": "power distribution and UPS"
+    },
+    {
+     "t": "ETN",
+     "w": "power distribution"
+    }
+   ]
+  },
+  "SBGSY": {
+   "basis": "Data-center power and cooling",
+   "peers": [
+    {
+     "t": "ABBNY",
+     "w": "switchgear and busway"
+    },
+    {
+     "t": "SIEGY",
+     "w": "switchgear and electrification"
+    },
+    {
+     "t": "VRT",
+     "w": "UPS and thermal management"
+    }
+   ]
+  },
+  "SIEGY": {
+   "basis": "Electrical equipment",
+   "peers": [
+    {
+     "t": "ABBNY",
+     "w": "switchgear and electrification"
+    },
+    {
+     "t": "SBGSY",
+     "w": "power distribution and UPS"
+    },
+    {
+     "t": "ETN",
+     "w": "power distribution"
+    }
+   ]
+  },
+  "NVT": {
+   "basis": "Enclosures and liquid cooling",
+   "peers": [
+    {
+     "t": "HUBB",
+     "w": "electrical enclosures and grid hardware"
+    },
+    {
+     "t": "LGRDY",
+     "w": "racks, PDUs and containment"
+    },
+    {
+     "t": "VRT",
+     "w": "thermal management"
+    },
+    {
+     "n": "Rittal",
+     "w": "enclosures and cooling (private)"
+    }
+   ]
+  },
+  "CARR": {
+   "basis": "HVAC and chillers",
+   "peers": [
+    {
+     "t": "TT",
+     "w": "chillers and air handlers"
+    },
+    {
+     "t": "JCI",
+     "w": "building HVAC and controls"
+    },
+    {
+     "t": "LII",
+     "n": "Lennox International",
+     "w": "packaged rooftop HVAC"
+    }
+   ]
+  },
+  "AAON": {
+   "basis": "Packaged HVAC",
+   "peers": [
+    {
+     "t": "LII",
+     "n": "Lennox International",
+     "w": "packaged rooftop HVAC"
+    },
+    {
+     "t": "CARR",
+     "w": "air handlers and chillers"
+    },
+    {
+     "t": "TT",
+     "w": "air handlers"
+    }
+   ]
+  },
+  "SPXC": {
+   "basis": "Cooling towers",
+   "peers": [
+    {
+     "n": "Baltimore Aircoil",
+     "w": "cooling towers (private)"
+    },
+    {
+     "n": "EVAPCO",
+     "w": "evaporative cooling (private)"
+    },
+    {
+     "n": "Brentwood Industries",
+     "w": "cooling tower fill (private)"
+    }
+   ]
+  },
+  "RRX": {
+   "basis": "Motors and air movement",
+   "peers": [
+    {
+     "t": "AME",
+     "n": "AMETEK",
+     "w": "motors and blowers"
+    },
+    {
+     "t": "NJDCY",
+     "w": "small motors and fans"
+    },
+    {
+     "n": "ebm-papst",
+     "w": "EC fans (private)"
+    }
+   ]
+  },
+  "NJDCY": {
+   "basis": "Motors and fans",
+   "peers": [
+    {
+     "t": "RRX",
+     "w": "motors and air movement"
+    },
+    {
+     "t": "AME",
+     "n": "AMETEK",
+     "w": "motors and blowers"
+    },
+    {
+     "n": "ebm-papst",
+     "w": "EC fans (private)"
+    }
+   ]
+  },
+  "MOD": {
+   "basis": "Data-center liquid cooling",
+   "peers": [
+    {
+     "t": "VRT",
+     "w": "thermal management"
+    },
+    {
+     "t": "NVT",
+     "w": "liquid cooling and enclosures"
+    },
+    {
+     "n": "Munters",
+     "w": "data-center cooling (Stockholm-listed)"
+    }
+   ]
+  },
+  "GLW": {
+   "basis": "Optical fiber and cable",
+   "peers": [
+    {
+     "t": "CIEN",
+     "w": "optical transport"
+    },
+    {
+     "t": "COMM",
+     "w": "fiber and copper cabling"
+    },
+    {
+     "t": "PRYMY",
+     "n": "Prysmian",
+     "w": "fiber and power cable"
+    }
+   ]
+  },
+  "COMM": {
+   "basis": "Cabling and rack infrastructure",
+   "peers": [
+    {
+     "t": "GLW",
+     "w": "optical fiber"
+    },
+    {
+     "t": "BDC",
+     "w": "data cable"
+    },
+    {
+     "n": "Panduit",
+     "w": "cabling and racks (private)"
+    }
+   ]
+  },
+  "BDC": {
+   "basis": "Data cable",
+   "peers": [
+    {
+     "t": "COMM",
+     "w": "cabling and racks"
+    },
+    {
+     "t": "GLW",
+     "w": "optical fiber"
+    },
+    {
+     "n": "Panduit",
+     "w": "cabling and racks (private)"
+    }
+   ]
+  },
+  "TEL": {
+   "basis": "Connectors",
+   "peers": [
+    {
+     "t": "APH",
+     "w": "connectors and cable assemblies"
+    },
+    {
+     "n": "Molex",
+     "w": "connectors (private)"
+    },
+    {
+     "n": "Yazaki",
+     "w": "connectors (private)"
+    }
+   ]
+  },
+  "APH": {
+   "basis": "Connectors",
+   "peers": [
+    {
+     "t": "TEL",
+     "w": "connectors and cable assemblies"
+    },
+    {
+     "n": "Molex",
+     "w": "connectors (private)"
+    },
+    {
+     "n": "Rosenberger",
+     "w": "connectors (private)"
+    }
+   ]
+  },
+  "LGRDY": {
+   "basis": "Racks, PDUs and containment",
+   "peers": [
+    {
+     "t": "SBGSY",
+     "w": "racks and power distribution"
+    },
+    {
+     "t": "VRT",
+     "w": "power and thermal"
+    },
+    {
+     "t": "COMM",
+     "w": "cabling and racks"
+    }
+   ]
+  },
+  "NTAP": {
+   "basis": "Enterprise storage",
+   "peers": [
+    {
+     "t": "PSTG",
+     "n": "Pure Storage",
+     "w": "all-flash arrays"
+    },
+    {
+     "t": "DELL",
+     "w": "storage arrays"
+    },
+    {
+     "t": "HPE",
+     "w": "storage arrays"
+    }
+   ]
+  },
+  "MTZ": {
+   "basis": "Infrastructure contractors",
+   "peers": [
+    {
+     "t": "PWR",
+     "w": "grid and utility construction"
+    },
+    {
+     "t": "EME",
+     "w": "electrical and mechanical contracting"
+    },
+    {
+     "t": "MYRG",
+     "n": "MYR Group",
+     "w": "transmission and substation work"
+    },
+    {
+     "t": "DY",
+     "w": "network construction"
+    }
+   ]
+  },
+  "DY": {
+   "basis": "Network contractors",
+   "peers": [
+    {
+     "t": "MTZ",
+     "w": "infrastructure construction"
+    },
+    {
+     "t": "IESC",
+     "w": "electrical and mechanical contracting"
+    },
+    {
+     "t": "MYRG",
+     "n": "MYR Group",
+     "w": "transmission and substation work"
+    }
+   ]
+  },
+  "IESC": {
+   "basis": "Electrical and mechanical contractors",
+   "peers": [
+    {
+     "t": "DY",
+     "w": "network construction"
+    },
+    {
+     "t": "MTZ",
+     "w": "infrastructure construction"
+    },
+    {
+     "t": "EME",
+     "w": "electrical and mechanical contracting"
+    },
+    {
+     "t": "FIX",
+     "w": "mechanical and electrical contracting"
+    }
+   ]
+  },
+  "IRM": {
+   "basis": "Data center and colocation REITs",
+   "peers": [
+    {
+     "t": "EQIX",
+     "w": "colocation and interconnection"
+    },
+    {
+     "t": "DLR",
+     "w": "data center REIT"
+    },
+    {
+     "t": "KDCREIT",
+     "n": "Keppel DC REIT",
+     "w": "data center REIT (Singapore-listed)"
+    }
+   ]
+  },
+  "ECL": {
+   "basis": "Water treatment",
+   "peers": [
+    {
+     "t": "XYL",
+     "w": "pumps and water treatment"
+    },
+    {
+     "n": "Kurita Water Industries",
+     "w": "water treatment (Tokyo-listed)"
+    },
+    {
+     "n": "Veolia",
+     "w": "water and waste (Paris-listed)"
+    }
+   ]
+  },
+  "XYL": {
+   "basis": "Pumps and water treatment",
+   "peers": [
+    {
+     "t": "ECL",
+     "w": "water treatment chemicals"
+    },
+    {
+     "t": "PNR",
+     "n": "Pentair",
+     "w": "pumps and water treatment"
+    },
+    {
+     "n": "Veolia",
+     "w": "water and waste (Paris-listed)"
+    }
+   ]
   }
  }
 }

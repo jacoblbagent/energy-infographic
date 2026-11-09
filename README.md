@@ -5,9 +5,10 @@
 **Local:** http://localhost:5184/  ·  **Tailnet:** http://jlb-hermes.tail1caa84.ts.net:5184/
 
 A single-file, dependency-free web infographic showing the public companies in
-each sector of an industry and how the sectors interact. Two value chains are
-drawn from the same data model, one per tab: **All** (the energy chain) and
-**AI** (the compute/AI chain). Data-driven SVG built at load time from a few JS
+each sector of an industry and how the sectors interact. Three value chains are
+drawn from the same data model, one per tab: **All** (the energy chain),
+**AI** (the compute/AI chain) and **Data center** (the equipment supply chain
+inside the building). Data-driven SVG built at load time from a few JS
 structures, no build step, no framework.
 
 **Purpose:** one screen that answers "who is in this sector, and how does what
@@ -43,7 +44,25 @@ with an **ENABLERS** band — Semiconductor Equipment & Materials
 Datacenter Power & Cooling (VRT ETN GEV PWR) — and the same dashed capital-returns
 loop back to the first column.
 
-Both views are the same data model: a `VIEWS` entry names its node list, edge
+**Data center** is the third chain: the supply side of the energy view's own
+"Data Centers" end-use node, drawn from the generator outward — who makes the
+equipment inside the building, not who runs the workloads.
+
+1. **Power Supply** — On-Site Generation (CAT GNRC GEV BE), Solar, Wind & Storage
+   (FSLR NXT ENPH FLNC)
+2. **Power Distribution** — Switchgear & Transformers (PWR HUBB SIEGY), UPS, PDUs
+   & Busway (VRT ETN ABBNY SBGSY)
+3. **Cooling & Air** — Chillers & Air Handlers (JCI TT CARR AAON SPXC), Fans &
+   Liquid Cooling (RRX NJDCY MOD)
+4. **Racks & Cabling** — Racks & Enclosures (NVT LGRDY BDC), Cabling & Fiber
+   (GLW COMM TEL APH)
+5. **IT & Build-Out** — Servers & Storage (SMCI DELL HPE NTAP), Switching & Optics
+   (ANET CSCO), Build & Operate (EME FIX EQIX DLR IRM)
+
+Enablers: Contractors & Commissioning (MTZ DY IESC), Chips & Accelerators
+(NVDA AMD AVGO MRVL), Water & Cooling Treatment (ECL XYL).
+
+All three views are the same data model: a `VIEWS` entry names its node list, edge
 list, enabler list, column titles, x-centres/widths, legend, header text and the
 `loop` endpoints. `buildView(key)` clears the canvas and redraws from whichever
 view is active, and re-points the company panel's Flows block and the market rail
