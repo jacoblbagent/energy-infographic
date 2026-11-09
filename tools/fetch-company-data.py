@@ -188,6 +188,33 @@ COMPANIES = {
     "MKSI":  ("MKS Instruments", "MKS Instruments", None),
     "SNPS":  ("Synopsys", "Synopsys", None),
     "CDNS":  ("Cadence Design Systems", "Cadence Design Systems", None),
+
+    # ---- data center view (equipment supply chain) ----
+    "CAT":   ("Caterpillar Inc.", "Caterpillar generator data center", None),
+    "NXT":   ("Nextracker", "Nextracker", None),
+    "ABBNY": ("ABB", "ABB electrification data center", None),
+    "SBGSY": ("Schneider Electric", "Schneider Electric data center", None),
+    "SIEGY": ("Siemens", "Siemens electrification data center", None),
+    "NVT":   ("nVent Electric", "nVent liquid cooling", None),
+    "CARR":  ("Carrier Global", "Carrier data center cooling", None),
+    "AAON":  ("AAON", "AAON data center", None),
+    "SPXC":  ("SPX Technologies", "SPX cooling towers", None),
+    "RRX":   ("Regal Rexnord", "Regal Rexnord", None),
+    "NJDCY": ("Nidec", "Nidec fans", None),
+    "MOD":   ("Modine Manufacturing", "Modine data center cooling", None),
+    "GLW":   ("Corning Inc.", "Corning optical fiber", None),
+    "COMM":  ("CommScope", "CommScope", "Q5152057"),
+    "BDC":   ("Belden", "Belden", None),
+    "TEL":   ("TE Connectivity", "TE Connectivity connectors", None),
+    "APH":   ("Amphenol", "Amphenol", None),
+    "LGRDY": ("Legrand", "Legrand data center", None),
+    "NTAP":  ("NetApp", "NetApp", None),
+    "MTZ":   ("MasTec", "MasTec data center", None),
+    "DY":    ("Dycom Industries", "Dycom", None),
+    "IESC":  ("IES Holdings", "IES Holdings", None),
+    "IRM":   ("Iron Mountain", "Iron Mountain data center", "Q1673079"),
+    "ECL":   ("Ecolab", "Ecolab cooling water", "Q1282031"),
+    "XYL":   ("Xylem", "Xylem", None),
 }
 
 EXCHANGE_SHORT = {
