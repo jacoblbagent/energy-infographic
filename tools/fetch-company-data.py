@@ -215,6 +215,18 @@ COMPANIES = {
     "IRM":   ("Iron Mountain", "Iron Mountain data center", "Q1673079"),
     "ECL":   ("Ecolab", "Ecolab cooling water", "Q1282031"),
     "XYL":   ("Xylem", "Xylem", None),
+
+    # ---- grid view (transmission and distribution) ----
+    "FTS":   ("Fortis Inc.", "Fortis ITC transmission", None),
+    "XEL":   ("Xcel Energy", "Xcel Energy", None),
+    "POWL":  ("Powell Industries", "Powell Industries", None),
+    "VMI":   ("Valmont Industries", "Valmont Industries", None),
+    "PLPC":  ("Preformed Line Products", "Preformed Line Products", None),
+    "ED":    ("Consolidated Edison", "Con Edison", None),
+    "ITRI":  ("Itron", "Itron", None),
+    "ESE":   ("ESCO Technologies", "ESCO Technologies", None),
+    "MYRG":  ("MYR Group", "MYR Group", None),
+    "SCCO":  ("Southern Copper Corporation", "Southern Copper", None),
 }
 
 EXCHANGE_SHORT = {

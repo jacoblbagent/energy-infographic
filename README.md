@@ -5,10 +5,10 @@
 **Local:** http://localhost:5184/  ·  **Tailnet:** http://jlb-hermes.tail1caa84.ts.net:5184/
 
 A single-file, dependency-free web infographic showing the public companies in
-each sector of an industry and how the sectors interact. Three value chains are
+each sector of an industry and how the sectors interact. Four value chains are
 drawn from the same data model, one per tab: **All** (the energy chain),
-**AI** (the compute/AI chain) and **Data center** (the equipment supply chain
-inside the building). Data-driven SVG built at load time from a few JS
+**AI** (the compute/AI chain), **Data center** (the equipment supply chain
+inside the building) and **Grid** (generation to the meter). Data-driven SVG built at load time from a few JS
 structures, no build step, no framework.
 
 **Purpose:** one screen that answers "who is in this sector, and how does what
@@ -62,7 +62,24 @@ equipment inside the building, not who runs the workloads.
 Enablers: Contractors & Commissioning (MTZ DY IESC), Chips & Accelerators
 (NVDA AMD AVGO MRVL), Water & Cooling Treatment (ECL XYL).
 
-All three views are the same data model: a `VIEWS` entry names its node list, edge
+**Grid** is the fourth chain: the path power takes from the plant to the meter.
+Equipment makers sit beside the stage they supply as dashed supply edges.
+
+1. **Generation** — Dispatchable Generation (CEG VST NRG TLN), Renewables &
+   Storage (NEE BEP AES FLNC)
+2. **Transmission** — Transmission Owners (AEP FTS XEL), HV Equipment
+   (GEV SIEGY ABBNY)
+3. **Substations** — Substations & Switchgear (ETN HUBB POWL), Poles & Line
+   Hardware (VMI PLPC)
+4. **Distribution** — Distribution Utilities (DUK SO D EXC ED), Meters & Grid
+   Monitoring (ITRI ESE)
+5. **Grid Edge & Demand** — Homes & Rooftop Solar (ENPH RUN GNRC), EV Charging
+   (CHPT EVGO), Large Loads (EQIX DLR NUE)
+
+Enablers: Grid Contractors (PWR MTZ MYRG), Copper & Aluminum (FCX SCCO AA),
+Generation Fuel (CCJ LEU EQT BTU).
+
+All four views are the same data model: a `VIEWS` entry names its node list, edge
 list, enabler list, column titles, x-centres/widths, legend, header text and the
 `loop` endpoints. `buildView(key)` clears the canvas and redraws from whichever
 view is active, and re-points the company panel's Flows block and the market rail

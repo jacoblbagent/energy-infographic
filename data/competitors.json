@@ -2910,6 +2910,180 @@
      "w": "water and waste (Paris-listed)"
     }
    ]
+  },
+  "FTS": {
+   "basis": "Transmission and regulated utilities",
+   "peers": [
+    {
+     "t": "AEP",
+     "w": "transmission and regulated utility"
+    },
+    {
+     "t": "XEL",
+     "w": "transmission and regulated utility"
+    },
+    {
+     "n": "Emera",
+     "w": "regulated utilities (Toronto-listed)"
+    }
+   ]
+  },
+  "XEL": {
+   "basis": "Regulated electric utility",
+   "peers": [
+    {
+     "t": "AEP",
+     "w": "transmission and regulated utility"
+    },
+    {
+     "t": "DUK",
+     "w": "regulated electric utility"
+    },
+    {
+     "t": "WEC",
+     "n": "WEC Energy",
+     "w": "Midwestern electric and gas utility"
+    }
+   ]
+  },
+  "POWL": {
+   "basis": "Switchgear and packaged substations",
+   "peers": [
+    {
+     "t": "ETN",
+     "w": "switchgear and power distribution"
+    },
+    {
+     "t": "HUBB",
+     "w": "utility and substation hardware"
+    },
+    {
+     "t": "ABBNY",
+     "w": "switchgear and electrification"
+    }
+   ]
+  },
+  "VMI": {
+   "basis": "Utility poles and towers",
+   "peers": [
+    {
+     "t": "PLPC",
+     "w": "overhead line hardware"
+    },
+    {
+     "t": "HUBB",
+     "w": "utility line hardware"
+    },
+    {
+     "n": "Sabre Industries",
+     "w": "steel poles and towers (private)"
+    }
+   ]
+  },
+  "PLPC": {
+   "basis": "Overhead line hardware",
+   "peers": [
+    {
+     "t": "HUBB",
+     "w": "utility connectors and line hardware"
+    },
+    {
+     "t": "VMI",
+     "w": "poles and towers"
+    },
+    {
+     "n": "MacLean Power Systems",
+     "w": "line hardware (private)"
+    }
+   ]
+  },
+  "ED": {
+   "basis": "Urban distribution utility",
+   "peers": [
+    {
+     "t": "EXC",
+     "w": "urban distribution utility"
+    },
+    {
+     "t": "D",
+     "w": "regulated electric and gas utility"
+    },
+    {
+     "t": "PEG",
+     "n": "PSEG",
+     "w": "New Jersey electric and gas utility"
+    }
+   ]
+  },
+  "ITRI": {
+   "basis": "Smart meters and grid networks",
+   "peers": [
+    {
+     "t": "XYL",
+     "w": "Sensus smart water and gas meters"
+    },
+    {
+     "t": "HUBB",
+     "w": "Aclara smart meters"
+    },
+    {
+     "n": "Landis+Gyr",
+     "w": "smart meters (Zurich-listed)"
+    }
+   ]
+  },
+  "ESE": {
+   "basis": "Utility test and diagnostics",
+   "peers": [
+    {
+     "t": "ITRI",
+     "w": "grid sensing and metering"
+    },
+    {
+     "t": "HUBB",
+     "w": "utility grid products"
+    },
+    {
+     "n": "Megger",
+     "w": "electrical test equipment (private)"
+    }
+   ]
+  },
+  "MYRG": {
+   "basis": "Transmission and distribution contractor",
+   "peers": [
+    {
+     "t": "PWR",
+     "w": "transmission and distribution contractor"
+    },
+    {
+     "t": "MTZ",
+     "w": "infrastructure contractor"
+    },
+    {
+     "t": "IESC",
+     "w": "electrical contractor"
+    }
+   ]
+  },
+  "SCCO": {
+   "basis": "Copper mining",
+   "peers": [
+    {
+     "t": "FCX",
+     "w": "copper mining"
+    },
+    {
+     "t": "BHP",
+     "n": "BHP",
+     "w": "copper and iron ore mining"
+    },
+    {
+     "t": "TECK",
+     "n": "Teck Resources",
+     "w": "copper and zinc mining"
+    }
+   ]
   }
  }
 }
