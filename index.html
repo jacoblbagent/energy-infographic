@@ -55,6 +55,15 @@
   svg{display:block;width:100%;min-width:900px;height:auto}
 
   .col-title{font-size:10px;font-weight:700;letter-spacing:1.5px;fill:var(--faint)}
+  /* column info icon: ring + "i", hover/focus shows #colTip */
+  .col-info{cursor:help;outline:none}
+  .col-info .ci-ring{fill:transparent;stroke:var(--faint);stroke-width:1.1;pointer-events:all}
+  .col-info .ci-glyph{font-size:8.5px;font-weight:700;fill:var(--faint);pointer-events:none;font-family:var(--mono)}
+  .col-info:hover .ci-ring,.col-info:focus-visible .ci-ring{stroke:var(--ink)}
+  .col-info:hover .ci-glyph,.col-info:focus-visible .ci-glyph{fill:var(--ink)}
+  #colTip{position:fixed;z-index:41;max-width:260px;background:#0F172A;color:#fff;font-size:11.5px;font-weight:500;
+    line-height:1.4;padding:8px 10px;border-radius:6px;pointer-events:none;opacity:0;transition:opacity .12s;white-space:normal}
+  #colTip b{display:block;font-size:10px;letter-spacing:1.2px;color:#BFD3EA;margin-bottom:3px}
   .node-box{fill:var(--node);stroke:var(--line);stroke-width:1}
   .node-label{font-size:12.5px;font-weight:600;fill:var(--ink)}
 
@@ -10353,6 +10362,14 @@ const VIEWS={
     title:"The Electrical Grid",
     sub:"Public companies along the path power takes from the plant to the meter. Hover to preview a node, click to hold that path, click a ticker for the company.",
     colTitles:["GENERATION","TRANSMISSION","SUBSTATIONS","DISTRIBUTION","GRID EDGE & DEMAND"],
+    /* one info-icon tooltip per column header (grid view only) */
+    colInfo:[
+      "Plants that turn fuel, wind, sunlight or water into electricity, plus the storage that holds it.",
+      "High-voltage lines and the equipment that moves bulk power from plants toward load centers.",
+      "Facilities that step voltage up or down and switch power between lines.",
+      "Medium- and low-voltage feeders, poles and transformers that deliver power to neighborhoods and businesses.",
+      "Where power is metered and used: homes with rooftop solar, EV charging, and large sites such as data centers."
+    ],
     cx:[230,530,830,1130,1460], nw:[240,240,250,250,240],
     legend:[["Generation",G.ggn],["Transmission",G.gtx],["Substations",G.gsb],
             ["Distribution",G.gds],["Demand",G.gde],["Enablers",G.svc]],
@@ -10567,6 +10584,13 @@ function blur(){
   EDGES.forEach(e=>{e.el.classList.remove("hl","dim");
     e.lbl.classList.remove("on","fade");});
   NODES.forEach(n=>n.gEl.classList.remove("dim"));
+}
+
+/* column info tooltip: created on first use so paintChrome can run before this block */
+let colTip=null;
+function colTipEl(){
+  if(!colTip){colTip=document.createElement("div");colTip.id="colTip";document.body.appendChild(colTip);}
+  return colTip;
 }
 
 /* ---------- hover tooltip ---------- */
@@ -10896,6 +10920,7 @@ function clearSel(){
 
 /* ---------- chrome for the active view ---------- */
 function paintChrome(){
+if(colTip) colTip.style.opacity="0";
 const COL_TITLES=VIEW.colTitles, CX=VIEW.cx, NW=VIEW.nw;
 /* ---------- column headers ---------- */
 CX.map((_,c)=>c).forEach(c=>{
@@ -10905,6 +10930,25 @@ CX.map((_,c)=>c).forEach(c=>{
   num.textContent="0"+(c+1);
   const t=el("text",{x:x+22,y:y,class:"col-title"},svg);
   t.textContent=COL_TITLES[c];
+  if(VIEW.colInfo){
+    /* info icon sits after the title; hover/focus shows the category description */
+    const ix=x+22+t.getComputedTextLength()+11, iy=y-3.5, desc=VIEW.colInfo[c];
+    const ig=el("g",{class:"col-info",tabindex:"0",role:"img","aria-label":COL_TITLES[c]+": "+desc},svg);
+    el("circle",{cx:ix,cy:iy,r:6.5,class:"ci-ring"},ig);
+    el("text",{x:ix,y:iy+3,"text-anchor":"middle",class:"ci-glyph"},ig).textContent="i";
+    const show=()=>{
+      const tp=colTipEl();
+      tp.innerHTML="<b>"+COL_TITLES[c]+"</b>";
+      tp.appendChild(document.createTextNode(desc));
+      const r=ig.getBoundingClientRect();
+      tp.style.left=Math.min(r.left-8,window.innerWidth-276)+"px";
+      tp.style.top=(r.bottom+8)+"px";
+      tp.style.opacity="1";
+    };
+    const hide=()=>{colTipEl().style.opacity="0";};
+    ig.addEventListener("mouseenter",show); ig.addEventListener("mouseleave",hide);
+    ig.addEventListener("focus",show); ig.addEventListener("blur",hide);
+  }
 });
 
 /* ---------- header / footer / legend ---------- */
